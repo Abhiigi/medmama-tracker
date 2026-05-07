@@ -1,233 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MedMama 🌸 Pregnancy Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --blush:#f7e8e8;--rose:#e8a0a0;--deep:#c0627a;--deeper:#a04060;
-  --sage:#7aaa80;--softgreen:#d4ead6;
-  --cream:#fdf8f4;--white:#fffaf7;--text:#3a2a30;--light:#9a7878;
-  --shadow:0 4px 24px rgba(192,98,122,.09);
-  --visit:#7b5ea7;--visit-light:#ede8f7;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>MedMama 🌸 Pregnancy Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blush: #f7e8e8;
+      --rose: #e8a0a0;
+      --deep: #c0627a;
+      --deeper: #a04060;
+      --sage: #7aaa80;
+      --softgreen: #d4ead6;
+      --cream: #fdf8f4;
+      --white: #fffaf7;
+      --text: #3a2a30;
+      --light: #9a7878;
+      --shadow: 0 4px 24px rgba(192, 98, 122, 0.09);
+      --visit: #7b5ea7;
+      --visit-light: #ede8f7;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    /* AUTH */
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #fdf0f3 0%, #f7f0ff 100%);
+    }
+    .auth-box {
+      background: #fff;
+      border-radius: 28px;
+      padding: 36px 28px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(192, 98, 122, 0.13);
+    }
+    .auth-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px;
+      color: var(--deep);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .auth-sub {
+      text-align: center;
+      font-size: 13px;
+      color: var(--light);
+      margin-bottom: 28px;
+    }
+    .auth-tabs {
+      display: flex;
+      background: var(--blush);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      background: transparent;
+      color: var(--light);
+      transition: all .2s;
+    }
+    .auth-tab.active {
+      background: #fff;
+      color: var(--deep);
+      box-shadow: 0 2px 8px rgba(192, 98, 122, 0.12);
+    }
+    .auth-field {
+      margin-bottom: 14px;
+    }
+    .auth-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 5px;
+    }
+    .auth-field input {
+      width: 100%;
+      border: 1.5px solid var(--blush);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border .2s;
+    }
+    .auth-field input:focus {
+      border-color: var(--rose);
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--deep);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      margin-top: 6px;
+      transition: background .2s;
+    }
+    .auth-btn:hover {
+      background: var(--deeper);
+    }
+    .auth-btn:disabled {
+      background: #ddd;
+      cursor: not-allowed;
+    }
+    .auth-err {
+      background: #fff0f0;
+      border: 1px solid #f5c0c0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #c04040;
+      margin-top: 12px;
+      display: none;
+    }
+    .auth-ok {
+      background: #f0fff4;
+      border: 1px solid #a0d4b0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #2a7040;
+      margin-top: 12px;
+      display: none;
+    }
 
-/* ── AUTH ── */
-.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
-  background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%);}
-.auth-box{background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;
-  box-shadow:0 8px 40px rgba(192,98,122,.13);}
-.auth-logo{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--deep);font-style:italic;
-  text-align:center;margin-bottom:4px;}
-.auth-sub{text-align:center;font-size:13px;color:var(--light);margin-bottom:28px;}
-.auth-tabs{display:flex;background:var(--blush);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px;}
-.auth-tab{flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;
-  font-family:'DM Sans',sans-serif;background:transparent;color:var(--light);transition:all .2s;}
-.auth-tab.active{background:#fff;color:var(--deep);box-shadow:0 2px 8px rgba(192,98,122,.12);}
-.auth-field{margin-bottom:14px;}
-.auth-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px;}
-.auth-field input{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:11px 14px;
-  font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border .2s;}
-.auth-field input:focus{border-color:var(--rose);}
-.auth-btn{width:100%;padding:13px;background:var(--deep);color:#fff;border:none;border-radius:14px;
-  font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;transition:background .2s;}
-.auth-btn:hover{background:var(--deeper);}
-.auth-btn:disabled{background:#ddd;cursor:not-allowed;}
-.auth-err{background:#fff0f0;border:1px solid #f5c0c0;border-radius:10px;padding:10px 14px;font-size:12px;color:#c04040;margin-top:12px;display:none;}
-.auth-ok{background:#f0fff4;border:1px solid #a0d4b0;border-radius:10px;padding:10px 14px;font-size:12px;color:#2a7040;margin-top:12px;display:none;}
+    /* MAIN LAYOUT */
+    #app {
+      display: none;
+      flex: 1;
+    }
+    .topbar {
+      background: #fff;
+      padding: 12px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--blush);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      gap: 8px;
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: var(--deep);
+      font-style: italic;
+      white-space: nowrap;
+    }
+    .sync-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 12px;
+      background: var(--blush);
+      color: var(--deep);
+      border-bottom: 1px solid #f0dada;
+    }
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    .sync-dot.ok { background: #7aaa80; }
+    .sync-dot.err { background: #e07070; }
+    .sync-dot.loading { background: #f5c842; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
 
-/* ── TOPBAR ── */
-.topbar{background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;white-space:nowrap;}
-.topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
-.tabs{display:flex;gap:4px;flex-wrap:wrap;}
-.tab{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;
-  font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
-.tab.active{background:var(--deep);color:#fff;}
-.tab:not(.active){background:var(--blush);color:var(--light);}
-.signout-btn{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;
-  font-family:'DM Sans',sans-serif;background:#f5f0f0;color:var(--light);white-space:nowrap;}
-.signout-btn:hover{background:var(--blush);color:var(--deep);}
+    .main-content {
+      display: flex;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px 12px;
+      gap: 18px;
+      flex: 1;
+    }
+    .side-panel {
+      width: 220px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .center-panel {
+      flex: 1;
+      min-width: 0;
+    }
+    @media (max-width: 950px) {
+      .main-content {
+        flex-direction: column;
+        align-items: center;
+      }
+      .side-panel {
+        width: 100%;
+        max-width: 520px;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
 
-/* ── SYNC BAR ── */
-.sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;
-  font-size:11px;padding:4px 12px;background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
-.sync-dot.ok{background:#7aaa80;} .sync-dot.err{background:#e07070;}
-.sync-dot.loading{background:#f5c842;animation:pulse 1s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+    .baby-card, .nutrition-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-size: 13px;
+    }
+    .baby-animation {
+      font-size: 38px;
+      animation: bounceBaby 2s infinite;
+    }
+    @keyframes bounceBaby {
+      0%,100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+      50% { transform: translateY(0); }
+      70% { transform: translateY(-3px); }
+    }
+    .nutrition-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 8px 0;
+      font-size: 12px;
+    }
 
-/* ── BODY ── */
-.body{max-width:520px;margin:0 auto;padding:20px 16px;}
-.card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;}
-.view{display:none;} .view.active{display:block;}
-#app{display:none;}
+    .tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .tab.active {
+      background: var(--deep);
+      color: #fff;
+    }
+    .tab:not(.active) {
+      background: var(--blush);
+      color: var(--light);
+    }
+    .signout-btn {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 500;
+      background: #f5f0f0;
+      color: var(--light);
+    }
 
-/* ── DATE / PROGRESS ── */
-.date-row{display:flex;justify-content:space-between;align-items:center;}
-.date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-.date-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);font-weight:600;}
-.today-badge{background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;}
-.visit-badge{background:var(--visit-light);color:var(--visit);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;border:1px solid #c9b8e8;}
-.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px;}
-.prog-count{font-size:14px;font-weight:700;color:var(--deep);}
-.prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease;}
-.prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light);}
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .view { display: none; }
+    .view.active { display: block; }
 
-/* ── SECTION LABELS ── */
-.sec-label{display:flex;align-items:center;gap:8px;margin:18px 0 8px;
-  font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);}
-.sec-line{flex:1;height:1px;background:rgba(0,0,0,.07);}
+    .med-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 13px 15px;
+      margin-bottom: 9px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border-left: 4px solid #e8d8d8;
+    }
+    .med-card.morning { border-left-color: #f5c842; }
+    .med-card.noon { border-left-color: #f5944a; }
+    .med-card.evening { border-left-color: #7b8fdb; }
+    .med-card.night { border-left-color: #9b7fe8; }
+    .med-card.done { opacity: .9; }
+    .chk {
+      width: 30px; height: 30px; border-radius: 9px; border: 2px solid #ddd;
+      background: #fff; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; transition: all .2s;
+    }
+    .chk.inactive {
+      opacity: 0.5; cursor: not-allowed; background: #f5f5f5;
+    }
+    .morning .chk.checked { background: #f5c842; border-color: #f5c842; }
+    .noon .chk.checked { background: #f5944a; border-color: #f5944a; }
+    .evening .chk.checked { background: #7b8fdb; border-color: #7b8fdb; }
+    .night .chk.checked { background: #9b7fe8; border-color: #9b7fe8; }
 
-/* ── MED CARDS ── */
-.med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;
-  box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;transition:all .2s;
-  border-left:4px solid #e8d8d8;animation:fadeUp .35s ease both;}
-.med-card.done{opacity:.8;}
-.med-card.morning{border-left-color:#f5c842;} .med-card.morning.done{background:#fffef0;}
-.med-card.noon{border-left-color:#f5944a;}    .med-card.noon.done{background:#fff6f0;}
-.med-card.evening{border-left-color:#7b8fdb;} .med-card.evening.done{background:#f4f6ff;}
-.med-card.night{border-left-color:#9b7fe8;}   .med-card.night.done{background:#f7f3ff;}
-.med-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.morning .med-icon{background:#fff8e1;} .noon .med-icon{background:#fff0e6;}
-.evening .med-icon{background:#f0f4ff;} .night .med-icon{background:#f0eaff;}
-.med-info{flex:1;min-width:0;}
-.med-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--deep);font-style:italic;}
-.med-name{font-size:12px;color:var(--text);font-weight:500;margin-top:1px;}
-.med-meta{font-size:10px;color:var(--light);margin-top:2px;}
-.med-dose{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
-.morning .med-dose{background:#fff8e1;color:#7a5c00;} .noon .med-dose{background:#fff0e6;color:#7a3500;}
-.evening .med-dose{background:#f0f4ff;color:#1a2870;} .night .med-dose{background:#f0eaff;color:#3a1a70;}
-.chk{width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;
-  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:16px;color:#fff;transition:all .2s;user-select:none;font-weight:700;}
-.morning .chk.checked{background:#f5c842;border-color:#f5c842;}
-.noon .chk.checked{background:#f5944a;border-color:#f5944a;}
-.evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb;}
-.night .chk.checked{background:#9b7fe8;border-color:#9b7fe8;}
-
-/* ── NOTES ── */
-.notes-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
-textarea{width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;
-  font-size:13px;color:var(--text);background:transparent;line-height:1.7;min-height:60px;}
-textarea::placeholder{color:#c4b4b4;}
-
-/* ── CALENDAR ── */
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600;}
-.cal-btn{background:var(--blush);border:none;border-radius:10px;padding:6px 16px;cursor:pointer;font-size:18px;color:var(--deep);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px;}
-.cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--light);letter-spacing:1px;padding:4px 0;}
-.cal-day{border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:5px 2px;aspect-ratio:1/1;transition:all .15s;
-  box-shadow:0 1px 4px rgba(0,0,0,.05);font-family:'DM Sans',sans-serif;position:relative;}
-.cal-day.empty-cell{background:transparent;box-shadow:none;cursor:default;}
-.cal-day.future{background:#f9f5f5;color:#ccc;cursor:default;}
-.cal-day.sel{background:var(--deep)!important;color:#fff!important;font-weight:700;box-shadow:0 2px 10px rgba(192,98,122,.35);}
-.cal-day.today-cell{background:var(--blush);font-weight:700;}
-.cal-day.full{background:var(--softgreen);color:#2a6a30;}
-.cal-day.partial{background:#fff3cd;color:#7a5c00;}
-.cal-day.none{background:#fff;}
-.cal-day.has-visit::after{content:'🏥';font-size:8px;position:absolute;top:1px;right:2px;line-height:1;}
-.cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px;}
-.cal-day.full .cal-dot{background:#2a6a30;} .cal-day.partial .cal-dot{background:#f5c842;}
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light);}
-.leg-dot{width:10px;height:10px;border-radius:3px;}
-.summary-line{font-size:13px;line-height:2.1;color:var(--text);}
-.summary-line span{font-size:10px;color:var(--light);}
-
-/* ── VISIT BANNER ── */
-.visit-banner{background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;
-  margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;}
-.visit-banner-icon{font-size:22px;flex-shrink:0;}
-.visit-banner-info{flex:1;}
-.visit-banner-title{font-size:13px;font-weight:600;color:var(--visit);margin-bottom:2px;}
-.visit-banner-note{font-size:12px;color:#6a5090;line-height:1.5;}
-
-/* ── PRESCRIPTION ── */
-.rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush);}
-.rx-file-name{font-size:11px;color:var(--light);margin-top:6px;}
-
-/* ── MODALS ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;
-  display:none;align-items:flex-end;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:520px;
-  max-height:90vh;overflow-y:auto;padding:28px 24px 40px;}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
-.modal-close{background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;
-  cursor:pointer;font-size:16px;color:var(--deep);display:flex;align-items:center;justify-content:center;}
-
-/* ── FORM FIELDS ── */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px;}
-.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--blush);border-radius:12px;
-  padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;
-  transition:border .2s;background:#fff;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose);}
-.field textarea{resize:vertical;min-height:70px;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-
-/* ── BUTTONS ── */
-.btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600;
-  font-family:'DM Sans',sans-serif;transition:all .2s;}
-.btn-primary{background:var(--deep);color:#fff;} .btn-primary:hover{background:var(--deeper);}
-.btn-danger{background:#fff0f0;color:#c04040;} .btn-danger:hover{background:#ffe0e0;}
-.btn-ghost{background:var(--blush);color:var(--deep);}
-.btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
-.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-
-/* ── MED LIST IN SETTINGS ── */
-.med-list-item{background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;
-  display:flex;align-items:center;gap:12px;}
-.med-list-icon{font-size:20px;width:36px;text-align:center;}
-.med-list-info{flex:1;min-width:0;}
-.med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;}
-.med-list-meta{font-size:11px;color:var(--light);margin-top:1px;}
-.med-list-actions{display:flex;gap:6px;}
-
-/* ── VISITS LIST ── */
-.visit-item{background:var(--visit-light);border-radius:14px;padding:12px 16px;margin-bottom:8px;
-  display:flex;align-items:flex-start;gap:12px;border:1px solid #d8caf0;}
-.visit-item-icon{font-size:20px;flex-shrink:0;}
-.visit-item-info{flex:1;min-width:0;}
-.visit-item-date{font-size:13px;font-weight:600;color:var(--visit);}
-.visit-item-note{font-size:12px;color:#6a5090;margin-top:2px;}
-.visit-item-actions{display:flex;gap:6px;flex-shrink:0;}
-
-/* ── FILE UPLOAD ── */
-.upload-area{border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;
-  cursor:pointer;transition:background .2s;}
-.upload-area:hover{background:var(--blush);}
-.upload-area input[type=file]{display:none;}
-.upload-label{font-size:13px;color:var(--light);margin-top:6px;}
-
-/* ── EMPTY STATE ── */
-.empty-state{text-align:center;padding:32px 20px;color:var(--light);}
-.empty-state .icon{font-size:36px;margin-bottom:10px;}
-.empty-state p{font-size:13px;line-height:1.6;}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-.modal{animation:slideUp .3s ease;}
-</style>
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(30,10,20,.45);
+      z-index: 100; display: none; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 28px 28px 0 0; width: 100%;
+      max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 28px 24px 40px;
+      animation: slideUp .3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  </style>
 </head>
 <body>
-
-<!-- ══ AUTH SCREEN ══ -->
 <div id="auth-screen" class="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">🌸 MedMama</div>
-    <div class="auth-sub">Your personal pregnancy medicine tracker</div>
+    <div class="auth-sub">Your pregnancy medicine tracker</div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
       <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
@@ -240,12 +368,11 @@ textarea::placeholder{color:#c4b4b4;}
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
 <div id="app">
   <div class="topbar">
     <div class="logo">🌸 MedMama</div>
-    <div class="topbar-right">
-      <div class="tabs" id="main-tabs">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div class="tabs">
         <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
         <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
         <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
@@ -255,765 +382,195 @@ textarea::placeholder{color:#c4b4b4;}
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
-  <div class="sync-bar">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-text">Loading…</span>
-  </div>
+  <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div> <span id="sync-text">Loading…</span></div>
 
-  <div class="body">
-
-    <!-- OTHER DAY VIEW (past date selected from calendar) -->
-    <div id="view-otherday" class="view">
-      <div id="otherday-visit-banner"></div>
-      <div class="card" style="margin-bottom:14px;">
-        <div class="date-row">
-          <div><div class="date-lbl">Viewing</div><div class="date-val" id="otherday-date-display">—</div></div>
-          <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="prog-top">
-          <span class="prog-lbl">Doses taken</span>
-          <span class="prog-count" id="otherday-prog-count">0 / 0</span>
-        </div>
-        <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
-        <div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div>
-      </div>
-      <div id="otherday-med-sections"></div>
-      <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
-      <div class="card">
-        <div class="notes-lbl">Notes for this day</div>
-        <textarea id="otherday-notes-input" placeholder="Notes for this day…" oninput="saveOtherdayNote()"></textarea>
+  <div class="main-content">
+    <!-- LEFT PANEL: NUTRITION -->
+    <div class="side-panel">
+      <div class="nutrition-card">
+        <div style="font-weight:600; color:var(--deep); margin-bottom:8px;">🥗 Pregnancy Nutrition</div>
+        <div class="nutrition-item"><span>🥬</span> Vitamin A: carrots, spinach</div>
+        <div class="nutrition-item"><span>🍊</span> Vitamin C: oranges, bell peppers</div>
+        <div class="nutrition-item"><span>☀️</span> Vitamin D: eggs, sunshine</div>
+        <div class="nutrition-item"><span>🥩</span> Iron: lentils, lean meat</div>
+        <div class="nutrition-item"><span>🥛</span> Calcium: milk, yogurt</div>
+        <div class="nutrition-item"><span>🐟</span> B12: fish, fortified cereals</div>
+        <div style="margin-top:10px; font-size:11px; color:var(--light);">✨ Stay hydrated & eat colorful!</div>
       </div>
     </div>
 
-    <!-- TODAY VIEW -->
-    <div id="view-today" class="view active">
-      <div id="visit-today-banner"></div>
-      <div class="card" style="margin-bottom:14px;">
-        <div class="date-row">
-          <div><div class="date-lbl">Date</div><div class="date-val" id="date-display">—</div></div>
-          <div id="today-badge" class="today-badge" style="display:none">Today</div>
-        </div>
+    <!-- CENTER -->
+    <div class="center-panel">
+      <div id="view-today" class="view active">
+        <div id="visit-today-banner"></div>
+        <div class="card"><div class="date-row"><div><div class="date-lbl">Date</div><div class="date-val" id="date-display">—</div></div></div></div>
+        <div class="card"><div class="prog-top"><span>Doses taken</span><span id="prog-count">0/0</span></div><div class="prog-track"><div id="prog-fill" style="width:0%;height:8px;background:var(--rose);border-radius:10px;"></div></div></div>
+        <div id="med-sections"></div>
+        <div class="card"><textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea></div>
       </div>
-      <div class="card" style="margin-bottom:18px;">
-        <div class="prog-top">
-          <span class="prog-lbl">Doses taken</span>
-          <span class="prog-count" id="prog-count">0 / 0</span>
-        </div>
-        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-        <div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div>
+      <div id="view-otherday" class="view">
+        <div id="otherday-visit-banner"></div>
+        <div class="card"><div class="date-val" id="otherday-date-display">—</div></div>
+        <div class="card"><span id="otherday-prog-count">0/0</span><div class="prog-track"><div id="otherday-prog-fill" style="width:0%;height:8px;background:var(--rose);border-radius:10px;"></div></div></div>
+        <div id="otherday-med-sections"></div>
+        <div class="card"><textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea></div>
       </div>
-      <div id="med-sections"></div>
-      <div id="no-meds-msg" style="display:none" class="empty-state">
-        <div class="icon">💊</div>
-        <p>No medicines added yet.<br>Go to <strong>My Meds</strong> tab to add your prescriptions.</p>
-      </div>
-      <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
-      <div class="card">
-        <div class="notes-lbl">How are you feeling today?</div>
-        <textarea id="notes-input" placeholder="Write any symptoms, side effects, or reminders…" oninput="saveNote()"></textarea>
-      </div>
+      <div id="view-calendar" class="view"><div class="card"><div id="cal-grid"></div></div></div>
+      <div id="view-visits" class="view"><div id="visits-list"></div></div>
+      <div id="view-mymeds" class="view"><div id="meds-list"></div></div>
     </div>
 
-    <!-- CALENDAR VIEW -->
-    <div id="view-calendar" class="view">
-      <div class="card">
-        <div class="cal-nav">
-          <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
-          <div class="cal-title" id="cal-title">—</div>
-          <button class="cal-btn" onclick="changeMonth(1)">›</button>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="legend">
-          <div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All doses</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div>
-          <div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div>
-          <div class="leg-item"><span style="font-size:12px">🏥</span>Doctor visit</div>
-        </div>
+    <!-- RIGHT PANEL: BABY -->
+    <div class="side-panel">
+      <div class="baby-card">
+        <div class="baby-animation">👶🏻🍼</div>
+        <div style="font-weight:600; color:var(--deep);">Little one growing...</div>
+        <div style="font-size:11px; color:var(--light); margin-top:6px;">🌸 You're doing great, mama!</div>
+        <div style="margin-top:10px;">🐣 ⭐ 🧸</div>
       </div>
-      <div class="card"><div class="summary-line" id="month-summary">Loading…</div></div>
-    </div>
-
-    <!-- VISITS VIEW -->
-    <div id="view-visits" class="view">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">Doctor Visits</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddVisit()">+ Add Visit</button>
-      </div>
-      <div id="visits-list"></div>
-    </div>
-
-    <!-- MY MEDS VIEW -->
-    <div id="view-mymeds" class="view">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">My Medicines</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddMed()">+ Add Med</button>
-      </div>
-      <div id="meds-list"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══ ADD/EDIT MED MODAL ══ -->
-<div class="modal-overlay" id="med-modal">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="med-modal-title">Add Medicine</span>
-      <button class="modal-close" onclick="closeMedModal()">✕</button>
-    </div>
-    <input type="hidden" id="med-edit-id"/>
-    <div class="field"><label>Medicine Brand Name</label><input id="med-brand" placeholder="e.g. Dydrogesterone 10mg"/></div>
-    <div class="field"><label>Generic Name / Purpose</label><input id="med-name" placeholder="e.g. Progesterone Support"/></div>
-    <div class="field-row">
-      <div class="field"><label>Icon (emoji)</label><input id="med-icon" placeholder="💊" maxlength="4"/></div>
-      <div class="field"><label>Dose</label><input id="med-dose" placeholder="e.g. 1 tablet"/></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Time of Day</label>
-        <select id="med-time">
-          <option value="morning">🌅 Morning</option>
-          <option value="noon">🌞 Noon</option>
-          <option value="evening">🌇 Evening</option>
-          <option value="night">🌃 Night</option>
-        </select>
-      </div>
-      <div class="field"><label>When to Take</label><input id="med-timing" placeholder="e.g. After Breakfast"/></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveMed()">Save Medicine</button>
-      <button class="btn btn-ghost" onclick="closeMedModal()">Cancel</button>
-      <button class="btn btn-danger" id="med-delete-btn" onclick="deleteMed()" style="display:none">Delete</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ADD/EDIT VISIT MODAL ══ -->
-<div class="modal-overlay" id="visit-modal">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="visit-modal-title">Add Doctor Visit</span>
-      <button class="modal-close" onclick="closeVisitModal()">✕</button>
-    </div>
-    <input type="hidden" id="visit-edit-id"/>
-    <div class="field"><label>Visit Date</label><input id="visit-date" type="date"/></div>
-    <div class="field"><label>Doctor / Hospital</label><input id="visit-doctor" placeholder="e.g. Dr. Sharma, Apollo Hospital"/></div>
-    <div class="field"><label>Notes / Reminders</label>
-      <textarea id="visit-note" placeholder="e.g. Carry previous reports, blood test fasting required…"></textarea>
-    </div>
-    <div class="field">
-      <label>Prescription / Reports (Image or PDF)</label>
-      <div class="upload-area" onclick="document.getElementById('rx-upload').click()">
-        <div style="font-size:28px">📋</div>
-        <div class="upload-label">Tap to upload prescription or report</div>
-        <div style="font-size:11px;color:var(--light);margin-top:4px">JPG, PNG, PDF supported</div>
-        <input type="file" id="rx-upload" accept="image/*,.pdf" onchange="handleRxUpload(event)"/>
-      </div>
-      <div id="rx-preview"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveVisit()">Save Visit</button>
-      <button class="btn btn-ghost" onclick="closeVisitModal()">Cancel</button>
-      <button class="btn btn-danger" id="visit-delete-btn" onclick="deleteVisit()" style="display:none">Delete</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────
-const SUPABASE_URL = "https://pwzppkcdhzcidkpygklk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT";
-const REST = `${SUPABASE_URL}/rest/v1`;
-const AUTH = `${SUPABASE_URL}/auth/v1`;
+  (function() {
+    const SUPABASE_URL = "https://pwzppkcdhzcidkpygklk.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT";
+    const REST = `${SUPABASE_URL}/rest/v1`;
+    const AUTH = `${SUPABASE_URL}/auth/v1`;
 
-const SECTIONS=[
-  {key:"morning",label:"Morning",emoji:"🌅",sub:"Before Breakfast"},
-  {key:"noon",   label:"Noon",   emoji:"🌞",sub:"Before / After Lunch"},
-  {key:"evening",label:"Evening",emoji:"🌇",sub:"After Dinner"},
-  {key:"night",  label:"Night",  emoji:"🌃",sub:"After Dinner"},
-];
-const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let currentUser = null, accessToken = null;
+    let selectedDate = new Date().toISOString().slice(0,10);
+    let userMeds = [], userVisits = [], cache = {};
+    let authMode = 'login';
 
-// ── STATE ─────────────────────────────────────────────────────────
-let currentUser=null,accessToken=null;
-let selectedDate=toKey(new Date());
-let calYear,calMonth;
-let cache={},noteTimer=null,authMode='login';
-let userMeds=[],userVisits=[];
-let rxBase64=null,rxMime=null,rxFileName=null;
-(function(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();})();
+    function authHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${accessToken}`,
+        'Prefer': 'return=representation'
+      };
+    }
 
-function toKey(d){return d.toISOString().slice(0,10);}
-function todayKey(){return toKey(new Date());}
+    async function sbFetch(path, options = {}) {
+      const res = await fetch(`${REST}${path}`, { headers: authHeaders(), ...options });
+      if (!res.ok) throw new Error(await res.text());
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
+    }
 
-// ── AUTH UI ───────────────────────────────────────────────────────
-function switchAuthTab(mode){
-  authMode=mode;
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
-    t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='signup'));
-  });
-  document.getElementById('auth-submit-btn').textContent=mode==='login'?'Sign In':'Create Account';
-  document.getElementById('auth-err').style.display='none';
-  document.getElementById('auth-ok').style.display='none';
-}
-function showAuthError(msg){const el=document.getElementById('auth-err');el.textContent=msg;el.style.display='block';document.getElementById('auth-ok').style.display='none';}
-function showAuthOk(msg){const el=document.getElementById('auth-ok');el.textContent=msg;el.style.display='block';document.getElementById('auth-err').style.display='none';}
-
-async function handleAuth(){
-  const email=document.getElementById('auth-email').value.trim();
-  const password=document.getElementById('auth-password').value;
-  const btn=document.getElementById('auth-submit-btn');
-  if(!email||!password){showAuthError('Please enter your email and password.');return;}
-  btn.disabled=true;btn.textContent=authMode==='login'?'Signing in…':'Creating account…';
-  document.getElementById('auth-err').style.display='none';document.getElementById('auth-ok').style.display='none';
-  try{
-    const endpoint=authMode==='login'?'/token?grant_type=password':'/signup';
-    const res=await fetch(`${AUTH}${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({email,password})});
-    const data=await res.json();
-    if(!res.ok){showAuthError(data.error_description||data.msg||'Authentication failed.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';return;}
-    if(authMode==='signup'&&!data.access_token){showAuthOk('✅ Account created! Check your email to confirm, then sign in.');btn.disabled=false;btn.textContent='Create Account';return;}
-    accessToken=data.access_token;currentUser=data.user;cache={};
-    document.getElementById('auth-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    setSyncStatus('ok',`Signed in as ${currentUser.email}`);
-    await loadUserMeds();
-    await loadUserVisits();
-    renderToday();
-  }catch(e){showAuthError('Network error. Please try again.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';}
-}
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen').style.display!=='none')handleAuth();});
-
-async function signOut(){
-  try{await fetch(`${AUTH}/logout`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`}});}catch(e){}
-  accessToken=null;currentUser=null;cache={};userMeds=[];userVisits=[];
-  document.getElementById('app').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('auth-email').value='';document.getElementById('auth-password').value='';
-  document.getElementById('auth-err').style.display='none';document.getElementById('auth-ok').style.display='none';
-  switchAuthTab('login');
-}
-
-// ── SYNC STATUS ───────────────────────────────────────────────────
-function setSyncStatus(state,msg){document.getElementById('sync-dot').className='sync-dot '+state;document.getElementById('sync-text').textContent=msg;}
-
-// ── SUPABASE HELPERS ──────────────────────────────────────────────
-function authHeaders(){return{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`,'Prefer':'return=representation'};}
-async function sbFetch(path,options={}){
-  const res=await fetch(`${REST}${path}`,{headers:authHeaders(),...options});
-  if(!res.ok){const e=await res.text();throw new Error(e);}
-  const t=await res.text();return t?JSON.parse(t):null;
-}
-
-// ── USER MEDS ─────────────────────────────────────────────────────
-async function loadUserMeds(){
-  try{
-    const rows=await sbFetch(`/medmama_meds?user_id=eq.${currentUser.id}&order=sort_order.asc`);
-    userMeds=rows||[];
-  }catch(e){console.error('meds load',e);}
-}
-
-async function saveMedToDB(med){
-  if(med.id){
-    await sbFetch(`/medmama_meds?id=eq.${med.id}`,{method:'PATCH',body:JSON.stringify(med)});
-  } else {
-    const res=await sbFetch(`/medmama_meds`,{method:'POST',body:JSON.stringify({...med,user_id:currentUser.id,sort_order:Date.now()})});
-    return res&&res[0];
-  }
-}
-async function deleteMedFromDB(id){
-  await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'DELETE'});
-}
-
-// ── USER VISITS ───────────────────────────────────────────────────
-async function loadUserVisits(){
-  try{
-    const rows=await sbFetch(`/medmama_visits?user_id=eq.${currentUser.id}&order=visit_date.asc`);
-    userVisits=rows||[];
-  }catch(e){console.error('visits load',e);}
-}
-
-function getVisitForDate(dateStr){return userVisits.find(v=>v.visit_date===dateStr);}
-
-// ── DAILY TRACKER DATA ────────────────────────────────────────────
-async function loadDayFromDB(dateKey){
-  if(cache[dateKey]) return cache[dateKey];
-  try{
-    const rows=await sbFetch(`/medmama_tracker?date=eq.${dateKey}&user_id=eq.${currentUser.id}&select=*`);
-    cache[dateKey]=(rows&&rows.length>0)?{checks:rows[0].checks||{},note:rows[0].note||""}:{checks:{},note:""};
-    return cache[dateKey];
-  }catch(e){setSyncStatus('err','Sync error');return{checks:{},note:""};}
-}
-async function saveDayToDB(dateKey,data){
-  setSyncStatus('loading','Saving…');
-  try{
-    await sbFetch(`/medmama_tracker`,{
-      method:'POST',
-      headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},
-      body:JSON.stringify({date:dateKey,user_id:currentUser.id,checks:data.checks,note:data.note})
-    });
-    cache[dateKey]=data;setSyncStatus('ok','Synced ✓');
-  }catch(e){setSyncStatus('err','Save failed');console.error(e);}
-}
-
-// ── VIEWS ─────────────────────────────────────────────────────────
-function showView(v){
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  updateTabBar(v);
-  if(v==='today') renderToday();
-  if(v==='otherday') renderOtherday();
-  if(v==='calendar') renderCalendar();
-  if(v==='visits') renderVisits();
-  if(v==='mymeds') renderMyMeds();
-}
-
-function goToday(){
-  selectedDate=todayKey();
-  document.getElementById('tab-otherday').style.display='none';
-  showView('today');
-}
-
-function updateTabBar(activeView){
-  ['today','otherday','calendar','visits','mymeds'].forEach(v=>{
-    const el=document.getElementById('tab-'+v);
-    if(el) el.classList.toggle('active', v===activeView);
-  });
-}
-
-// Called from calendar when a non-today date is tapped
-function selectOtherDay(dateStr){
-  selectedDate=dateStr;
-  const d=new Date(dateStr+"T00:00:00");
-  const short=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-  const tabEl=document.getElementById('tab-otherday');
-  tabEl.textContent=short;
-  tabEl.style.display='';
-  showView('otherday');
-}
-
-// ── TODAY ─────────────────────────────────────────────────────────
-async function renderToday(){
-  setSyncStatus('loading','Loading…');
-  const dayData=await loadDayFromDB(selectedDate);
-  setSyncStatus('ok','Synced ✓');
-  const isToday=selectedDate===todayKey();
-  const d=new Date(selectedDate+"T00:00:00");
-  document.getElementById('date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('today-badge').style.display=isToday?'':'none';
-
-  // Visit banner — today's visit OR next upcoming
-  const visit=getVisitForDate(selectedDate);
-  const nextVisit=userVisits.filter(v=>v.visit_date>todayKey()).sort((a,b)=>a.visit_date.localeCompare(b.visit_date))[0];
-  const banner=document.getElementById('visit-today-banner');
-  if(visit){
-    banner.innerHTML=`<div class="visit-banner">
-      <div class="visit-banner-icon">🏥</div>
-      <div class="visit-banner-info">
-        <div class="visit-banner-title">Doctor Visit Today — ${visit.doctor||'Medical Appointment'}</div>
-        <div class="visit-banner-note">${visit.note||''}</div>
-        ${visit.rx_data?`<div style="margin-top:8px"><img src="${visit.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer" onclick="viewRxById('${visit.id}')"/></div>`:''}
-      </div>
-    </div>`;
-  } else if(nextVisit){
-    const dv=new Date(nextVisit.visit_date+"T00:00:00");
-    const daysLeft=Math.ceil((dv-new Date())/86400000);
-    const dateStr=dv.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-    banner.innerHTML=`<div class="visit-banner" style="cursor:pointer" onclick="selectOtherDay('${nextVisit.visit_date}')">
-      <div class="visit-banner-icon">📅</div>
-      <div class="visit-banner-info">
-        <div class="visit-banner-title">Next Visit: ${nextVisit.doctor||'Doctor'} — ${dateStr}</div>
-        <div class="visit-banner-note">in <strong>${daysLeft} day${daysLeft!==1?'s':''}</strong>${nextVisit.note?' · '+nextVisit.note:''} <span style="color:var(--visit);font-size:11px">Tap to view →</span></div>
-      </div>
-    </div>`;
-  } else { banner.innerHTML=''; }
-
-  // Meds
-  const container=document.getElementById('med-sections');
-  container.innerHTML='';
-  if(!userMeds.length){
-    document.getElementById('no-meds-msg').style.display='block';
-    document.getElementById('prog-count').textContent='0 / 0';
-    document.getElementById('prog-fill').style.width='0%';
-    return;
-  }
-  document.getElementById('no-meds-msg').style.display='none';
-  const checked=userMeds.filter(m=>dayData.checks[m.id]).length;
-  const pct=Math.round(checked/userMeds.length*100);
-  document.getElementById('prog-count').textContent=`${checked} / ${userMeds.length} · ${pct}%`;
-  document.getElementById('prog-fill').style.width=pct+'%';
-  SECTIONS.forEach(sec=>{
-    const meds=userMeds.filter(m=>m.time===sec.key);
-    if(!meds.length) return;
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`${sec.emoji} ${sec.label} <span style="font-weight:300;text-transform:none;letter-spacing:0">— ${sec.sub}</span><div class="sec-line"></div>`;
-    container.appendChild(lbl);
-    meds.forEach(med=>{
-      const done=!!dayData.checks[med.id];
-      const card=document.createElement('div');card.className=`med-card ${med.time} ${done?'done':''}`;
-      card.innerHTML=`
-        <div class="med-icon">${med.icon||'💊'}</div>
-        <div class="med-info">
-          <div class="med-brand">${med.brand}</div>
-          <div class="med-name">${med.purpose||''}</div>
-          <div class="med-meta">${med.timing||''}</div>
-          <div class="med-dose">${med.dose||''}</div>
-        </div>
-        <div class="chk ${done?'checked':''}" onclick="toggleCheck('${med.id}')">${done?'✓':''}</div>`;
-      container.appendChild(card);
-    });
-  });
-  document.getElementById('notes-input').value=dayData.note||'';
-}
-
-async function toggleCheck(medId){
-  const dayData=await loadDayFromDB(selectedDate);
-  dayData.checks[medId]=!dayData.checks[medId];
-  cache[selectedDate]=dayData;
-  await saveDayToDB(selectedDate,dayData);
-  if(selectedDate===todayKey()) renderToday(); else renderOtherday();
-}
-function saveNote(){
-  if(noteTimer) clearTimeout(noteTimer);
-  noteTimer=setTimeout(async()=>{
-    const dayData=await loadDayFromDB(selectedDate);
-    dayData.note=document.getElementById('notes-input').value;
-    cache[selectedDate]=dayData;
-    await saveDayToDB(selectedDate,dayData);
-  },800);
-}
-function saveOtherdayNote(){
-  if(noteTimer) clearTimeout(noteTimer);
-  noteTimer=setTimeout(async()=>{
-    const dayData=await loadDayFromDB(selectedDate);
-    dayData.note=document.getElementById('otherday-notes-input').value;
-    cache[selectedDate]=dayData;
-    await saveDayToDB(selectedDate,dayData);
-  },800);
-}
-
-// ── OTHER DAY ─────────────────────────────────────────────────────
-async function renderOtherday(){
-  setSyncStatus('loading','Loading…');
-  const dayData=await loadDayFromDB(selectedDate);
-  setSyncStatus('ok','Synced ✓');
-  const d=new Date(selectedDate+"T00:00:00");
-  document.getElementById('otherday-date-display').textContent=
-    d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  // Visit banner for this day
-  const visit=getVisitForDate(selectedDate);
-  const banner=document.getElementById('otherday-visit-banner');
-  if(visit){
-    banner.innerHTML=`<div class="visit-banner">
-      <div class="visit-banner-icon">🏥</div>
-      <div class="visit-banner-info">
-        <div class="visit-banner-title">Doctor Visit — ${visit.doctor||'Medical Appointment'}</div>
-        <div class="visit-banner-note">${visit.note||''}</div>
-        ${visit.rx_data?`<div style="margin-top:8px"><img src="${visit.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer" onclick="viewRxById('${visit.id}')"/></div>`:''}
-      </div>
-    </div>`;
-  } else { banner.innerHTML=''; }
-
-  if(!userMeds.length){
-    document.getElementById('otherday-prog-count').textContent='0 / 0';
-    document.getElementById('otherday-prog-fill').style.width='0%';
-    document.getElementById('otherday-med-sections').innerHTML='';
-    return;
-  }
-  const checked=userMeds.filter(m=>dayData.checks[m.id]).length;
-  const pct=Math.round(checked/userMeds.length*100);
-  document.getElementById('otherday-prog-count').textContent=`${checked} / ${userMeds.length} · ${pct}%`;
-  document.getElementById('otherday-prog-fill').style.width=pct+'%';
-  const container=document.getElementById('otherday-med-sections');
-  container.innerHTML='';
-  SECTIONS.forEach(sec=>{
-    const meds=userMeds.filter(m=>m.time===sec.key);
-    if(!meds.length) return;
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`${sec.emoji} ${sec.label} <span style="font-weight:300;text-transform:none;letter-spacing:0">— ${sec.sub}</span><div class="sec-line"></div>`;
-    container.appendChild(lbl);
-    meds.forEach(med=>{
-      const done=!!dayData.checks[med.id];
-      const card=document.createElement('div');card.className=`med-card ${med.time} ${done?'done':''}`;
-      card.innerHTML=`
-        <div class="med-icon">${med.icon||'💊'}</div>
-        <div class="med-info">
-          <div class="med-brand">${med.brand}</div>
-          <div class="med-name">${med.purpose||''}</div>
-          <div class="med-meta">${med.timing||''}</div>
-          <div class="med-dose">${med.dose||''}</div>
-        </div>
-        <div class="chk ${done?'checked':''}" onclick="toggleCheck('${med.id}')">${done?'✓':''}</div>`;
-      container.appendChild(card);
-    });
-  });
-  document.getElementById('otherday-notes-input').value=dayData.note||'';
-}
-
-// ── CALENDAR ──────────────────────────────────────────────────────
-async function getDayStatus(dateStr){
-  if(!userMeds.length) return 'none';
-  const d=await loadDayFromDB(dateStr);
-  const count=userMeds.filter(m=>d.checks[m.id]).length;
-  if(count===0) return 'none';
-  if(count===userMeds.length) return 'full';
-  return 'partial';
-}
-
-async function renderCalendar(){
-  document.getElementById('cal-title').textContent=`${MONTHS[calMonth]} ${calYear}`;
-  const grid=document.getElementById('cal-grid');grid.innerHTML='';
-  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
-  const today=todayKey();
-  for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty-cell';grid.appendChild(el);}
-  try{
-    const m=String(calMonth+1).padStart(2,'0');
-    const rows=await sbFetch(`/medmama_tracker?date=gte.${calYear}-${m}-01&date=lte.${calYear}-${m}-${String(daysInMonth).padStart(2,'0')}&user_id=eq.${currentUser.id}&select=*`);
-    if(rows) rows.forEach(r=>{cache[r.date]={checks:r.checks||{},note:r.note||""};});
-  }catch(e){}
-  let full=0,partial=0,empty=0;
-  for(let day=1;day<=daysInMonth;day++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const isFuture=ds>today,isToday=ds===today,isSel=ds===selectedDate;
-    const hasVisit=!!getVisitForDate(ds);
-    const status=isFuture?'future':await getDayStatus(ds);
-    if(!isFuture){if(status==='full')full++;else if(status==='partial')partial++;else empty++;}
-    const el=document.createElement('button');
-    el.className=`cal-day ${isFuture?'future':status} ${isToday&&!isSel?'today-cell':''} ${isSel?'sel':''} ${hasVisit?'has-visit':''}`;
-    el.innerHTML=`${day}<div class="cal-dot"></div>`;
-    if(!isFuture) el.onclick=()=>{
-      if(ds===todayKey()){ goToday(); } else { selectOtherDay(ds); }
+    window.switchAuthTab = (mode) => {
+      authMode = mode;
+      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0 && mode==='login') || (i===1 && mode==='signup')));
+      document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Sign In' : 'Create Account';
     };
-    grid.appendChild(el);
-  }
-  const total=full+partial+empty;
-  document.getElementById('month-summary').innerHTML=
-    `✅ All doses: <strong>${full}</strong> day${full!==1?'s':''}<br>
-     🟡 Partial: <strong>${partial}</strong> day${partial!==1?'s':''}<br>
-     ⬜ Missed: <strong>${empty}</strong> day${empty!==1?'s':''}<br>
-     🏥 Doctor visits: <strong>${userVisits.filter(v=>v.visit_date.startsWith(`${calYear}-${String(calMonth+1).padStart(2,'0')}`)).length}</strong><br>
-     <span>Out of ${total} tracked day${total!==1?'s':''} this month</span>`;
-  setSyncStatus('ok','Synced ✓');
-}
-function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 
-// ── MY MEDS ───────────────────────────────────────────────────────
-function renderMyMeds(){
-  const container=document.getElementById('meds-list');container.innerHTML='';
-  if(!userMeds.length){
-    container.innerHTML=`<div class="empty-state"><div class="icon">💊</div><p>No medicines added yet.<br>Tap "+ Add Med" to add your prescription.</p></div>`;return;
-  }
-  SECTIONS.forEach(sec=>{
-    const meds=userMeds.filter(m=>m.time===sec.key);
-    if(!meds.length) return;
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`${sec.emoji} ${sec.label}<div class="sec-line"></div>`;container.appendChild(lbl);
-    meds.forEach(med=>{
-      const el=document.createElement('div');el.className='med-list-item';
-      el.innerHTML=`
-        <div class="med-list-icon">${med.icon||'💊'}</div>
-        <div class="med-list-info">
-          <div class="med-list-brand">${med.brand}</div>
-          <div class="med-list-meta">${med.purpose||''} · ${med.dose||''} · ${med.timing||''}</div>
-        </div>
-        <div class="med-list-actions">
-          <button class="btn btn-ghost btn-sm" onclick="openEditMed('${med.id}')">Edit</button>
-        </div>`;
-      container.appendChild(el);
-    });
-  });
-}
+    window.handleAuth = async () => {
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      if(!email||!password) return alert('Enter email and password');
+      const btn = document.getElementById('auth-submit-btn');
+      btn.disabled = true;
+      try {
+        const endpoint = authMode==='login' ? '/token?grant_type=password' : '/signup';
+        const res = await fetch(`${AUTH}${endpoint}`, {
+          method:'POST', headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+          body:JSON.stringify({email,password})
+        });
+        const data = await res.json();
+        if(!res.ok) { alert(data.error_description||'Auth failed'); btn.disabled=false; return; }
+        if(authMode==='signup' && !data.access_token) {
+          alert('Check email to confirm.'); btn.disabled=false; return;
+        }
+        accessToken = data.access_token; currentUser = data.user;
+        document.getElementById('auth-screen').style.display='none';
+        document.getElementById('app').style.display='block';
+        await loadUserMeds(); await loadUserVisits(); renderToday();
+      } catch(e) { alert('Network error'); btn.disabled=false; }
+    };
 
-function openAddMed(){
-  document.getElementById('med-modal-title').textContent='Add Medicine';
-  document.getElementById('med-edit-id').value='';
-  document.getElementById('med-brand').value='';
-  document.getElementById('med-name').value='';
-  document.getElementById('med-icon').value='💊';
-  document.getElementById('med-dose').value='';
-  document.getElementById('med-time').value='morning';
-  document.getElementById('med-timing').value='';
-  document.getElementById('med-delete-btn').style.display='none';
-  document.getElementById('med-modal').classList.add('open');
-}
-function openEditMed(id){
-  const med=userMeds.find(m=>m.id===id);if(!med) return;
-  document.getElementById('med-modal-title').textContent='Edit Medicine';
-  document.getElementById('med-edit-id').value=id;
-  document.getElementById('med-brand').value=med.brand||'';
-  document.getElementById('med-name').value=med.purpose||'';
-  document.getElementById('med-icon').value=med.icon||'💊';
-  document.getElementById('med-dose').value=med.dose||'';
-  document.getElementById('med-time').value=med.time||'morning';
-  document.getElementById('med-timing').value=med.timing||'';
-  document.getElementById('med-delete-btn').style.display='';
-  document.getElementById('med-modal').classList.add('open');
-}
-function closeMedModal(){document.getElementById('med-modal').classList.remove('open');}
+    window.signOut = async () => {
+      accessToken=null; currentUser=null; cache={}; userMeds=[]; userVisits=[];
+      document.getElementById('app').style.display='none';
+      document.getElementById('auth-screen').style.display='flex';
+    };
 
-async function saveMed(){
-  const id=document.getElementById('med-edit-id').value;
-  const med={
-    brand:document.getElementById('med-brand').value.trim(),
-    purpose:document.getElementById('med-name').value.trim(),
-    icon:document.getElementById('med-icon').value.trim()||'💊',
-    dose:document.getElementById('med-dose').value.trim(),
-    time:document.getElementById('med-time').value,
-    timing:document.getElementById('med-timing').value.trim(),
-  };
-  if(!med.brand){alert('Please enter a medicine name.');return;}
-  setSyncStatus('loading','Saving…');
-  try{
-    if(id){
-      await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(med)});
-    } else {
-      await sbFetch(`/medmama_meds`,{method:'POST',body:JSON.stringify({...med,user_id:currentUser.id,sort_order:Date.now()})});
+    async function loadUserMeds() {
+      try { userMeds = await sbFetch(`/medmama_meds?user_id=eq.${currentUser.id}&order=sort_order.asc`) || []; } catch(e){}
     }
-    await loadUserMeds();cache={};
-    setSyncStatus('ok','Saved ✓');closeMedModal();renderMyMeds();
-  }catch(e){setSyncStatus('err','Save failed');alert('Failed to save. Please try again.');}
-}
-
-async function deleteMed(){
-  const id=document.getElementById('med-edit-id').value;
-  if(!id||!confirm('Delete this medicine?')) return;
-  setSyncStatus('loading','Deleting…');
-  try{
-    await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'DELETE'});
-    await loadUserMeds();cache={};
-    setSyncStatus('ok','Deleted ✓');closeMedModal();renderMyMeds();
-  }catch(e){setSyncStatus('err','Delete failed');}
-}
-
-// ── VISITS ────────────────────────────────────────────────────────
-function renderVisits(){
-  const container=document.getElementById('visits-list');container.innerHTML='';
-  if(!userVisits.length){
-    container.innerHTML=`<div class="empty-state"><div class="icon">🏥</div><p>No doctor visits added yet.<br>Tap "+ Add Visit" to schedule one.</p></div>`;return;
-  }
-  const sorted=[...userVisits].sort((a,b)=>a.visit_date.localeCompare(b.visit_date));
-  const today=todayKey();
-  const upcoming=sorted.filter(v=>v.visit_date>=today);
-  const past=sorted.filter(v=>v.visit_date<today);
-  if(upcoming.length){
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`🏥 Upcoming<div class="sec-line"></div>`;container.appendChild(lbl);
-    upcoming.forEach(v=>container.appendChild(buildVisitCard(v)));
-  }
-  if(past.length){
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`📁 Past Visits<div class="sec-line"></div>`;container.appendChild(lbl);
-    [...past].reverse().forEach(v=>container.appendChild(buildVisitCard(v)));
-  }
-}
-
-function buildVisitCard(v){
-  const el=document.createElement('div');el.className='visit-item';
-  const d=new Date(v.visit_date+"T00:00:00");
-  const dateStr=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
-  const daysLeft=Math.ceil((new Date(v.visit_date+"T00:00:00")-new Date())/86400000);
-  const daysTag=daysLeft>0?`<span style="font-size:10px;background:#e8dff7;color:var(--visit);padding:2px 8px;border-radius:20px;margin-left:8px">in ${daysLeft} day${daysLeft!==1?'s':''}</span>`:
-    daysLeft===0?`<span style="font-size:10px;background:#fde8d8;color:#a05000;padding:2px 8px;border-radius:20px;margin-left:8px">Today!</span>`:'';
-  el.innerHTML=`
-    <div class="visit-item-icon">🏥</div>
-    <div class="visit-item-info">
-      <div class="visit-item-date">${dateStr} ${daysTag}</div>
-      <div class="visit-item-note"><strong>${v.doctor||''}</strong>${v.note?'<br>'+v.note:''}</div>
-      ${v.rx_data?`<img src="${v.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer;margin-top:8px" onclick="viewRxById('${v.id}')"/>`:''}
-    </div>
-    <div class="visit-item-actions">
-      <button class="btn btn-ghost btn-sm" onclick="openEditVisit('${v.id}')">Edit</button>
-    </div>`;
-  return el;
-}
-
-function viewRxById(id){
-  const v=userVisits.find(x=>x.id===id);
-  if(v&&v.rx_data){const w=window.open();w.document.write(`<img src="${v.rx_data}" style="max-width:100%"/>`);}
-}
-
-function openAddVisit(){
-  document.getElementById('visit-modal-title').textContent='Add Doctor Visit';
-  document.getElementById('visit-edit-id').value='';
-  document.getElementById('visit-date').value=todayKey();
-  document.getElementById('visit-doctor').value='';
-  document.getElementById('visit-note').value='';
-  document.getElementById('rx-preview').innerHTML='';
-  document.getElementById('visit-delete-btn').style.display='none';
-  rxBase64=null;rxMime=null;rxFileName=null;
-  document.getElementById('visit-modal').classList.add('open');
-}
-function openEditVisit(id){
-  const v=userVisits.find(x=>x.id===id);if(!v) return;
-  document.getElementById('visit-modal-title').textContent='Edit Doctor Visit';
-  document.getElementById('visit-edit-id').value=id;
-  document.getElementById('visit-date').value=v.visit_date||'';
-  document.getElementById('visit-doctor').value=v.doctor||'';
-  document.getElementById('visit-note').value=v.note||'';
-  document.getElementById('visit-delete-btn').style.display='';
-  rxBase64=null;rxMime=null;rxFileName=null;
-  const preview=document.getElementById('rx-preview');
-  if(v.rx_data){preview.innerHTML=`<img src="${v.rx_data}" class="rx-img" style="max-height:120px"/><div class="rx-file-name">Existing prescription</div>`;}
-  else {preview.innerHTML='';}
-  document.getElementById('visit-modal').classList.add('open');
-}
-function closeVisitModal(){document.getElementById('visit-modal').classList.remove('open');}
-
-function handleRxUpload(e){
-  const file=e.target.files[0];if(!file) return;
-  rxFileName=file.name;rxMime=file.type;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    rxBase64=ev.target.result;
-    const preview=document.getElementById('rx-preview');
-    if(file.type.startsWith('image/')){
-      preview.innerHTML=`<img src="${rxBase64}" class="rx-img" style="max-height:140px"/><div class="rx-file-name">${file.name}</div>`;
-    } else {
-      preview.innerHTML=`<div style="padding:10px;background:var(--blush);border-radius:10px;font-size:12px;color:var(--deep)">📄 ${file.name} selected</div>`;
+    async function loadUserVisits() {
+      try { userVisits = await sbFetch(`/medmama_visits?user_id=eq.${currentUser.id}&order=visit_date.asc`) || []; } catch(e){}
     }
-  };
-  reader.readAsDataURL(file);
-}
 
-async function saveVisit(){
-  const id=document.getElementById('visit-edit-id').value;
-  const visit={
-    visit_date:document.getElementById('visit-date').value,
-    doctor:document.getElementById('visit-doctor').value.trim(),
-    note:document.getElementById('visit-note').value.trim(),
-  };
-  if(!visit.visit_date){alert('Please select a date.');return;}
-  if(rxBase64) visit.rx_data=rxBase64;
-  setSyncStatus('loading','Saving…');
-  try{
-    if(id){
-      await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(visit)});
-    } else {
-      await sbFetch(`/medmama_visits`,{method:'POST',body:JSON.stringify({...visit,user_id:currentUser.id})});
+    function isFutureDate(dateStr) { return dateStr > new Date().toISOString().slice(0,10); }
+
+    async function loadDay(dateKey) {
+      if(cache[dateKey]) return cache[dateKey];
+      try {
+        const rows = await sbFetch(`/medmama_tracker?date=eq.${dateKey}&user_id=eq.${currentUser.id}`);
+        cache[dateKey] = rows?.length ? {checks: rows[0].checks||{}, note: rows[0].note||""} : {checks:{}, note:""};
+      } catch(e) { cache[dateKey] = {checks:{}, note:""}; }
+      return cache[dateKey];
     }
-    await loadUserVisits();
-    setSyncStatus('ok','Saved ✓');closeVisitModal();renderVisits();
-  }catch(e){setSyncStatus('err','Save failed');console.error(e);alert('Failed to save. Please try again.');}
-}
 
-async function deleteVisit(){
-  const id=document.getElementById('visit-edit-id').value;
-  if(!id||!confirm('Delete this visit?')) return;
-  setSyncStatus('loading','Deleting…');
-  try{
-    await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'DELETE'});
-    await loadUserVisits();
-    setSyncStatus('ok','Deleted ✓');closeVisitModal();renderVisits();
-  }catch(e){setSyncStatus('err','Delete failed');}
-}
+    window.renderToday = async () => {
+      const dayData = await loadDay(selectedDate);
+      document.getElementById('date-display').textContent = new Date(selectedDate).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+      const container = document.getElementById('med-sections');
+      container.innerHTML = '';
+      const future = isFutureDate(selectedDate);
+      let total=0, checked=0;
+      userMeds.forEach(m => {
+        total++;
+        if(dayData.checks[m.id]) checked++;
+        const done = !!dayData.checks[m.id];
+        const card = document.createElement('div');
+        card.className = `med-card ${m.time} ${done ? 'done' : ''}`;
+        card.innerHTML = `
+          <div>${m.icon||'💊'}</div>
+          <div style="flex:1"><strong>${m.brand}</strong><br><small>${m.purpose||''} · ${m.dose||''}</small></div>
+          <div class="chk ${done?'checked':''} ${future?'inactive':''}" onclick="${future ? '' : `toggleCheck('${m.id}')`}">${done?'✓':''}</div>
+        `;
+        container.appendChild(card);
+      });
+      document.getElementById('prog-count').textContent = `${checked}/${total}`;
+      document.getElementById('prog-fill').style.width = total ? `${(checked/total)*100}%` : '0%';
+      document.getElementById('notes-input').value = dayData.note || '';
+    };
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay=>{
-  overlay.addEventListener('click',e=>{if(e.target===overlay){overlay.classList.remove('open');}});
-});
+    window.toggleCheck = async (medId) => {
+      if(isFutureDate(selectedDate)) return;
+      const dayData = await loadDay(selectedDate);
+      dayData.checks[medId] = !dayData.checks[medId];
+      await saveDay(selectedDate, dayData);
+      renderToday();
+    };
+
+    async function saveDay(dateKey, data) {
+      await sbFetch('/medmama_tracker', {
+        method:'POST',
+        headers:{...authHeaders(), 'Prefer':'resolution=merge-duplicates'},
+        body:JSON.stringify({date:dateKey, user_id:currentUser.id, checks:data.checks, note:data.note})
+      });
+    }
+
+    window.saveNote = () => setTimeout(async () => {
+      const dayData = await loadDay(selectedDate);
+      dayData.note = document.getElementById('notes-input').value;
+      await saveDay(selectedDate, dayData);
+    }, 600);
+
+    window.goToday = () => { selectedDate = new Date().toISOString().slice(0,10); showView('today'); };
+    window.showView = (v) => {
+      document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+      document.getElementById(`view-${v}`).classList.add('active');
+      if(v==='today') renderToday();
+    };
+
+    // initial auth screen
+    document.getElementById('auth-screen').style.display = 'flex';
+  })();
 </script>
 </body>
 </html>
