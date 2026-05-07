@@ -245,11 +245,12 @@ textarea::placeholder{color:#c4b4b4;}
   <div class="topbar">
     <div class="logo">🌸 MedMama</div>
     <div class="topbar-right">
-      <div class="tabs">
-        <button class="tab active" onclick="showView('today')">Today</button>
-        <button class="tab" onclick="showView('calendar')">Calendar</button>
-        <button class="tab" onclick="showView('visits')">Visits</button>
-        <button class="tab" onclick="showView('mymeds')">My Meds</button>
+      <div class="tabs" id="main-tabs">
+        <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
+        <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
+        <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
+        <button class="tab" id="tab-visits" onclick="showView('visits')">Visits</button>
+        <button class="tab" id="tab-mymeds" onclick="showView('mymeds')">My Meds</button>
       </div>
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
@@ -260,6 +261,31 @@ textarea::placeholder{color:#c4b4b4;}
   </div>
 
   <div class="body">
+
+    <!-- OTHER DAY VIEW (past date selected from calendar) -->
+    <div id="view-otherday" class="view">
+      <div id="otherday-visit-banner"></div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="date-row">
+          <div><div class="date-lbl">Viewing</div><div class="date-val" id="otherday-date-display">—</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px;">
+        <div class="prog-top">
+          <span class="prog-lbl">Doses taken</span>
+          <span class="prog-count" id="otherday-prog-count">0 / 0</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
+        <div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div>
+      </div>
+      <div id="otherday-med-sections"></div>
+      <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
+      <div class="card">
+        <div class="notes-lbl">Notes for this day</div>
+        <textarea id="otherday-notes-input" placeholder="Notes for this day…" oninput="saveOtherdayNote()"></textarea>
+      </div>
+    </div>
 
     <!-- TODAY VIEW -->
     <div id="view-today" class="view active">
@@ -533,13 +559,37 @@ async function saveDayToDB(dateKey,data){
 // ── VIEWS ─────────────────────────────────────────────────────────
 function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.tab').forEach(el=>{if(el.textContent.trim().toLowerCase().includes(v.toLowerCase()))el.classList.add('active');});
+  updateTabBar(v);
   if(v==='today') renderToday();
+  if(v==='otherday') renderOtherday();
   if(v==='calendar') renderCalendar();
   if(v==='visits') renderVisits();
   if(v==='mymeds') renderMyMeds();
+}
+
+function goToday(){
+  selectedDate=todayKey();
+  document.getElementById('tab-otherday').style.display='none';
+  showView('today');
+}
+
+function updateTabBar(activeView){
+  ['today','otherday','calendar','visits','mymeds'].forEach(v=>{
+    const el=document.getElementById('tab-'+v);
+    if(el) el.classList.toggle('active', v===activeView);
+  });
+}
+
+// Called from calendar when a non-today date is tapped
+function selectOtherDay(dateStr){
+  selectedDate=dateStr;
+  const d=new Date(dateStr+"T00:00:00");
+  const short=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  const tabEl=document.getElementById('tab-otherday');
+  tabEl.textContent=short;
+  tabEl.style.display='';
+  showView('otherday');
 }
 
 // ── TODAY ─────────────────────────────────────────────────────────
@@ -552,8 +602,9 @@ async function renderToday(){
   document.getElementById('date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('today-badge').style.display=isToday?'':'none';
 
-  // Visit banner
+  // Visit banner — today's visit OR next upcoming
   const visit=getVisitForDate(selectedDate);
+  const nextVisit=userVisits.filter(v=>v.visit_date>todayKey()).sort((a,b)=>a.visit_date.localeCompare(b.visit_date))[0];
   const banner=document.getElementById('visit-today-banner');
   if(visit){
     banner.innerHTML=`<div class="visit-banner">
@@ -561,7 +612,18 @@ async function renderToday(){
       <div class="visit-banner-info">
         <div class="visit-banner-title">Doctor Visit Today — ${visit.doctor||'Medical Appointment'}</div>
         <div class="visit-banner-note">${visit.note||''}</div>
-        ${visit.rx_data?`<div style="margin-top:8px"><img src="${visit.rx_data}" class="rx-img" style="max-height:120px;cursor:pointer" onclick="viewRx('${visit.id}')"/></div>`:''}
+        ${visit.rx_data?`<div style="margin-top:8px"><img src="${visit.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer" onclick="viewRxById('${visit.id}')"/></div>`:''}
+      </div>
+    </div>`;
+  } else if(nextVisit){
+    const dv=new Date(nextVisit.visit_date+"T00:00:00");
+    const daysLeft=Math.ceil((dv-new Date())/86400000);
+    const dateStr=dv.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    banner.innerHTML=`<div class="visit-banner" style="cursor:pointer" onclick="selectOtherDay('${nextVisit.visit_date}')">
+      <div class="visit-banner-icon">📅</div>
+      <div class="visit-banner-info">
+        <div class="visit-banner-title">Next Visit: ${nextVisit.doctor||'Doctor'} — ${dateStr}</div>
+        <div class="visit-banner-note">in <strong>${daysLeft} day${daysLeft!==1?'s':''}</strong>${nextVisit.note?' · '+nextVisit.note:''} <span style="color:var(--visit);font-size:11px">Tap to view →</span></div>
       </div>
     </div>`;
   } else { banner.innerHTML=''; }
@@ -609,7 +671,7 @@ async function toggleCheck(medId){
   dayData.checks[medId]=!dayData.checks[medId];
   cache[selectedDate]=dayData;
   await saveDayToDB(selectedDate,dayData);
-  renderToday();
+  if(selectedDate===todayKey()) renderToday(); else renderOtherday();
 }
 function saveNote(){
   if(noteTimer) clearTimeout(noteTimer);
@@ -619,6 +681,74 @@ function saveNote(){
     cache[selectedDate]=dayData;
     await saveDayToDB(selectedDate,dayData);
   },800);
+}
+function saveOtherdayNote(){
+  if(noteTimer) clearTimeout(noteTimer);
+  noteTimer=setTimeout(async()=>{
+    const dayData=await loadDayFromDB(selectedDate);
+    dayData.note=document.getElementById('otherday-notes-input').value;
+    cache[selectedDate]=dayData;
+    await saveDayToDB(selectedDate,dayData);
+  },800);
+}
+
+// ── OTHER DAY ─────────────────────────────────────────────────────
+async function renderOtherday(){
+  setSyncStatus('loading','Loading…');
+  const dayData=await loadDayFromDB(selectedDate);
+  setSyncStatus('ok','Synced ✓');
+  const d=new Date(selectedDate+"T00:00:00");
+  document.getElementById('otherday-date-display').textContent=
+    d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Visit banner for this day
+  const visit=getVisitForDate(selectedDate);
+  const banner=document.getElementById('otherday-visit-banner');
+  if(visit){
+    banner.innerHTML=`<div class="visit-banner">
+      <div class="visit-banner-icon">🏥</div>
+      <div class="visit-banner-info">
+        <div class="visit-banner-title">Doctor Visit — ${visit.doctor||'Medical Appointment'}</div>
+        <div class="visit-banner-note">${visit.note||''}</div>
+        ${visit.rx_data?`<div style="margin-top:8px"><img src="${visit.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer" onclick="viewRxById('${visit.id}')"/></div>`:''}
+      </div>
+    </div>`;
+  } else { banner.innerHTML=''; }
+
+  if(!userMeds.length){
+    document.getElementById('otherday-prog-count').textContent='0 / 0';
+    document.getElementById('otherday-prog-fill').style.width='0%';
+    document.getElementById('otherday-med-sections').innerHTML='';
+    return;
+  }
+  const checked=userMeds.filter(m=>dayData.checks[m.id]).length;
+  const pct=Math.round(checked/userMeds.length*100);
+  document.getElementById('otherday-prog-count').textContent=`${checked} / ${userMeds.length} · ${pct}%`;
+  document.getElementById('otherday-prog-fill').style.width=pct+'%';
+  const container=document.getElementById('otherday-med-sections');
+  container.innerHTML='';
+  SECTIONS.forEach(sec=>{
+    const meds=userMeds.filter(m=>m.time===sec.key);
+    if(!meds.length) return;
+    const lbl=document.createElement('div');lbl.className='sec-label';
+    lbl.innerHTML=`${sec.emoji} ${sec.label} <span style="font-weight:300;text-transform:none;letter-spacing:0">— ${sec.sub}</span><div class="sec-line"></div>`;
+    container.appendChild(lbl);
+    meds.forEach(med=>{
+      const done=!!dayData.checks[med.id];
+      const card=document.createElement('div');card.className=`med-card ${med.time} ${done?'done':''}`;
+      card.innerHTML=`
+        <div class="med-icon">${med.icon||'💊'}</div>
+        <div class="med-info">
+          <div class="med-brand">${med.brand}</div>
+          <div class="med-name">${med.purpose||''}</div>
+          <div class="med-meta">${med.timing||''}</div>
+          <div class="med-dose">${med.dose||''}</div>
+        </div>
+        <div class="chk ${done?'checked':''}" onclick="toggleCheck('${med.id}')">${done?'✓':''}</div>`;
+      container.appendChild(card);
+    });
+  });
+  document.getElementById('otherday-notes-input').value=dayData.note||'';
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────
@@ -654,7 +784,9 @@ async function renderCalendar(){
     const el=document.createElement('button');
     el.className=`cal-day ${isFuture?'future':status} ${isToday&&!isSel?'today-cell':''} ${isSel?'sel':''} ${hasVisit?'has-visit':''}`;
     el.innerHTML=`${day}<div class="cal-dot"></div>`;
-    if(!isFuture) el.onclick=()=>{selectedDate=ds;showView('today');};
+    if(!isFuture) el.onclick=()=>{
+      if(ds===todayKey()){ goToday(); } else { selectOtherDay(ds); }
+    };
     grid.appendChild(el);
   }
   const total=full+partial+empty;
