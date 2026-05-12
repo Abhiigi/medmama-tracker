@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -199,40 +200,6 @@ textarea::placeholder{color:#c4b4b4;}
 .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;}
 .med-list-meta{font-size:11px;color:var(--light);margin-top:1px;}
 .med-list-actions{display:flex;gap:6px;}
-
-/* ── PREGNANCY CARD ── */
-.preg-card{background:linear-gradient(135deg,#fde8f0 0%,#f0e8fd 100%);border-radius:20px;padding:18px 20px;margin-bottom:14px;box-shadow:0 4px 24px rgba(192,98,122,.13);}
-.preg-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.preg-item{background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;}
-.preg-item-lbl{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--light);margin-bottom:3px;}
-.preg-item-val{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--deep);font-weight:600;line-height:1.2;}
-.preg-item-sub{font-size:10px;color:var(--light);margin-top:2px;}
-.preg-edd{grid-column:1/-1;display:flex;align-items:center;gap:12px;}
-.preg-edd-icon{font-size:28px;}
-.preg-edd-info{flex:1;}
-.preg-edd-date{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-weight:600;}
-.preg-edd-days{font-size:12px;color:var(--deeper);font-weight:600;margin-top:2px;}
-.trimester-bar{display:flex;gap:4px;margin-top:12px;}
-.tri-seg{flex:1;height:6px;border-radius:4px;background:var(--blush);}
-.tri-seg.active{background:var(--deep);}
-.tri-seg.done{background:var(--rose);}
-.tri-labels{display:flex;justify-content:space-between;margin-top:4px;}
-.tri-lbl{font-size:9px;color:var(--light);text-align:center;flex:1;}
-.tri-lbl.active{color:var(--deep);font-weight:700;}
-.preg-date-input{width:100%;border:1.5px solid rgba(192,98,122,.3);border-radius:12px;padding:8px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;background:rgba(255,255,255,.7);margin-top:4px;}
-.preg-date-input:focus{border-color:var(--rose);}
-
-/* ── TRIMESTER MEDICINE TABS ── */
-.tri-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--blush);border-radius:14px;padding:4px;}
-.tri-tab{flex:1;padding:7px 4px;border:none;border-radius:10px;cursor:pointer;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;background:transparent;color:var(--light);transition:all .2s;text-align:center;}
-.tri-tab.active{background:var(--deep);color:#fff;box-shadow:0 2px 8px rgba(192,98,122,.25);}
-.temp-med-card{border-left:4px solid #f5944a!important;}
-.temp-badge{display:inline-block;font-size:9px;background:#fff0e6;color:#a04000;border-radius:20px;padding:2px 8px;font-weight:700;letter-spacing:.5px;margin-left:6px;vertical-align:middle;}
-.tri-med-badge{display:inline-block;font-size:9px;border-radius:20px;padding:2px 8px;font-weight:700;letter-spacing:.5px;margin-left:6px;vertical-align:middle;}
-.t1-badge{background:#e8f0ff;color:#2040a0;}
-.t2-badge{background:#e8fff0;color:#206040;}
-.t3-badge{background:#f0e8ff;color:#602080;}
-.all-badge{background:#f5f5f5;color:#555;}
  
 /* ── VISITS ── */
 .visit-item{background:var(--visit-light);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;border:1px solid #d8caf0;}
@@ -324,53 +291,6 @@ textarea::placeholder{color:#c4b4b4;}
     <div class="main-col">
       <div class="body">
  
-        <!-- PREGNANCY STATUS CARD shown in all views -->
-        <div id="preg-status-card" class="preg-card" style="display:none">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--deep);font-style:italic;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-            <span>🌸 Pregnancy Tracker</span>
-            <button onclick="togglePregEdit()" id="preg-edit-btn" style="font-size:11px;background:rgba(255,255,255,.6);border:none;border-radius:8px;padding:3px 10px;cursor:pointer;color:var(--deep);">&#9999; Edit</button>
-          </div>
-          <div id="preg-edit-section" style="display:none;margin-bottom:12px;">
-            <div class="preg-item-lbl">Last Menstrual Period (LMP) Date</div>
-            <input type="date" id="lmp-input" class="preg-date-input" onchange="saveLMP(this.value)"/>
-          </div>
-          <div id="preg-info-section" style="display:none;">
-            <div class="preg-grid">
-              <div class="preg-item">
-                <div class="preg-item-lbl">Week</div>
-                <div class="preg-item-val" id="preg-week">--</div>
-                <div class="preg-item-sub" id="preg-day-in-week">--</div>
-              </div>
-              <div class="preg-item">
-                <div class="preg-item-lbl">Trimester</div>
-                <div class="preg-item-val" id="preg-tri">--</div>
-                <div class="preg-item-sub" id="preg-tri-sub">--</div>
-              </div>
-              <div class="preg-item preg-edd">
-                <div class="preg-edd-icon">&#128700;</div>
-                <div class="preg-edd-info">
-                  <div class="preg-item-lbl">Expected Delivery Date</div>
-                  <div class="preg-edd-date" id="preg-edd">--</div>
-                  <div class="preg-edd-days" id="preg-days-left">--</div>
-                </div>
-              </div>
-            </div>
-            <div class="trimester-bar">
-              <div class="tri-seg" id="tri-bar-1"></div>
-              <div class="tri-seg" id="tri-bar-2"></div>
-              <div class="tri-seg" id="tri-bar-3"></div>
-            </div>
-            <div class="tri-labels">
-              <div class="tri-lbl" id="tri-lbl-1">1st Trimester<br><span style="font-size:8px">Wk 1-13</span></div>
-              <div class="tri-lbl" id="tri-lbl-2">2nd Trimester<br><span style="font-size:8px">Wk 14-26</span></div>
-              <div class="tri-lbl" id="tri-lbl-3">3rd Trimester<br><span style="font-size:8px">Wk 27-40</span></div>
-            </div>
-          </div>
-          <div id="preg-no-lmp" style="text-align:center;padding:8px 0;font-size:12px;color:var(--light);">
-            Tap <strong>Edit</strong> to enter your last period date
-          </div>
-        </div>
-
         <!-- OTHER DAY VIEW -->
         <div id="view-otherday" class="view">
           <div id="otherday-visit-banner"></div>
@@ -462,13 +382,6 @@ textarea::placeholder{color:#c4b4b4;}
             <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">My Medicines</div>
             <button class="btn btn-primary btn-sm" onclick="openAddMed()">+ Add Med</button>
           </div>
-          <div class="tri-tabs" id="meds-tri-tabs">
-            <button class="tri-tab active" onclick="setMedsTriTab('all')">All Meds</button>
-            <button class="tri-tab" onclick="setMedsTriTab('1')">1st Tri</button>
-            <button class="tri-tab" onclick="setMedsTriTab('2')">2nd Tri</button>
-            <button class="tri-tab" onclick="setMedsTriTab('3')">3rd Tri</button>
-            <button class="tri-tab" onclick="setMedsTriTab('temporary')">&#9201; Temp</button>
-          </div>
           <div id="meds-list"></div>
         </div>
  
@@ -512,34 +425,6 @@ textarea::placeholder{color:#c4b4b4;}
         </select>
       </div>
       <div class="field"><label>When to Take</label><input id="med-timing" placeholder="e.g. After Breakfast"/></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Trimester</label>
-        <select id="med-trimester">
-          <option value="all">All Trimesters</option>
-          <option value="1">1st Trimester (Wk 1-13)</option>
-          <option value="2">2nd Trimester (Wk 14-26)</option>
-          <option value="3">3rd Trimester (Wk 27-40)</option>
-        </select>
-      </div>
-      <div class="field"><label>Medicine Type</label>
-        <select id="med-type">
-          <option value="regular">Regular / Prescribed</option>
-          <option value="temporary">Temporary (Symptom-based)</option>
-        </select>
-      </div>
-    </div>
-    <div class="field" id="med-temp-dates-wrap" style="display:none;">
-      <label>Temporary Duration</label>
-      <div class="field-row">
-        <input type="date" id="med-temp-from" placeholder="From date"/>
-        <input type="date" id="med-temp-to" placeholder="To date"/>
-      </div>
-      <div style="font-size:10px;color:var(--light);margin-top:4px;">Leave blank to show until manually removed</div>
-    </div>
-    <div class="field" id="med-symptom-wrap" style="display:none;">
-      <label>Symptom / Reason</label>
-      <input id="med-symptom" placeholder="e.g. Nausea, Heartburn, Constipation..."/>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveMed()">Save Medicine</button>
@@ -1164,3 +1049,4 @@ function renderBabyPanel(){
 }
 </script>
 </body>
+</html>
