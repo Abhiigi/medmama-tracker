@@ -15,32 +15,23 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px;}
-
 .page-layout{display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative;}
 .side-panel{width:200px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow:hidden;}
-.side-panel-left{display:none;}
-.side-panel-right{display:none;}
-@media(min-width:900px){
-  .side-panel-left{display:block;}
-  .side-panel-right{display:block;}
-}
+.side-panel-left{display:none;}.side-panel-right{display:none;}
+@media(min-width:900px){.side-panel-left{display:block;}.side-panel-right{display:block;}}
 .main-col{flex:1;max-width:520px;min-width:0;}
-
 .nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px;}
 .nutrition-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px;}
 .nut-card{background:#fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);text-align:center;cursor:pointer;transition:transform .2s;}
 .nut-card:hover{transform:scale(1.04);}
 .nut-icon{font-size:26px;margin-bottom:4px;}
 .nut-name{font-size:10px;font-weight:700;color:var(--deep);letter-spacing:.5px;}
-.nut-desc{font-size:9px;color:var(--light);margin-top:2px;line-height:1.4;}
 .nut-foods{font-size:9px;color:var(--sage);margin-top:3px;font-weight:600;}
-
 .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px;}
 .baby-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;}
 .baby-svg-wrap{width:160px;height:200px;position:relative;}
 .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep);text-align:center;}
 .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center;}
-
 .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%);}
 .auth-box{background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(192,98,122,.13);}
 .auth-logo{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px;}
@@ -57,7 +48,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .auth-btn:disabled{background:#ddd;cursor:not-allowed;}
 .auth-err{background:#fff0f0;border:1px solid #f5c0c0;border-radius:10px;padding:10px 14px;font-size:12px;color:#c04040;margin-top:12px;display:none;}
 .auth-ok{background:#f0fff4;border:1px solid #a0d4b0;border-radius:10px;padding:10px 14px;font-size:12px;color:#2a7040;margin-top:12px;display:none;}
-
 .topbar{background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px;}
 .logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;white-space:nowrap;}
 .topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
@@ -67,72 +57,59 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
 .tab:not(.active){background:var(--blush);color:var(--light);}
 .signout-btn{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;background:#f5f0f0;color:var(--light);white-space:nowrap;}
 .signout-btn:hover{background:var(--blush);color:var(--deep);}
-
 .sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada;}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
-.sync-dot.ok{background:#7aaa80;} .sync-dot.err{background:#e07070;}
+.sync-dot.ok{background:#7aaa80;}.sync-dot.err{background:#e07070;}
 .sync-dot.loading{background:#f5c842;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-
 .body{max-width:520px;margin:0 auto;padding:20px 16px;}
 .card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;}
-.view{display:none;} .view.active{display:block;}
+.view{display:none;}.view.active{display:block;}
 #app{display:none;}
-
 .date-row{display:flex;justify-content:space-between;align-items:center;}
 .date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
 .date-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);font-weight:600;}
 .today-badge{background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;}
 .future-badge{background:#f0f4ff;color:#7b8fdb;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;border:1px solid #c8d4f8;}
-.visit-badge{background:var(--visit-light);color:var(--visit);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;border:1px solid #c9b8e8;}
 .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px;}
 .prog-count{font-size:14px;font-weight:700;color:var(--deep);}
 .prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden;}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease;}
 .prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light);}
-
 .sec-label{display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);}
 .sec-line{flex:1;height:1px;background:rgba(0,0,0,.07);}
-
 .med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;transition:all .2s;border-left:4px solid #e8d8d8;animation:fadeUp .35s ease both;}
 .med-card.done{opacity:.8;}
-.med-card.morning{border-left-color:#f5c842;} .med-card.morning.done{background:#fffef0;}
-.med-card.noon{border-left-color:#f5944a;}    .med-card.noon.done{background:#fff6f0;}
-.med-card.evening{border-left-color:#7b8fdb;} .med-card.evening.done{background:#f4f6ff;}
-.med-card.night{border-left-color:#9b7fe8;}   .med-card.night.done{background:#f7f3ff;}
-
+.med-card.morning{border-left-color:#f5c842;}.med-card.morning.done{background:#fffef0;}
+.med-card.noon{border-left-color:#f5944a;}.med-card.noon.done{background:#fff6f0;}
+.med-card.evening{border-left-color:#7b8fdb;}.med-card.evening.done{background:#f4f6ff;}
+.med-card.night{border-left-color:#9b7fe8;}.med-card.night.done{background:#f7f3ff;}
 .med-card.future-day{opacity:.5;filter:grayscale(.4);}
 .med-card.future-day .chk{cursor:not-allowed;background:#f5f5f5;border-color:#ddd;}
-.med-card.future-day:hover{opacity:.55;}
 .future-notice{background:#f0f4ff;border:1px solid #c8d4f8;border-radius:14px;padding:10px 16px;margin-bottom:14px;font-size:12px;color:#5a6aaa;display:flex;align-items:center;gap:8px;}
-
 .med-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.morning .med-icon{background:#fff8e1;} .noon .med-icon{background:#fff0e6;}
-.evening .med-icon{background:#f0f4ff;} .night .med-icon{background:#f0eaff;}
+.morning .med-icon{background:#fff8e1;}.noon .med-icon{background:#fff0e6;}
+.evening .med-icon{background:#f0f4ff;}.night .med-icon{background:#f0eaff;}
 .med-info{flex:1;min-width:0;}
 .med-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--deep);font-style:italic;}
 .med-name{font-size:12px;color:var(--text);font-weight:500;margin-top:1px;}
 .med-meta{font-size:10px;color:var(--light);margin-top:2px;}
 .med-dose{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
-.morning .med-dose{background:#fff8e1;color:#7a5c00;} .noon .med-dose{background:#fff0e6;color:#7a3500;}
-.evening .med-dose{background:#f0f4ff;color:#1a2870;} .night .med-dose{background:#f0eaff;color:#3a1a70;}
+.morning .med-dose{background:#fff8e1;color:#7a5c00;}.noon .med-dose{background:#fff0e6;color:#7a3500;}
+.evening .med-dose{background:#f0f4ff;color:#1a2870;}.night .med-dose{background:#f0eaff;color:#3a1a70;}
 .chk{width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:all .2s;user-select:none;font-weight:700;}
-.morning .chk.checked{background:#f5c842;border-color:#f5c842;} .noon .chk.checked{background:#f5944a;border-color:#f5944a;}
-.evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb;} .night .chk.checked{background:#9b7fe8;border-color:#9b7fe8;}
-
+.morning .chk.checked{background:#f5c842;border-color:#f5c842;}.noon .chk.checked{background:#f5944a;border-color:#f5944a;}
+.evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb;}.night .chk.checked{background:#9b7fe8;border-color:#9b7fe8;}
 .notes-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
 textarea{width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:transparent;line-height:1.7;min-height:60px;}
 textarea::placeholder{color:#c4b4b4;}
-
 .visit-banner{background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;}
 .visit-banner-icon{font-size:22px;flex-shrink:0;}
 .visit-banner-info{flex:1;}
 .visit-banner-title{font-size:13px;font-weight:600;color:var(--visit);margin-bottom:2px;}
 .visit-banner-note{font-size:12px;color:#6a5090;line-height:1.5;}
 .rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush);}
-.rx-file-name{font-size:11px;color:var(--light);margin-top:6px;}
-
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600;}
 .cal-btn{background:var(--blush);border:none;border-radius:10px;padding:6px 16px;cursor:pointer;font-size:18px;color:var(--deep);}
@@ -141,7 +118,6 @@ textarea::placeholder{color:#c4b4b4;}
 .cal-day{border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px;aspect-ratio:1/1;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);font-family:'DM Sans',sans-serif;position:relative;}
 .cal-day.empty-cell{background:transparent;box-shadow:none;cursor:default;}
 .cal-day.future{background:#f0f4ff;color:#7b8fdb;cursor:pointer;}
-.cal-day.future:hover{background:#e0e8ff;}
 .cal-day.sel{background:var(--deep)!important;color:#fff!important;font-weight:700;box-shadow:0 2px 10px rgba(192,98,122,.35);}
 .cal-day.today-cell{background:var(--blush);font-weight:700;}
 .cal-day.full{background:var(--softgreen);color:#2a6a30;}
@@ -149,56 +125,47 @@ textarea::placeholder{color:#c4b4b4;}
 .cal-day.none{background:#fff;}
 .cal-day.has-visit::after{content:'🏥';font-size:8px;position:absolute;top:1px;right:2px;line-height:1;}
 .cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px;}
-.cal-day.full .cal-dot{background:#2a6a30;} .cal-day.partial .cal-dot{background:#f5c842;}
+.cal-day.full .cal-dot{background:#2a6a30;}.cal-day.partial .cal-dot{background:#f5c842;}
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
 .leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light);}
 .leg-dot{width:10px;height:10px;border-radius:3px;}
 .summary-line{font-size:13px;line-height:2.1;color:var(--text);}
-.summary-line span{font-size:10px;color:var(--light);}
-
 .modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;display:none;align-items:flex-end;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px 24px 40px;animation:slideUp .3s ease;}
 .modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
 .modal-close{background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--deep);display:flex;align-items:center;justify-content:center;}
-
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px;}
 .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border .2s;background:#fff;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose);}
 .field textarea{resize:vertical;min-height:70px;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-
 .btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .2s;}
-.btn-primary{background:var(--deep);color:#fff;} .btn-primary:hover{background:var(--deeper);}
-.btn-danger{background:#fff0f0;color:#c04040;} .btn-danger:hover{background:#ffe0e0;}
+.btn-primary{background:var(--deep);color:#fff;}.btn-primary:hover{background:var(--deeper);}
+.btn-danger{background:#fff0f0;color:#c04040;}.btn-danger:hover{background:#ffe0e0;}
 .btn-ghost{background:var(--blush);color:var(--deep);}
 .btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
 .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-
 .med-list-item{background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
 .med-list-icon{font-size:20px;width:36px;text-align:center;}
 .med-list-info{flex:1;min-width:0;}
 .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;}
 .med-list-meta{font-size:11px;color:var(--light);margin-top:1px;}
 .med-list-actions{display:flex;gap:6px;}
-
 .visit-item{background:var(--visit-light);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;border:1px solid #d8caf0;}
 .visit-item-icon{font-size:20px;flex-shrink:0;}
 .visit-item-info{flex:1;min-width:0;}
 .visit-item-date{font-size:13px;font-weight:600;color:var(--visit);}
 .visit-item-note{font-size:12px;color:#6a5090;margin-top:2px;}
 .visit-item-actions{display:flex;gap:6px;flex-shrink:0;}
-
 .upload-area{border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:background .2s;}
 .upload-area:hover{background:var(--blush);}
 .upload-area input[type=file]{display:none;}
 .upload-label{font-size:13px;color:var(--light);margin-top:6px;}
-
 .empty-state{text-align:center;padding:32px 20px;color:var(--light);}
 .empty-state .icon{font-size:36px;margin-bottom:10px;}
 .empty-state p{font-size:13px;line-height:1.6;}
-
 .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200;animation:fadeUp .2s ease;}
 .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199;}
 .nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep);}
@@ -206,8 +173,7 @@ textarea::placeholder{color:#c4b4b4;}
 .nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic;}
 .nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px;}
 .nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600;}
-
-/* ── WA ALERT SETTINGS ── */
+/* ── WA ALERT ── */
 .wa-card{background:linear-gradient(135deg,#dcfce7 0%,#f0fdf4 100%);border:1.5px solid #86efac;border-radius:18px;padding:18px 20px;margin-bottom:14px;}
 .wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .wa-icon{font-size:28px;}
@@ -237,9 +203,9 @@ textarea::placeholder{color:#c4b4b4;}
 .wa-preview-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;font-weight:600;}
 .wa-preview-msg{font-size:13px;color:#1f2937;line-height:1.7;font-family:'DM Sans',sans-serif;}
 .wa-preview-msg .med-highlight{background:#dcfce7;padding:1px 6px;border-radius:6px;font-weight:600;color:#166534;}
-.wa-test-btn{margin-top:12px;background:#22c55e;color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
-.wa-test-btn:hover{background:#16a34a;}
-
+.wa-test-btn{margin-top:4px;background:#22c55e;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.wa-test-btn:hover{background:#16a34a;transform:scale(1.02);}
+.wa-test-btn:disabled{background:#a3a3a3;cursor:not-allowed;transform:none;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
@@ -250,7 +216,7 @@ textarea::placeholder{color:#c4b4b4;}
 </head>
 <body>
 
-<!-- ══ AUTH SCREEN ══ -->
+<!-- AUTH -->
 <div id="auth-screen" class="auth-screen">
   <div class="auth-box">
     <div class="auth-logo">🌸 MedMama</div>
@@ -267,7 +233,7 @@ textarea::placeholder{color:#c4b4b4;}
   </div>
 </div>
 
-<!-- ══ MAIN APP ══ -->
+<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="logo">🌸 MedMama</div>
@@ -283,371 +249,157 @@ textarea::placeholder{color:#c4b4b4;}
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
-  <div class="sync-bar">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-text">Loading…</span>
-  </div>
+  <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Loading…</span></div>
 
   <div class="page-layout">
+    <div class="side-panel side-panel-left"><div class="nutrition-panel"><div class="nutrition-title">🥗 Pregnancy Nutrition</div><div id="nut-cards"></div></div></div>
 
-    <!-- ── LEFT PANEL: NUTRITION ── -->
-    <div class="side-panel side-panel-left">
-      <div class="nutrition-panel">
-        <div class="nutrition-title">🥗 Pregnancy Nutrition</div>
-        <div id="nut-cards"></div>
+    <div class="main-col"><div class="body">
+
+      <!-- OTHER DAY -->
+      <div id="view-otherday" class="view">
+        <div id="otherday-visit-banner"></div>
+        <div class="card" style="margin-bottom:14px;"><div class="date-row"><div><div class="date-lbl">Viewing</div><div class="date-val" id="otherday-date-display">—</div></div><div style="display:flex;gap:8px;align-items:center;"><div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div><button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button></div></div></div>
+        <div id="otherday-future-notice" style="display:none" class="future-notice">📅 <span>Future date — can't check off yet.</span></div>
+        <div class="card" style="margin-bottom:18px;"><div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="otherday-prog-count">0/0</span></div><div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div><div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div></div>
+        <div id="otherday-med-sections"></div>
+        <div id="otherday-notes-wrap"><div class="sec-label">📝 Notes <div class="sec-line"></div></div><div class="card"><div class="notes-lbl">Notes for this day</div><textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea></div></div>
       </div>
-    </div>
 
-    <!-- ── MAIN CONTENT ── -->
-    <div class="main-col">
-      <div class="body">
-
-        <!-- OTHER DAY VIEW -->
-        <div id="view-otherday" class="view">
-          <div id="otherday-visit-banner"></div>
-          <div class="card" style="margin-bottom:14px;">
-            <div class="date-row">
-              <div><div class="date-lbl">Viewing</div><div class="date-val" id="otherday-date-display">—</div></div>
-              <div style="display:flex;gap:8px;align-items:center;">
-                <div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div>
-                <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
-              </div>
-            </div>
-          </div>
-          <div id="otherday-future-notice" style="display:none" class="future-notice">
-            📅 <span>This is a future date — medicines shown as your schedule. You can't check them off yet.</span>
-          </div>
-          <div class="card" style="margin-bottom:18px;">
-            <div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="otherday-prog-count">0 / 0</span></div>
-            <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
-            <div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div>
-          </div>
-          <div id="otherday-med-sections"></div>
-          <div id="otherday-notes-wrap">
-            <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
-            <div class="card">
-              <div class="notes-lbl">Notes for this day</div>
-              <textarea id="otherday-notes-input" placeholder="Notes for this day…" oninput="saveOtherdayNote()"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- TODAY VIEW -->
-        <div id="view-today" class="view active">
-          <div id="visit-today-banner"></div>
-          <div class="card" style="margin-bottom:14px;">
-            <div class="date-row">
-              <div><div class="date-lbl">Date</div><div class="date-val" id="date-display">—</div></div>
-              <div id="today-badge" class="today-badge" style="display:none">Today</div>
-            </div>
-          </div>
-          <div class="card" style="margin-bottom:18px;">
-            <div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="prog-count">0 / 0</span></div>
-            <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-            <div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div>
-          </div>
-          <div id="med-sections"></div>
-          <div id="no-meds-msg" style="display:none" class="empty-state">
-            <div class="icon">💊</div>
-            <p>No medicines added yet.<br>Go to <strong>My Meds</strong> tab to add your prescriptions.</p>
-          </div>
-          <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
-          <div class="card">
-            <div class="notes-lbl">How are you feeling today?</div>
-            <textarea id="notes-input" placeholder="Write any symptoms, side effects, or reminders…" oninput="saveNote()"></textarea>
-          </div>
-        </div>
-
-        <!-- CALENDAR VIEW -->
-        <div id="view-calendar" class="view">
-          <div class="card">
-            <div class="cal-nav">
-              <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
-              <div class="cal-title" id="cal-title">—</div>
-              <button class="cal-btn" onclick="changeMonth(1)">›</button>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-            <div class="legend">
-              <div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All doses</div>
-              <div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div>
-              <div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div>
-              <div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div>
-              <div class="leg-item"><span style="font-size:12px">🏥</span>Visit</div>
-            </div>
-          </div>
-          <div class="card"><div class="summary-line" id="month-summary">Loading…</div></div>
-        </div>
-
-        <!-- VISITS VIEW -->
-        <div id="view-visits" class="view">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">Doctor Visits</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddVisit()">+ Add Visit</button>
-          </div>
-          <div id="visits-list"></div>
-        </div>
-
-        <!-- MY MEDS VIEW -->
-        <div id="view-mymeds" class="view">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">My Medicines</div>
-            <button class="btn btn-primary btn-sm" onclick="openAddMed()">+ Add Med</button>
-          </div>
-          <div id="meds-list"></div>
-        </div>
-
-        <!-- ALERTS VIEW -->
-        <div id="view-alerts" class="view">
-          <div class="wa-card">
-            <div class="wa-header">
-              <div class="wa-icon">💬</div>
-              <div class="wa-title">WhatsApp Missed Medicine Alerts</div>
-            </div>
-            <div class="wa-desc">
-              Get a gentle WhatsApp reminder when you miss a medicine dose. We check <strong>4 times daily</strong> and only alert for medicines you haven't marked as taken.
-            </div>
-            <div class="wa-toggle-row">
-              <div class="wa-toggle-label">Enable WhatsApp Alerts</div>
-              <label class="wa-toggle">
-                <input type="checkbox" id="wa-enabled" onchange="toggleWaAlerts()"/>
-                <span class="wa-slider"></span>
-              </label>
-            </div>
-            <div id="wa-phone-section" style="display:none">
-              <div class="wa-phone-row">
-                <div class="field">
-                  <label>WhatsApp Number (with country code)</label>
-                  <input id="wa-phone" type="tel" placeholder="+91 98765 43210" maxlength="16"/>
-                </div>
-                <button class="btn btn-primary btn-sm" onclick="saveWaPrefs()" style="height:42px;margin-bottom:0;">Save</button>
-              </div>
-              <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a5a;margin:14px 0 6px;">Alert Schedule</div>
-              <div class="wa-schedule">
-                <div class="wa-slot">🌅 Morning check<br><span class="wa-slot-time">10:30 AM</span></div>
-                <div class="wa-slot">🌞 Afternoon check<br><span class="wa-slot-time">2:30 PM</span></div>
-                <div class="wa-slot">🌇 Evening check<br><span class="wa-slot-time">6:30 PM</span></div>
-                <div class="wa-slot">🌃 Night check<br><span class="wa-slot-time">10:30 PM</span></div>
-              </div>
-              <div class="wa-preview">
-                <div class="wa-preview-label">Sample Alert Message</div>
-                <div class="wa-preview-msg" id="wa-preview-msg">
-                  🌸 <strong>MedMama Alert</strong><br><br>
-                  You missed <span class="med-highlight">Folvite</span> (Morning dose).<br>
-                  This medicine is needed for — <em>Folic acid prevents neural tube defects in early pregnancy.</em><br><br>
-                  💊 Open MedMama to mark it as taken.
-                </div>
-              </div>
-            </div>
-            <div class="wa-status" id="wa-status"></div>
-          </div>
-          <div class="card">
-            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:10px;">How it works</div>
-            <div style="font-size:12px;color:var(--text);line-height:2;">
-              1️⃣ Enable alerts &amp; enter your WhatsApp number<br>
-              2️⃣ We check your tracker at <strong>10:30 AM, 2:30 PM, 6:30 PM, 10:30 PM</strong><br>
-              3️⃣ If any medicine for that time slot is unmarked, you get a WhatsApp message<br>
-              4️⃣ Each alert includes the medicine name &amp; why it's important<br>
-              5️⃣ Mark the dose in app → no more alerts for that dose
-            </div>
-          </div>
-        </div>
-
+      <!-- TODAY -->
+      <div id="view-today" class="view active">
+        <div id="visit-today-banner"></div>
+        <div class="card" style="margin-bottom:14px;"><div class="date-row"><div><div class="date-lbl">Date</div><div class="date-val" id="date-display">—</div></div><div id="today-badge" class="today-badge" style="display:none">Today</div></div></div>
+        <div class="card" style="margin-bottom:18px;"><div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="prog-count">0/0</span></div><div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div><div class="prog-times"><span>🌅 Morning</span><span>🌞 Noon</span><span>🌇 Evening</span><span>🌃 Night</span></div></div>
+        <div id="med-sections"></div>
+        <div id="no-meds-msg" style="display:none" class="empty-state"><div class="icon">💊</div><p>No medicines yet. Go to <strong>My Meds</strong> to add.</p></div>
+        <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
+        <div class="card"><div class="notes-lbl">How are you feeling today?</div><textarea id="notes-input" placeholder="Symptoms, side effects…" oninput="saveNote()"></textarea></div>
       </div>
-    </div>
 
-    <!-- ── RIGHT PANEL: BABY ANIMATION ── -->
-    <div class="side-panel side-panel-right">
-      <div class="baby-panel">
-        <div class="baby-title">👶 Baby Today</div>
-        <div class="baby-svg-wrap" id="baby-svg-wrap"></div>
-        <div class="week-badge" id="baby-week-badge">Week —</div>
-        <div class="baby-tip" id="baby-tip">Loading your baby's stage…</div>
+      <!-- CALENDAR -->
+      <div id="view-calendar" class="view">
+        <div class="card"><div class="cal-nav"><button class="cal-btn" onclick="changeMonth(-1)">‹</button><div class="cal-title" id="cal-title">—</div><button class="cal-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid" id="cal-grid"></div><div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All</div><div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div><div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div><div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div><div class="leg-item"><span style="font-size:12px">🏥</span>Visit</div></div></div>
+        <div class="card"><div class="summary-line" id="month-summary">Loading…</div></div>
       </div>
-    </div>
 
+      <!-- VISITS -->
+      <div id="view-visits" class="view">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">Doctor Visits</div><button class="btn btn-primary btn-sm" onclick="openAddVisit()">+ Add Visit</button></div>
+        <div id="visits-list"></div>
+      </div>
+
+      <!-- MY MEDS -->
+      <div id="view-mymeds" class="view">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">My Medicines</div><button class="btn btn-primary btn-sm" onclick="openAddMed()">+ Add Med</button></div>
+        <div id="meds-list"></div>
+      </div>
+
+      <!-- ALERTS -->
+      <div id="view-alerts" class="view">
+        <div class="wa-card">
+          <div class="wa-header"><div class="wa-icon">💬</div><div class="wa-title">WhatsApp Missed Medicine Alerts</div></div>
+          <div class="wa-desc">Get a gentle WhatsApp reminder when you miss a dose. We check <strong>4 times daily</strong> and only alert for unmarked medicines.</div>
+          <div class="wa-toggle-row">
+            <div class="wa-toggle-label">Enable WhatsApp Alerts</div>
+            <label class="wa-toggle"><input type="checkbox" id="wa-enabled" onchange="toggleWaAlerts()"/><span class="wa-slider"></span></label>
+          </div>
+          <div id="wa-phone-section" style="display:none">
+            <div class="wa-phone-row">
+              <div class="field"><label>WhatsApp Number (with country code)</label><input id="wa-phone" type="tel" placeholder="+91 98765 43210" maxlength="16"/></div>
+              <button class="btn btn-primary btn-sm" onclick="saveWaPrefs()" style="height:42px;margin-bottom:0;">Save</button>
+            </div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a5a;margin:14px 0 6px;">Alert Schedule</div>
+            <div class="wa-schedule">
+              <div class="wa-slot">🌅 Morning<br><span class="wa-slot-time">10:30 AM</span></div>
+              <div class="wa-slot">🌞 Afternoon<br><span class="wa-slot-time">2:30 PM</span></div>
+              <div class="wa-slot">🌇 Evening<br><span class="wa-slot-time">6:30 PM</span></div>
+              <div class="wa-slot">🌃 Night<br><span class="wa-slot-time">10:30 PM</span></div>
+            </div>
+            <!-- TEST BUTTON -->
+            <div id="wa-test-section" style="margin-top:14px;display:none;">
+              <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#4a7a5a;margin-bottom:8px;">🧪 Test Your Alert</div>
+              <button class="wa-test-btn" id="wa-test-btn" onclick="sendTestAlert()">📲 Send Test Alert Now</button>
+              <div style="font-size:10px;color:#6b7280;margin-top:6px;line-height:1.5;">Sends an instant WhatsApp message with today's missed medicines.</div>
+            </div>
+            <!-- PREVIEW -->
+            <div class="wa-preview">
+              <div class="wa-preview-label">Sample Alert Message</div>
+              <div class="wa-preview-msg" id="wa-preview-msg">🌸 <strong>MedMama Alert</strong><br><br>You missed <span class="med-highlight">Folvite</span> (Morning dose).<br>This medicine is needed for — <em>Folic acid prevents neural tube defects.</em><br><br>💊 Open MedMama to mark it as taken.</div>
+            </div>
+          </div>
+          <div class="wa-status" id="wa-status"></div>
+        </div>
+        <div class="card">
+          <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:10px;">How it works</div>
+          <div style="font-size:12px;color:var(--text);line-height:2;">
+            1️⃣ Enable alerts &amp; enter your WhatsApp number<br>
+            2️⃣ We check at <strong>10:30 AM, 2:30 PM, 6:30 PM, 10:30 PM</strong><br>
+            3️⃣ If any medicine is unmarked, you get a WhatsApp message<br>
+            4️⃣ Each alert has the medicine name &amp; why it matters<br>
+            5️⃣ Mark the dose → no more alerts for that dose<br>
+            6️⃣ Use <strong>Test Alert</strong> to verify your number
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+
+    <div class="side-panel side-panel-right"><div class="baby-panel"><div class="baby-title">👶 Baby Today</div><div class="baby-svg-wrap" id="baby-svg-wrap"></div><div class="week-badge" id="baby-week-badge">Week —</div><div class="baby-tip" id="baby-tip">Loading…</div></div></div>
   </div>
 </div>
 
-<!-- ══ ADD/EDIT MED MODAL ══ -->
-<div class="modal-overlay" id="med-modal">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="med-modal-title">Add Medicine</span>
-      <button class="modal-close" onclick="closeMedModal()">✕</button>
-    </div>
-    <input type="hidden" id="med-edit-id"/>
-    <div class="field"><label>Medicine Brand Name</label><input id="med-brand" placeholder="e.g. Folvite, Susten 200…"/></div>
-    <div class="field"><label>Generic Name / Purpose</label><input id="med-name" placeholder="e.g. Folic Acid, Progesterone…"/></div>
-    <div class="field-row">
-      <div class="field"><label>Icon (emoji)</label><input id="med-icon" placeholder="💊" maxlength="4"/></div>
-      <div class="field"><label>Dose</label><input id="med-dose" placeholder="e.g. 1 tablet"/></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Time of Day</label>
-        <select id="med-time">
-          <option value="morning">🌅 Morning</option>
-          <option value="noon">🌞 Noon</option>
-          <option value="evening">🌇 Evening</option>
-          <option value="night">🌃 Night</option>
-        </select>
-      </div>
-      <div class="field"><label>When to Take</label><input id="med-timing" placeholder="e.g. After Breakfast"/></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveMed()">Save Medicine</button>
-      <button class="btn btn-ghost" onclick="closeMedModal()">Cancel</button>
-      <button class="btn btn-danger" id="med-delete-btn" onclick="deleteMed()" style="display:none">Delete</button>
-    </div>
-  </div>
-</div>
+<!-- MED MODAL -->
+<div class="modal-overlay" id="med-modal"><div class="modal">
+  <div class="modal-title"><span id="med-modal-title">Add Medicine</span><button class="modal-close" onclick="closeMedModal()">✕</button></div>
+  <input type="hidden" id="med-edit-id"/>
+  <div class="field"><label>Brand Name</label><input id="med-brand" placeholder="e.g. Folvite, Susten 200…"/></div>
+  <div class="field"><label>Generic / Purpose</label><input id="med-name" placeholder="e.g. Folic Acid, Progesterone…"/></div>
+  <div class="field-row"><div class="field"><label>Icon</label><input id="med-icon" placeholder="💊" maxlength="4"/></div><div class="field"><label>Dose</label><input id="med-dose" placeholder="e.g. 1 tablet"/></div></div>
+  <div class="field-row"><div class="field"><label>Time of Day</label><select id="med-time"><option value="morning">🌅 Morning</option><option value="noon">🌞 Noon</option><option value="evening">🌇 Evening</option><option value="night">🌃 Night</option></select></div><div class="field"><label>When to Take</label><input id="med-timing" placeholder="e.g. After Breakfast"/></div></div>
+  <div class="btn-row"><button class="btn btn-primary" onclick="saveMed()">Save</button><button class="btn btn-ghost" onclick="closeMedModal()">Cancel</button><button class="btn btn-danger" id="med-delete-btn" onclick="deleteMed()" style="display:none">Delete</button></div>
+</div></div>
 
-<!-- ══ ADD/EDIT VISIT MODAL ══ -->
-<div class="modal-overlay" id="visit-modal">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="visit-modal-title">Add Doctor Visit</span>
-      <button class="modal-close" onclick="closeVisitModal()">✕</button>
-    </div>
-    <input type="hidden" id="visit-edit-id"/>
-    <div class="field"><label>Visit Date</label><input id="visit-date" type="date"/></div>
-    <div class="field"><label>Doctor / Hospital</label><input id="visit-doctor" placeholder="e.g. Dr. Sharma, Apollo Hospital"/></div>
-    <div class="field"><label>Notes / Reminders</label>
-      <textarea id="visit-note" placeholder="e.g. Carry previous reports, blood test fasting required…"></textarea>
-    </div>
-    <div class="field">
-      <label>Prescription / Reports (Image or PDF)</label>
-      <div class="upload-area" onclick="document.getElementById('rx-upload').click()">
-        <div style="font-size:28px">📋</div>
-        <div class="upload-label">Tap to upload prescription or report</div>
-        <div style="font-size:11px;color:var(--light);margin-top:4px">JPG, PNG, PDF supported</div>
-        <input type="file" id="rx-upload" accept="image/*,.pdf" onchange="handleRxUpload(event)"/>
-      </div>
-      <div id="rx-preview"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="saveVisit()">Save Visit</button>
-      <button class="btn btn-ghost" onclick="closeVisitModal()">Cancel</button>
-      <button class="btn btn-danger" id="visit-delete-btn" onclick="deleteVisit()" style="display:none">Delete</button>
-    </div>
-  </div>
-</div>
+<!-- VISIT MODAL -->
+<div class="modal-overlay" id="visit-modal"><div class="modal">
+  <div class="modal-title"><span id="visit-modal-title">Add Doctor Visit</span><button class="modal-close" onclick="closeVisitModal()">✕</button></div>
+  <input type="hidden" id="visit-edit-id"/>
+  <div class="field"><label>Visit Date</label><input id="visit-date" type="date"/></div>
+  <div class="field"><label>Doctor / Hospital</label><input id="visit-doctor" placeholder="e.g. Dr. Sharma"/></div>
+  <div class="field"><label>Notes</label><textarea id="visit-note" placeholder="Carry reports, fasting required…"></textarea></div>
+  <div class="field"><label>Prescription (Image/PDF)</label><div class="upload-area" onclick="document.getElementById('rx-upload').click()"><div style="font-size:28px">📋</div><div class="upload-label">Tap to upload</div><input type="file" id="rx-upload" accept="image/*,.pdf" onchange="handleRxUpload(event)"/></div><div id="rx-preview"></div></div>
+  <div class="btn-row"><button class="btn btn-primary" onclick="saveVisit()">Save</button><button class="btn btn-ghost" onclick="closeVisitModal()">Cancel</button><button class="btn btn-danger" id="visit-delete-btn" onclick="deleteVisit()" style="display:none">Delete</button></div>
+</div></div>
 
-<!-- ══ NUTRITION TOOLTIP ══ -->
+<!-- NUT TOOLTIP -->
 <div id="nut-overlay" class="nut-tooltip-overlay" style="display:none" onclick="closeNutTooltip()"></div>
-<div id="nut-tooltip" class="nut-tooltip" style="display:none">
-  <button class="nt-close" onclick="closeNutTooltip()">✕</button>
-  <div class="nt-icon" id="nt-icon"></div>
-  <div class="nt-title" id="nt-title"></div>
-  <div class="nt-body" id="nt-body"></div>
-  <div class="nt-foods" id="nt-foods"></div>
-</div>
+<div id="nut-tooltip" class="nut-tooltip" style="display:none"><button class="nt-close" onclick="closeNutTooltip()">✕</button><div class="nt-icon" id="nt-icon"></div><div class="nt-title" id="nt-title"></div><div class="nt-body" id="nt-body"></div><div class="nt-foods" id="nt-foods"></div></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────
-const SUPABASE_URL = "https://pwzppkcdhzcidkpygklk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT";
-const REST = `${SUPABASE_URL}/rest/v1`;
-const AUTH = `${SUPABASE_URL}/auth/v1`;
+const SUPABASE_URL="https://pwzppkcdhzcidkpygklk.supabase.co";
+const SUPABASE_KEY="sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT";
+const REST=`${SUPABASE_URL}/rest/v1`;
+const AUTH=`${SUPABASE_URL}/auth/v1`;
+const WA_FN=`${SUPABASE_URL}/functions/v1/wa-missed-alert`;
 
-const SECTIONS=[
-  {key:"morning",label:"Morning",emoji:"🌅",sub:"Before Breakfast"},
-  {key:"noon",   label:"Noon",   emoji:"🌞",sub:"Before / After Lunch"},
-  {key:"evening",label:"Evening",emoji:"🌇",sub:"After Dinner"},
-  {key:"night",  label:"Night",  emoji:"🌃",sub:"After Dinner"},
-];
+const SECTIONS=[{key:"morning",label:"Morning",emoji:"🌅",sub:"Before Breakfast"},{key:"noon",label:"Noon",emoji:"🌞",sub:"Before / After Lunch"},{key:"evening",label:"Evening",emoji:"🌇",sub:"After Dinner"},{key:"night",label:"Night",emoji:"🌃",sub:"After Dinner"}];
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const NUTRIENTS=[{icon:"🅰️",name:"Vitamin A",color:"#fff3e0",desc:"Supports baby's eye development.",foods:"Sweet potato, carrots, spinach",why:"Critical for organ formation."},{icon:"🅱️",name:"Vitamin B12",color:"#e8f5e9",desc:"Neural tube development.",foods:"Dairy, eggs, fortified cereals",why:"Low B12 linked to preterm birth."},{icon:"🍊",name:"Vitamin C",color:"#fff8e1",desc:"Boosts iron absorption.",foods:"Oranges, guava, amla",why:"Helps absorb plant-based iron."},{icon:"☀️",name:"Vitamin D",color:"#fffde7",desc:"Builds baby's bones.",foods:"Sunlight, fortified milk",why:"Deficiency common in India."},{icon:"🩸",name:"Iron",color:"#fce4ec",desc:"Prevents anaemia.",foods:"Spinach, dal, jaggery",why:"Demand doubles in pregnancy."},{icon:"🦴",name:"Calcium",color:"#e3f2fd",desc:"Baby's bones and teeth.",foods:"Milk, curd, paneer, ragi",why:"Baby takes from mom's bones."},{icon:"🧬",name:"Folic Acid",color:"#f3e5f5",desc:"Prevents neural tube defects.",foods:"Green leafy veg, beans, citrus",why:"Most critical weeks 1–12."},{icon:"🐟",name:"Omega-3",color:"#e0f7fa",desc:"Baby's brain development.",foods:"Flaxseeds, walnuts, fish",why:"DHA critical in 3rd trimester."}];
+const BABY_STAGES=[{week:4,size:"Poppy seed",tip:"Tiny cells implanting!",color:"#fde8f0"},{week:6,size:"Sweet pea",tip:"Heart begins to beat 🫀",color:"#fde8f0"},{week:8,size:"Raspberry",tip:"All major organs forming!",color:"#f3e8fd"},{week:10,size:"Strawberry",tip:"Baby can hiccup!",color:"#fde8ec"},{week:12,size:"Lime",tip:"End of first trimester 🎉",color:"#e8fde8"},{week:16,size:"Avocado",tip:"Baby hears your voice.",color:"#e8fde8"},{week:20,size:"Banana",tip:"Halfway! Baby has eyebrows.",color:"#fefde8"},{week:24,size:"Corn",tip:"Real sleep-wake cycle.",color:"#fef3e8"},{week:28,size:"Eggplant",tip:"Eyes open! Baby can dream.",color:"#ede8fd"},{week:32,size:"Coconut",tip:"Practicing breathing.",color:"#e8f3fd"},{week:36,size:"Papaya",tip:"Head-down, almost ready!",color:"#fde8f8"},{week:40,size:"Pumpkin",tip:"Full term! You're amazing! 🌟",color:"#fef8e8"}];
 
-const NUTRIENTS=[
-  {icon:"🅰️",name:"Vitamin A",color:"#fff3e0",desc:"Supports baby's eye development, immune system and cell growth.",foods:"Sweet potato, carrots, spinach, eggs, mango",why:"Critical in first trimester for organ formation."},
-  {icon:"🅱️",name:"Vitamin B12",color:"#e8f5e9",desc:"Essential for neural tube development and prevents anaemia in mother.",foods:"Dairy, eggs, fortified cereals, fish",why:"Low B12 linked to preterm birth risk."},
-  {icon:"🍊",name:"Vitamin C",color:"#fff8e1",desc:"Boosts iron absorption, supports immunity, and grows baby's connective tissue.",foods:"Oranges, guava, amla, tomatoes, capsicum",why:"Helps absorb plant-based iron better."},
-  {icon:"☀️",name:"Vitamin D",color:"#fffde7",desc:"Builds baby's bones and teeth, prevents gestational diabetes.",foods:"Sunlight, fortified milk, fatty fish, egg yolk",why:"Deficiency common in India — supplement recommended."},
-  {icon:"🩸",name:"Iron",color:"#fce4ec",desc:"Prevents anaemia, carries oxygen to baby via placenta.",foods:"Spinach, dal, jaggery, pomegranate, dry fruits",why:"Demand doubles during pregnancy — critical from 2nd trimester."},
-  {icon:"🦴",name:"Calcium",color:"#e3f2fd",desc:"Builds baby's bones, teeth, heart and muscles.",foods:"Milk, curd, paneer, sesame seeds, ragi",why:"Baby takes calcium from mom's bones if intake is low."},
-  {icon:"🧬",name:"Folic Acid",color:"#f3e5f5",desc:"Prevents neural tube defects (spina bifida) in early pregnancy.",foods:"Green leafy vegetables, beans, fortified bread, citrus",why:"Most critical in weeks 1–12. Usually given as Folvite."},
-  {icon:"🐟",name:"Omega-3",color:"#e0f7fa",desc:"Develops baby's brain, eyes and nervous system.",foods:"Flaxseeds, walnuts, fatty fish, chia seeds",why:"DHA especially important in 3rd trimester for brain growth."},
-];
+const MED_PURPOSE_DB={'folvite':'Folic acid prevents neural tube defects in early pregnancy.','folic acid':'Folic acid prevents neural tube defects in early pregnancy.','susten':'Progesterone supports uterine lining and prevents early miscarriage.','progesterone':'Progesterone supports uterine lining and prevents early miscarriage.','duphaston':'Dydrogesterone supports pregnancy maintenance in first trimester.','ecosprin':'Low-dose aspirin prevents preeclampsia.','aspirin':'Low-dose aspirin improves placental blood flow.','calcium':'Calcium builds baby\'s bones and prevents maternal bone loss.','shelcal':'Calcium + D3 builds baby\'s bones.','iron':'Iron prevents anaemia and carries oxygen to baby.','autrin':'Iron + folic acid prevents pregnancy anaemia.','dexorange':'Iron syrup boosts haemoglobin.','orofer':'Iron supplement prevents anaemia.','livogen':'Iron + folic acid combo for pregnancy.','thyronorm':'Levothyroxine for baby\'s brain development.','thyroxine':'Thyroid hormone for neurological development.','vitamin d':'Vitamin D for bone growth and immune health.','d3 must':'Vitamin D3 prevents gestational diabetes.','omega 3':'Omega-3 DHA for baby\'s brain and eyes.','dha':'DHA for brain and retinal development.','maxepa':'Omega-3 for brain and eye development.','prenatal':'Essential nutrients for healthy pregnancy.','pregnacare':'Complete prenatal multivitamin.','b12':'B12 prevents neural defects and anaemia.','methylcobalamin':'B12 for nervous system development.','ondansetron':'Anti-nausea for morning sickness.','doxinate':'Doxylamine + B6 for pregnancy nausea.','pantoprazole':'For pregnancy heartburn.','metformin':'For gestational diabetes.','insulin':'Controls blood sugar in gestational diabetes.','heparin':'Prevents blood clots in pregnancy.','clexane':'Prevents thrombosis in high-risk pregnancy.','isoxsuprine':'Prevents preterm contractions.','default':'Supports a healthy pregnancy. Consult your doctor.'};
 
-const BABY_STAGES=[
-  {week:4,size:"Poppy seed",tip:"A tiny ball of cells is implanting in your uterus!",color:"#fde8f0"},
-  {week:6,size:"Sweet pea",tip:"Heart begins to beat — tiny flickers on ultrasound 🫀",color:"#fde8f0"},
-  {week:8,size:"Raspberry",tip:"All major organs forming. Tiny fingers appear!",color:"#f3e8fd"},
-  {week:10,size:"Strawberry",tip:"Baby can hiccup! Movements start but too small to feel.",color:"#fde8ec"},
-  {week:12,size:"Lime",tip:"End of first trimester — risk drops significantly 🎉",color:"#e8fde8"},
-  {week:16,size:"Avocado",tip:"Baby hears your heartbeat and voice for the first time.",color:"#e8fde8"},
-  {week:20,size:"Banana",tip:"Halfway there! Baby has eyebrows and can suck their thumb.",color:"#fefde8"},
-  {week:24,size:"Corn",tip:"Baby has a real sleep-wake cycle now. You might feel kicks!",color:"#fef3e8"},
-  {week:28,size:"Eggplant",tip:"Eyes open! Baby can dream (REM sleep detected).",color:"#ede8fd"},
-  {week:32,size:"Coconut",tip:"Baby practices breathing movements. Gaining fat quickly.",color:"#e8f3fd"},
-  {week:36,size:"Papaya",tip:"Almost ready! Baby is head-down preparing for birth.",color:"#fde8f8"},
-  {week:40,size:"Pumpkin",tip:"Full term! Baby could arrive any day now. You're amazing! 🌟",color:"#fef8e8"},
-];
-
-// ── MEDICINE PURPOSE LOOKUP ───────────────────────────────────────
-const MED_PURPOSE_DB = {
-  'folvite':'Folic acid prevents neural tube defects in early pregnancy.',
-  'folic acid':'Folic acid prevents neural tube defects in early pregnancy.',
-  'susten':'Progesterone supports uterine lining and prevents early miscarriage.',
-  'progesterone':'Progesterone supports uterine lining and prevents early miscarriage.',
-  'duphaston':'Dydrogesterone supports pregnancy maintenance in the first trimester.',
-  'dydrogesterone':'Dydrogesterone supports pregnancy maintenance in the first trimester.',
-  'ecosprin':'Low-dose aspirin improves placental blood flow and prevents preeclampsia.',
-  'aspirin':'Low-dose aspirin improves placental blood flow and prevents preeclampsia.',
-  'calcium':'Calcium builds baby\'s bones, teeth and prevents maternal bone loss.',
-  'shelcal':'Calcium + Vitamin D3 builds baby\'s bones and prevents deficiency.',
-  'calcimax':'Calcium supplement essential for baby\'s skeletal development.',
-  'iron':'Iron prevents anaemia and carries oxygen to the baby via placenta.',
-  'autrin':'Iron + folic acid prevents pregnancy anaemia and supports blood volume.',
-  'dexorange':'Iron syrup prevents anaemia and boosts haemoglobin during pregnancy.',
-  'orofer':'Iron supplement prevents pregnancy-related iron deficiency anaemia.',
-  'livogen':'Iron + folic acid combo essential for preventing pregnancy anaemia.',
-  'thyronorm':'Levothyroxine maintains thyroid levels critical for baby\'s brain development.',
-  'thyroxine':'Thyroid hormone essential for baby\'s neurological development.',
-  'levothyroxine':'Thyroid hormone essential for baby\'s neurological development.',
-  'vitamin d':'Vitamin D supports baby\'s bone growth and maternal immune health.',
-  'd3 must':'Vitamin D3 prevents deficiency linked to gestational diabetes.',
-  'omega 3':'Omega-3 DHA develops baby\'s brain, eyes and nervous system.',
-  'dha':'DHA omega-3 is critical for baby\'s brain and retinal development.',
-  'maxepa':'Omega-3 fatty acids support baby\'s brain and eye development.',
-  'prenatal':'Prenatal vitamins provide essential nutrients for healthy pregnancy.',
-  'pregnacare':'Complete prenatal multivitamin supporting mother and baby\'s health.',
-  'mama':'Prenatal multivitamin with iron, calcium and folic acid.',
-  'b12':'Vitamin B12 prevents neural defects and pregnancy anaemia.',
-  'methylcobalamin':'Vitamin B12 supports baby\'s nervous system development.',
-  'ondansetron':'Anti-nausea medicine to manage severe morning sickness.',
-  'doxinate':'Doxylamine + B6 safely treats nausea and vomiting in pregnancy.',
-  'perinorm':'Metoclopramide helps manage nausea and vomiting during pregnancy.',
-  'rabeprazole':'Reduces stomach acid to treat pregnancy-related acidity and reflux.',
-  'pantoprazole':'Proton pump inhibitor for managing pregnancy heartburn safely.',
-  'ranitidine':'Manages acidity and heartburn common during pregnancy.',
-  'metformin':'Manages gestational diabetes and insulin resistance during pregnancy.',
-  'insulin':'Controls blood sugar levels in gestational diabetes.',
-  'heparin':'Blood thinner preventing dangerous clots during high-risk pregnancy.',
-  'clexane':'Low molecular weight heparin prevents blood clots in pregnancy.',
-  'enoxaparin':'Anticoagulant preventing thrombosis in high-risk pregnancies.',
-  'isoxsuprine':'Relaxes uterine muscles to prevent preterm contractions.',
-  'default':'Supports a healthy pregnancy. Consult your doctor for details.'
-};
-
-function getMedPurpose(brand, purpose) {
-  if (purpose && purpose.trim().length > 15) return purpose.trim();
-  const key = (brand || '').toLowerCase().trim();
-  for (const [k, v] of Object.entries(MED_PURPOSE_DB)) {
-    if (key.includes(k) || k.includes(key)) return v;
-  }
-  const purposeKey = (purpose || '').toLowerCase().trim();
-  for (const [k, v] of Object.entries(MED_PURPOSE_DB)) {
-    if (purposeKey.includes(k) || k.includes(purposeKey)) return v;
-  }
-  return purpose || MED_PURPOSE_DB['default'];
+function getMedPurpose(brand,purpose){
+  if(purpose&&purpose.trim().length>15)return purpose.trim();
+  const k=(brand||'').toLowerCase().trim();
+  for(const[key,v]of Object.entries(MED_PURPOSE_DB)){if(k.includes(key)||key.includes(k))return v;}
+  const p=(purpose||'').toLowerCase().trim();
+  for(const[key,v]of Object.entries(MED_PURPOSE_DB)){if(p.includes(key)||key.includes(p))return v;}
+  return purpose||MED_PURPOSE_DB['default'];
 }
 
-// ── STATE ─────────────────────────────────────────────────────────
-let currentUser=null,accessToken=null;
-let selectedDate=toKey(new Date());
-let calYear,calMonth;
-let cache={},noteTimer=null,authMode='login';
-let userMeds=[],userVisits=[];
+let currentUser=null,accessToken=null,selectedDate=toKey(new Date()),calYear,calMonth;
+let cache={},noteTimer=null,authMode='login',userMeds=[],userVisits=[];
 let rxBase64=null,rxMime=null,rxFileName=null;
 (function(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();})();
 
@@ -655,502 +407,162 @@ function toKey(d){return d.toISOString().slice(0,10);}
 function todayKey(){return toKey(new Date());}
 function isFutureDate(ds){return ds>todayKey();}
 
-// ── AUTH ──────────────────────────────────────────────────────────
-function switchAuthTab(mode){
-  authMode=mode;
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='signup')));
-  document.getElementById('auth-submit-btn').textContent=mode==='login'?'Sign In':'Create Account';
-  document.getElementById('auth-err').style.display='none';
-  document.getElementById('auth-ok').style.display='none';
-}
+// AUTH
+function switchAuthTab(mode){authMode=mode;document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='signup')));document.getElementById('auth-submit-btn').textContent=mode==='login'?'Sign In':'Create Account';document.getElementById('auth-err').style.display='none';document.getElementById('auth-ok').style.display='none';}
 function showAuthError(msg){const el=document.getElementById('auth-err');el.textContent=msg;el.style.display='block';document.getElementById('auth-ok').style.display='none';}
 function showAuthOk(msg){const el=document.getElementById('auth-ok');el.textContent=msg;el.style.display='block';document.getElementById('auth-err').style.display='none';}
 
 async function handleAuth(){
-  const email=document.getElementById('auth-email').value.trim();
-  const password=document.getElementById('auth-password').value;
-  const btn=document.getElementById('auth-submit-btn');
-  if(!email||!password){showAuthError('Please enter email and password.');return;}
-  btn.disabled=true;btn.textContent=authMode==='login'?'Signing in…':'Creating account…';
+  const email=document.getElementById('auth-email').value.trim(),password=document.getElementById('auth-password').value,btn=document.getElementById('auth-submit-btn');
+  if(!email||!password){showAuthError('Enter email and password.');return;}
+  btn.disabled=true;btn.textContent=authMode==='login'?'Signing in…':'Creating…';
   document.getElementById('auth-err').style.display='none';document.getElementById('auth-ok').style.display='none';
   try{
     const endpoint=authMode==='login'?'/token?grant_type=password':'/signup';
     const res=await fetch(`${AUTH}${endpoint}`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({email,password})});
     const data=await res.json();
-    if(!res.ok){showAuthError(data.error_description||data.msg||'Authentication failed.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';return;}
-    if(authMode==='signup'&&!data.access_token){showAuthOk('✅ Account created! Check your email to confirm, then sign in.');btn.disabled=false;btn.textContent='Create Account';return;}
+    if(!res.ok){showAuthError(data.error_description||data.msg||'Auth failed.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';return;}
+    if(authMode==='signup'&&!data.access_token){showAuthOk('✅ Account created! Check email then sign in.');btn.disabled=false;btn.textContent='Create Account';return;}
     accessToken=data.access_token;currentUser=data.user;cache={};
-    document.getElementById('auth-screen').style.display='none';
-    document.getElementById('app').style.display='block';
+    document.getElementById('auth-screen').style.display='none';document.getElementById('app').style.display='block';
     setSyncStatus('ok',`Signed in as ${currentUser.email}`);
-    await loadUserMeds();await loadUserVisits();
-    renderToday();buildNutritionPanel();renderBabyPanel();
-  }catch(e){showAuthError('Network error. Please try again.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';}
+    await loadUserMeds();await loadUserVisits();renderToday();buildNutritionPanel();renderBabyPanel();
+  }catch(e){showAuthError('Network error.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen').style.display!=='none')handleAuth();});
 
 async function signOut(){
   try{await fetch(`${AUTH}/logout`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`}});}catch(e){}
   accessToken=null;currentUser=null;cache={};userMeds=[];userVisits=[];
-  document.getElementById('app').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('auth-email').value='';document.getElementById('auth-password').value='';
-  switchAuthTab('login');
+  document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('auth-email').value='';document.getElementById('auth-password').value='';switchAuthTab('login');
 }
 
-// ── SYNC STATUS ───────────────────────────────────────────────────
-function setSyncStatus(state,msg){document.getElementById('sync-dot').className='sync-dot '+state;document.getElementById('sync-text').textContent=msg;}
-
-// ── SUPABASE HELPERS ──────────────────────────────────────────────
+function setSyncStatus(s,m){document.getElementById('sync-dot').className='sync-dot '+s;document.getElementById('sync-text').textContent=m;}
 function authHeaders(){return{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`,'Prefer':'return=representation'};}
-async function sbFetch(path,options={}){
-  const res=await fetch(`${REST}${path}`,{headers:authHeaders(),...options});
-  if(!res.ok){const e=await res.text();throw new Error(e);}
-  const t=await res.text();return t?JSON.parse(t):null;
-}
+async function sbFetch(path,options={}){const res=await fetch(`${REST}${path}`,{headers:authHeaders(),...options});if(!res.ok){const e=await res.text();throw new Error(e);}const t=await res.text();return t?JSON.parse(t):null;}
 
-// ── USER MEDS ─────────────────────────────────────────────────────
-async function loadUserMeds(){
-  try{const rows=await sbFetch(`/medmama_meds?user_id=eq.${currentUser.id}&order=sort_order.asc`);userMeds=rows||[];}
-  catch(e){console.error(e);}
-}
-async function loadUserVisits(){
-  try{const rows=await sbFetch(`/medmama_visits?user_id=eq.${currentUser.id}&order=visit_date.asc`);userVisits=rows||[];}
-  catch(e){console.error(e);}
-}
+async function loadUserMeds(){try{const r=await sbFetch(`/medmama_meds?user_id=eq.${currentUser.id}&order=sort_order.asc`);userMeds=r||[];}catch(e){console.error(e);}}
+async function loadUserVisits(){try{const r=await sbFetch(`/medmama_visits?user_id=eq.${currentUser.id}&order=visit_date.asc`);userVisits=r||[];}catch(e){console.error(e);}}
 function getVisitForDate(ds){return userVisits.find(v=>v.visit_date===ds);}
 
-// ── DAILY TRACKER ─────────────────────────────────────────────────
-async function loadDayFromDB(dateKey){
-  if(cache[dateKey]) return cache[dateKey];
-  try{
-    const rows=await sbFetch(`/medmama_tracker?date=eq.${dateKey}&user_id=eq.${currentUser.id}&select=*`);
-    cache[dateKey]=(rows&&rows.length>0)?{checks:rows[0].checks||{},note:rows[0].note||""}:{checks:{},note:""};
-    return cache[dateKey];
-  }catch(e){setSyncStatus('err','Sync error');return{checks:{},note:""};}
+async function loadDayFromDB(dk){
+  if(cache[dk])return cache[dk];
+  try{const r=await sbFetch(`/medmama_tracker?date=eq.${dk}&user_id=eq.${currentUser.id}&select=*`);cache[dk]=(r&&r.length>0)?{checks:r[0].checks||{},note:r[0].note||""}:{checks:{},note:""};return cache[dk];}
+  catch(e){setSyncStatus('err','Sync error');return{checks:{},note:""};}
 }
-async function saveDayToDB(dateKey,data){
+async function saveDayToDB(dk,data){
   setSyncStatus('loading','Saving…');
-  try{
-    await sbFetch(`/medmama_tracker`,{method:'POST',headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({date:dateKey,user_id:currentUser.id,checks:data.checks,note:data.note})});
-    cache[dateKey]=data;setSyncStatus('ok','Synced ✓');
-  }catch(e){setSyncStatus('err','Save failed');console.error(e);}
+  try{await sbFetch('/medmama_tracker',{method:'POST',headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({date:dk,user_id:currentUser.id,checks:data.checks,note:data.note})});cache[dk]=data;setSyncStatus('ok','Synced ✓');}
+  catch(e){setSyncStatus('err','Save failed');console.error(e);}
 }
 
-// ── VIEWS ─────────────────────────────────────────────────────────
+// VIEWS
 function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  updateTabBar(v);
-  if(v==='today') renderToday();
-  if(v==='otherday') renderOtherday();
-  if(v==='calendar') renderCalendar();
-  if(v==='visits') renderVisits();
-  if(v==='mymeds') renderMyMeds();
-  if(v==='alerts'){loadWaPrefs();updateWaPreview();}
+  document.getElementById('view-'+v).classList.add('active');updateTabBar(v);
+  if(v==='today')renderToday();if(v==='otherday')renderOtherday();if(v==='calendar')renderCalendar();
+  if(v==='visits')renderVisits();if(v==='mymeds')renderMyMeds();if(v==='alerts'){loadWaPrefs();updateWaPreview();}
 }
 function goToday(){selectedDate=todayKey();document.getElementById('tab-otherday').style.display='none';showView('today');}
 function updateTabBar(v){['today','otherday','calendar','visits','mymeds','alerts'].forEach(x=>{const el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',x===v);});}
-function selectOtherDay(ds){
-  selectedDate=ds;
-  const d=new Date(ds+"T00:00:00");
-  const short=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-  const tabEl=document.getElementById('tab-otherday');
-  tabEl.textContent=(isFutureDate(ds)?'📅 ':'')+ short;
-  tabEl.style.display='';
-  showView('otherday');
-}
+function selectOtherDay(ds){selectedDate=ds;const d=new Date(ds+"T00:00:00");const s=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});const t=document.getElementById('tab-otherday');t.textContent=(isFutureDate(ds)?'📅 ':'')+s;t.style.display='';showView('otherday');}
 
-// ── RENDER MED SECTIONS (shared) ──────────────────────────────────
-function buildMedSections(container, dayData, isFuture){
+function buildMedSections(container,dayData,isFuture){
   container.innerHTML='';
-  if(!userMeds.length){
-    container.innerHTML=`<div class="empty-state"><div class="icon">💊</div><p>No medicines added yet.<br>Go to <strong>My Meds</strong> tab to add your prescriptions.</p></div>`;
-    return {checked:0,total:0};
-  }
+  if(!userMeds.length){container.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No medicines yet.</p></div>';return{checked:0,total:0};}
   const checked=isFuture?0:userMeds.filter(m=>dayData.checks[m.id]).length;
-  SECTIONS.forEach(sec=>{
-    const meds=userMeds.filter(m=>m.time===sec.key);
-    if(!meds.length) return;
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`${sec.emoji} ${sec.label} <span style="font-weight:300;text-transform:none;letter-spacing:0">— ${sec.sub}</span><div class="sec-line"></div>`;
-    container.appendChild(lbl);
-    meds.forEach(med=>{
-      const done=!isFuture&&!!dayData.checks[med.id];
-      const card=document.createElement('div');
-      card.className=`med-card ${med.time} ${done?'done':''} ${isFuture?'future-day':''}`;
-      const chkHtml=isFuture
-        ? `<div class="chk" title="Can't check future dates" style="cursor:not-allowed;background:#f0f0f0;border-color:#ddd;">·</div>`
-        : `<div class="chk ${done?'checked':''}" onclick="toggleCheck('${med.id}')">${done?'✓':''}</div>`;
-      card.innerHTML=`
-        <div class="med-icon">${med.icon||'💊'}</div>
-        <div class="med-info">
-          <div class="med-brand">${med.brand}</div>
-          <div class="med-name">${med.purpose||''}</div>
-          <div class="med-meta">${med.timing||''}</div>
-          <div class="med-dose">${med.dose||''}</div>
-        </div>
-        ${chkHtml}`;
-      container.appendChild(card);
-    });
-  });
-  return {checked,total:userMeds.length};
+  SECTIONS.forEach(sec=>{const meds=userMeds.filter(m=>m.time===sec.key);if(!meds.length)return;
+    const lbl=document.createElement('div');lbl.className='sec-label';lbl.innerHTML=`${sec.emoji} ${sec.label} <span style="font-weight:300;text-transform:none;letter-spacing:0">— ${sec.sub}</span><div class="sec-line"></div>`;container.appendChild(lbl);
+    meds.forEach(med=>{const done=!isFuture&&!!dayData.checks[med.id];const card=document.createElement('div');card.className=`med-card ${med.time} ${done?'done':''} ${isFuture?'future-day':''}`;
+      const chk=isFuture?'<div class="chk" style="cursor:not-allowed;background:#f0f0f0;border-color:#ddd;">·</div>':`<div class="chk ${done?'checked':''}" onclick="toggleCheck('${med.id}')">${done?'✓':''}</div>`;
+      card.innerHTML=`<div class="med-icon">${med.icon||'💊'}</div><div class="med-info"><div class="med-brand">${med.brand}</div><div class="med-name">${med.purpose||''}</div><div class="med-meta">${med.timing||''}</div><div class="med-dose">${med.dose||''}</div></div>${chk}`;
+      container.appendChild(card);});});
+  return{checked,total:userMeds.length};
 }
 
-// ── TODAY ─────────────────────────────────────────────────────────
 async function renderToday(){
-  setSyncStatus('loading','Loading…');
-  const dayData=await loadDayFromDB(selectedDate);
-  setSyncStatus('ok','Synced ✓');
-  const d=new Date(selectedDate+"T00:00:00");
-  document.getElementById('date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('today-badge').style.display='';
-
-  const visit=getVisitForDate(selectedDate);
-  const nextVisit=userVisits.filter(v=>v.visit_date>todayKey()).sort((a,b)=>a.visit_date.localeCompare(b.visit_date))[0];
-  const banner=document.getElementById('visit-today-banner');
-  if(visit){
-    banner.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">Doctor Visit Today — ${visit.doctor||'Medical Appointment'}</div><div class="visit-banner-note">${visit.note||''}</div>${visit.rx_data?`<img src="${visit.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer" onclick="viewRxById('${visit.id}')"/>`:''}  </div></div>`;
-  } else if(nextVisit){
-    const dv=new Date(nextVisit.visit_date+"T00:00:00");
-    const daysLeft=Math.ceil((dv-new Date())/86400000);
-    const dstr=dv.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
-    banner.innerHTML=`<div class="visit-banner" style="cursor:pointer" onclick="selectOtherDay('${nextVisit.visit_date}')"><div class="visit-banner-icon">📅</div><div class="visit-banner-info"><div class="visit-banner-title">Next Visit: ${nextVisit.doctor||'Doctor'} — ${dstr}</div><div class="visit-banner-note">in <strong>${daysLeft} day${daysLeft!==1?'s':''}</strong>${nextVisit.note?' · '+nextVisit.note:''} <span style="color:var(--visit);font-size:11px">Tap to view →</span></div></div></div>`;
-  } else { banner.innerHTML=''; }
-
-  if(!userMeds.length){
-    document.getElementById('no-meds-msg').style.display='block';
-    document.getElementById('prog-count').textContent='0 / 0';
-    document.getElementById('prog-fill').style.width='0%';
-    document.getElementById('med-sections').innerHTML='';
-  } else {
-    document.getElementById('no-meds-msg').style.display='none';
-    const {checked,total}=buildMedSections(document.getElementById('med-sections'),dayData,false);
-    const pct=Math.round(checked/total*100);
-    document.getElementById('prog-count').textContent=`${checked} / ${total} · ${pct}%`;
-    document.getElementById('prog-fill').style.width=pct+'%';
-  }
+  setSyncStatus('loading','Loading…');const dayData=await loadDayFromDB(selectedDate);setSyncStatus('ok','Synced ✓');
+  const d=new Date(selectedDate+"T00:00:00");document.getElementById('date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('today-badge').style.display='';
+  const visit=getVisitForDate(selectedDate);const nextVisit=userVisits.filter(v=>v.visit_date>todayKey()).sort((a,b)=>a.visit_date.localeCompare(b.visit_date))[0];const banner=document.getElementById('visit-today-banner');
+  if(visit){banner.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">Visit Today — ${visit.doctor||'Appointment'}</div><div class="visit-banner-note">${visit.note||''}</div></div></div>`;}
+  else if(nextVisit){const dv=new Date(nextVisit.visit_date+"T00:00:00");const dl=Math.ceil((dv-new Date())/86400000);const ds=dv.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});banner.innerHTML=`<div class="visit-banner" style="cursor:pointer" onclick="selectOtherDay('${nextVisit.visit_date}')"><div class="visit-banner-icon">📅</div><div class="visit-banner-info"><div class="visit-banner-title">Next: ${nextVisit.doctor||'Doctor'} — ${ds}</div><div class="visit-banner-note">in ${dl} day${dl!==1?'s':''}</div></div></div>`;}
+  else{banner.innerHTML='';}
+  if(!userMeds.length){document.getElementById('no-meds-msg').style.display='block';document.getElementById('prog-count').textContent='0/0';document.getElementById('prog-fill').style.width='0%';document.getElementById('med-sections').innerHTML='';}
+  else{document.getElementById('no-meds-msg').style.display='none';const{checked,total}=buildMedSections(document.getElementById('med-sections'),dayData,false);const p=Math.round(checked/total*100);document.getElementById('prog-count').textContent=`${checked}/${total} · ${p}%`;document.getElementById('prog-fill').style.width=p+'%';}
   document.getElementById('notes-input').value=dayData.note||'';
 }
 
-async function toggleCheck(medId){
-  if(isFutureDate(selectedDate)) return;
-  const dayData=await loadDayFromDB(selectedDate);
-  dayData.checks[medId]=!dayData.checks[medId];
-  cache[selectedDate]=dayData;
-  await saveDayToDB(selectedDate,dayData);
-  if(selectedDate===todayKey()) renderToday(); else renderOtherday();
-}
-function saveNote(){
-  if(noteTimer) clearTimeout(noteTimer);
-  noteTimer=setTimeout(async()=>{
-    const dayData=await loadDayFromDB(selectedDate);
-    dayData.note=document.getElementById('notes-input').value;
-    cache[selectedDate]=dayData;
-    await saveDayToDB(selectedDate,dayData);
-  },800);
-}
-function saveOtherdayNote(){
-  if(noteTimer) clearTimeout(noteTimer);
-  noteTimer=setTimeout(async()=>{
-    if(isFutureDate(selectedDate)) return;
-    const dayData=await loadDayFromDB(selectedDate);
-    dayData.note=document.getElementById('otherday-notes-input').value;
-    cache[selectedDate]=dayData;
-    await saveDayToDB(selectedDate,dayData);
-  },800);
-}
+async function toggleCheck(medId){if(isFutureDate(selectedDate))return;const d=await loadDayFromDB(selectedDate);d.checks[medId]=!d.checks[medId];cache[selectedDate]=d;await saveDayToDB(selectedDate,d);if(selectedDate===todayKey())renderToday();else renderOtherday();}
+function saveNote(){if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(async()=>{const d=await loadDayFromDB(selectedDate);d.note=document.getElementById('notes-input').value;cache[selectedDate]=d;await saveDayToDB(selectedDate,d);},800);}
+function saveOtherdayNote(){if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(async()=>{if(isFutureDate(selectedDate))return;const d=await loadDayFromDB(selectedDate);d.note=document.getElementById('otherday-notes-input').value;cache[selectedDate]=d;await saveDayToDB(selectedDate,d);},800);}
 
-// ── OTHER DAY ─────────────────────────────────────────────────────
 async function renderOtherday(){
-  const isFuture=isFutureDate(selectedDate);
-  setSyncStatus('loading','Loading…');
-  const dayData=isFuture?{checks:{},note:""}:await loadDayFromDB(selectedDate);
-  setSyncStatus('ok',isFuture?'Future date — read only':'Synced ✓');
-
-  const d=new Date(selectedDate+"T00:00:00");
-  document.getElementById('otherday-date-display').textContent=d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-  document.getElementById('otherday-future-notice').style.display=isFuture?'flex':'none';
-  document.getElementById('otherday-future-badge').style.display=isFuture?'':'none';
-  document.getElementById('otherday-notes-wrap').style.display=isFuture?'none':'';
-
-  const visit=getVisitForDate(selectedDate);
-  const banner=document.getElementById('otherday-visit-banner');
-  if(visit){
-    banner.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">${isFuture?'Upcoming':'Past'} Visit — ${visit.doctor||'Medical Appointment'}</div><div class="visit-banner-note">${visit.note||''}</div></div></div>`;
-  } else { banner.innerHTML=''; }
-
-  const {checked,total}=buildMedSections(document.getElementById('otherday-med-sections'),dayData,isFuture);
-  if(isFuture){
-    document.getElementById('otherday-prog-count').textContent=`Schedule — ${total} medicine${total!==1?'s':''}`;
-    document.getElementById('otherday-prog-fill').style.width='0%';
-  } else {
-    const pct=total>0?Math.round(checked/total*100):0;
-    document.getElementById('otherday-prog-count').textContent=`${checked} / ${total} · ${pct}%`;
-    document.getElementById('otherday-prog-fill').style.width=pct+'%';
-  }
-  if(!isFuture) document.getElementById('otherday-notes-input').value=dayData.note||'';
+  const isFuture=isFutureDate(selectedDate);setSyncStatus('loading','Loading…');const dayData=isFuture?{checks:{},note:""}:await loadDayFromDB(selectedDate);setSyncStatus('ok',isFuture?'Future — read only':'Synced ✓');
+  document.getElementById('otherday-date-display').textContent=new Date(selectedDate+"T00:00:00").toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('otherday-future-notice').style.display=isFuture?'flex':'none';document.getElementById('otherday-future-badge').style.display=isFuture?'':'none';document.getElementById('otherday-notes-wrap').style.display=isFuture?'none':'';
+  const visit=getVisitForDate(selectedDate);const banner=document.getElementById('otherday-visit-banner');
+  if(visit){banner.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">${isFuture?'Upcoming':'Past'} Visit — ${visit.doctor||'Appointment'}</div><div class="visit-banner-note">${visit.note||''}</div></div></div>`;}else{banner.innerHTML='';}
+  const{checked,total}=buildMedSections(document.getElementById('otherday-med-sections'),dayData,isFuture);
+  if(isFuture){document.getElementById('otherday-prog-count').textContent=`Schedule — ${total} med${total!==1?'s':''}`;document.getElementById('otherday-prog-fill').style.width='0%';}
+  else{const p=total>0?Math.round(checked/total*100):0;document.getElementById('otherday-prog-count').textContent=`${checked}/${total} · ${p}%`;document.getElementById('otherday-prog-fill').style.width=p+'%';}
+  if(!isFuture)document.getElementById('otherday-notes-input').value=dayData.note||'';
 }
 
-// ── CALENDAR ──────────────────────────────────────────────────────
-async function getDayStatus(ds){
-  if(!userMeds.length) return 'none';
-  const d=await loadDayFromDB(ds);
-  const count=userMeds.filter(m=>d.checks[m.id]).length;
-  if(count===0) return 'none';
-  if(count===userMeds.length) return 'full';
-  return 'partial';
-}
+async function getDayStatus(ds){if(!userMeds.length)return'none';const d=await loadDayFromDB(ds);const c=userMeds.filter(m=>d.checks[m.id]).length;if(c===0)return'none';if(c===userMeds.length)return'full';return'partial';}
 async function renderCalendar(){
-  document.getElementById('cal-title').textContent=`${MONTHS[calMonth]} ${calYear}`;
-  const grid=document.getElementById('cal-grid');grid.innerHTML='';
+  document.getElementById('cal-title').textContent=`${MONTHS[calMonth]} ${calYear}`;const grid=document.getElementById('cal-grid');grid.innerHTML='';
   ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
-  const today=todayKey();
-  for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty-cell';grid.appendChild(el);}
-  try{
-    const m=String(calMonth+1).padStart(2,'0');
-    const rows=await sbFetch(`/medmama_tracker?date=gte.${calYear}-${m}-01&date=lte.${calYear}-${m}-${String(daysInMonth).padStart(2,'0')}&user_id=eq.${currentUser.id}&select=*`);
-    if(rows) rows.forEach(r=>{cache[r.date]={checks:r.checks||{},note:r.note||""};});
-  }catch(e){}
+  const fd=new Date(calYear,calMonth,1).getDay(),dm=new Date(calYear,calMonth+1,0).getDate(),today=todayKey();
+  for(let i=0;i<fd;i++){const el=document.createElement('div');el.className='cal-day empty-cell';grid.appendChild(el);}
+  try{const m=String(calMonth+1).padStart(2,'0');const rows=await sbFetch(`/medmama_tracker?date=gte.${calYear}-${m}-01&date=lte.${calYear}-${m}-${String(dm).padStart(2,'0')}&user_id=eq.${currentUser.id}&select=*`);if(rows)rows.forEach(r=>{cache[r.date]={checks:r.checks||{},note:r.note||""};});}catch(e){}
   let full=0,partial=0,empty=0;
-  for(let day=1;day<=daysInMonth;day++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const future=ds>today,isToday=ds===today,isSel=ds===selectedDate;
-    const hasVisit=!!getVisitForDate(ds);
-    const status=future?'future':await getDayStatus(ds);
+  for(let day=1;day<=dm;day++){const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const future=ds>today,isToday=ds===today,isSel=ds===selectedDate;const hv=!!getVisitForDate(ds);const status=future?'future':await getDayStatus(ds);
     if(!future){if(status==='full')full++;else if(status==='partial')partial++;else empty++;}
-    const el=document.createElement('button');
-    el.className=`cal-day ${future?'future':status} ${isToday&&!isSel?'today-cell':''} ${isSel?'sel':''} ${hasVisit?'has-visit':''}`;
-    el.innerHTML=`${day}<div class="cal-dot"></div>`;
-    el.onclick=()=>{if(ds===todayKey()){goToday();}else{selectOtherDay(ds);}};
-    grid.appendChild(el);
-  }
+    const el=document.createElement('button');el.className=`cal-day ${future?'future':status} ${isToday&&!isSel?'today-cell':''} ${isSel?'sel':''} ${hv?'has-visit':''}`;el.innerHTML=`${day}<div class="cal-dot"></div>`;el.onclick=()=>{if(ds===todayKey())goToday();else selectOtherDay(ds);};grid.appendChild(el);}
   const total=full+partial+empty;
-  document.getElementById('month-summary').innerHTML=
-    `✅ All doses: <strong>${full}</strong> day${full!==1?'s':''}<br>
-     🟡 Partial: <strong>${partial}</strong> day${partial!==1?'s':''}<br>
-     ⬜ Missed: <strong>${empty}</strong> day${empty!==1?'s':''}<br>
-     🏥 Doctor visits: <strong>${userVisits.filter(v=>v.visit_date.startsWith(`${calYear}-${String(calMonth+1).padStart(2,'0')}`)).length}</strong><br>
-     <span>Out of ${total} tracked day${total!==1?'s':''} this month</span>`;
+  document.getElementById('month-summary').innerHTML=`✅ All: <strong>${full}</strong> · 🟡 Partial: <strong>${partial}</strong> · ⬜ Missed: <strong>${empty}</strong> · 🏥 Visits: <strong>${userVisits.filter(v=>v.visit_date.startsWith(`${calYear}-${String(calMonth+1).padStart(2,'0')}`)).length}</strong><br><span>Out of ${total} day${total!==1?'s':''}</span>`;
   setSyncStatus('ok','Synced ✓');
 }
 function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 
-// ── MY MEDS ───────────────────────────────────────────────────────
-function renderMyMeds(){
-  const container=document.getElementById('meds-list');container.innerHTML='';
-  if(!userMeds.length){container.innerHTML=`<div class="empty-state"><div class="icon">💊</div><p>No medicines added yet.<br>Tap "+ Add Med" to add your prescription.</p></div>`;return;}
-  SECTIONS.forEach(sec=>{
-    const meds=userMeds.filter(m=>m.time===sec.key);
-    if(!meds.length) return;
-    const lbl=document.createElement('div');lbl.className='sec-label';
-    lbl.innerHTML=`${sec.emoji} ${sec.label}<div class="sec-line"></div>`;container.appendChild(lbl);
-    meds.forEach(med=>{
-      const el=document.createElement('div');el.className='med-list-item';
-      el.innerHTML=`<div class="med-list-icon">${med.icon||'💊'}</div>
-        <div class="med-list-info">
-          <div class="med-list-brand">${med.brand}</div>
-          <div class="med-list-meta">${med.purpose||''} · ${med.dose||''} · ${med.timing||''}</div>
-        </div>
-        <div class="med-list-actions"><button class="btn btn-ghost btn-sm" onclick="openEditMed('${med.id}')">Edit</button></div>`;
-      container.appendChild(el);
-    });
-  });
-}
-function openAddMed(){
-  document.getElementById('med-modal-title').textContent='Add Medicine';
-  document.getElementById('med-edit-id').value='';
-  document.getElementById('med-brand').value='';
-  document.getElementById('med-name').value='';
-  document.getElementById('med-icon').value='💊';
-  document.getElementById('med-dose').value='';
-  document.getElementById('med-time').value='morning';
-  document.getElementById('med-timing').value='';
-  document.getElementById('med-delete-btn').style.display='none';
-  document.getElementById('med-modal').classList.add('open');
-}
-function openEditMed(id){
-  const med=userMeds.find(m=>m.id===id);if(!med) return;
-  document.getElementById('med-modal-title').textContent='Edit Medicine';
-  document.getElementById('med-edit-id').value=id;
-  document.getElementById('med-brand').value=med.brand||'';
-  document.getElementById('med-name').value=med.purpose||'';
-  document.getElementById('med-icon').value=med.icon||'💊';
-  document.getElementById('med-dose').value=med.dose||'';
-  document.getElementById('med-time').value=med.time||'morning';
-  document.getElementById('med-timing').value=med.timing||'';
-  document.getElementById('med-delete-btn').style.display='';
-  document.getElementById('med-modal').classList.add('open');
-}
+// MY MEDS
+function renderMyMeds(){const c=document.getElementById('meds-list');c.innerHTML='';if(!userMeds.length){c.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No medicines yet.</p></div>';return;}
+  SECTIONS.forEach(sec=>{const meds=userMeds.filter(m=>m.time===sec.key);if(!meds.length)return;const lbl=document.createElement('div');lbl.className='sec-label';lbl.innerHTML=`${sec.emoji} ${sec.label}<div class="sec-line"></div>`;c.appendChild(lbl);
+    meds.forEach(med=>{const el=document.createElement('div');el.className='med-list-item';el.innerHTML=`<div class="med-list-icon">${med.icon||'💊'}</div><div class="med-list-info"><div class="med-list-brand">${med.brand}</div><div class="med-list-meta">${med.purpose||''} · ${med.dose||''} · ${med.timing||''}</div></div><div class="med-list-actions"><button class="btn btn-ghost btn-sm" onclick="openEditMed('${med.id}')">Edit</button></div>`;c.appendChild(el);});});}
+function openAddMed(){document.getElementById('med-modal-title').textContent='Add Medicine';document.getElementById('med-edit-id').value='';document.getElementById('med-brand').value='';document.getElementById('med-name').value='';document.getElementById('med-icon').value='💊';document.getElementById('med-dose').value='';document.getElementById('med-time').value='morning';document.getElementById('med-timing').value='';document.getElementById('med-delete-btn').style.display='none';document.getElementById('med-modal').classList.add('open');}
+function openEditMed(id){const med=userMeds.find(m=>m.id===id);if(!med)return;document.getElementById('med-modal-title').textContent='Edit Medicine';document.getElementById('med-edit-id').value=id;document.getElementById('med-brand').value=med.brand||'';document.getElementById('med-name').value=med.purpose||'';document.getElementById('med-icon').value=med.icon||'💊';document.getElementById('med-dose').value=med.dose||'';document.getElementById('med-time').value=med.time||'morning';document.getElementById('med-timing').value=med.timing||'';document.getElementById('med-delete-btn').style.display='';document.getElementById('med-modal').classList.add('open');}
 function closeMedModal(){document.getElementById('med-modal').classList.remove('open');}
+async function saveMed(){const id=document.getElementById('med-edit-id').value;const med={brand:document.getElementById('med-brand').value.trim(),purpose:document.getElementById('med-name').value.trim(),icon:document.getElementById('med-icon').value.trim()||'💊',dose:document.getElementById('med-dose').value.trim(),time:document.getElementById('med-time').value,timing:document.getElementById('med-timing').value.trim()};if(!med.brand){alert('Enter medicine name.');return;}setSyncStatus('loading','Saving…');try{if(id){await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(med)});}else{await sbFetch('/medmama_meds',{method:'POST',body:JSON.stringify({...med,user_id:currentUser.id,sort_order:Date.now()})});}await loadUserMeds();cache={};setSyncStatus('ok','Saved ✓');closeMedModal();renderMyMeds();}catch(e){setSyncStatus('err','Save failed');}}
+async function deleteMed(){const id=document.getElementById('med-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncStatus('loading','Deleting…');try{await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'DELETE'});await loadUserMeds();cache={};setSyncStatus('ok','Deleted ✓');closeMedModal();renderMyMeds();}catch(e){setSyncStatus('err','Delete failed');}}
 
-async function saveMed(){
-  const id=document.getElementById('med-edit-id').value;
-  const med={brand:document.getElementById('med-brand').value.trim(),purpose:document.getElementById('med-name').value.trim(),icon:document.getElementById('med-icon').value.trim()||'💊',dose:document.getElementById('med-dose').value.trim(),time:document.getElementById('med-time').value,timing:document.getElementById('med-timing').value.trim()};
-  if(!med.brand){alert('Please enter a medicine name.');return;}
-  setSyncStatus('loading','Saving…');
-  try{
-    if(id){await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(med)});}
-    else{await sbFetch(`/medmama_meds`,{method:'POST',body:JSON.stringify({...med,user_id:currentUser.id,sort_order:Date.now()})});}
-    await loadUserMeds();cache={};setSyncStatus('ok','Saved ✓');closeMedModal();renderMyMeds();
-  }catch(e){setSyncStatus('err','Save failed');alert('Failed to save. Please try again.');}
-}
-async function deleteMed(){
-  const id=document.getElementById('med-edit-id').value;
-  if(!id||!confirm('Delete this medicine?')) return;
-  setSyncStatus('loading','Deleting…');
-  try{await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'DELETE'});await loadUserMeds();cache={};setSyncStatus('ok','Deleted ✓');closeMedModal();renderMyMeds();}
-  catch(e){setSyncStatus('err','Delete failed');}
-}
-
-// ── VISITS ────────────────────────────────────────────────────────
-function renderVisits(){
-  const container=document.getElementById('visits-list');container.innerHTML='';
-  if(!userVisits.length){container.innerHTML=`<div class="empty-state"><div class="icon">🏥</div><p>No doctor visits added yet.<br>Tap "+ Add Visit" to schedule one.</p></div>`;return;}
-  const sorted=[...userVisits].sort((a,b)=>a.visit_date.localeCompare(b.visit_date));
-  const today=todayKey();
-  const upcoming=sorted.filter(v=>v.visit_date>=today);
-  const past=sorted.filter(v=>v.visit_date<today);
-  if(upcoming.length){const lbl=document.createElement('div');lbl.className='sec-label';lbl.innerHTML=`🏥 Upcoming<div class="sec-line"></div>`;container.appendChild(lbl);upcoming.forEach(v=>container.appendChild(buildVisitCard(v)));}
-  if(past.length){const lbl=document.createElement('div');lbl.className='sec-label';lbl.innerHTML=`📁 Past Visits<div class="sec-line"></div>`;container.appendChild(lbl);[...past].reverse().forEach(v=>container.appendChild(buildVisitCard(v)));}
-}
-function buildVisitCard(v){
-  const el=document.createElement('div');el.className='visit-item';
-  const d=new Date(v.visit_date+"T00:00:00");
-  const dateStr=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});
-  const daysLeft=Math.ceil((new Date(v.visit_date+"T00:00:00")-new Date())/86400000);
-  const daysTag=daysLeft>0?`<span style="font-size:10px;background:#e8dff7;color:var(--visit);padding:2px 8px;border-radius:20px;margin-left:8px">in ${daysLeft} day${daysLeft!==1?'s':''}</span>`:daysLeft===0?`<span style="font-size:10px;background:#fde8d8;color:#a05000;padding:2px 8px;border-radius:20px;margin-left:8px">Today!</span>`:'';
-  el.innerHTML=`<div class="visit-item-icon">🏥</div><div class="visit-item-info"><div class="visit-item-date">${dateStr}${daysTag}</div><div class="visit-item-note"><strong>${v.doctor||''}</strong>${v.note?'<br>'+v.note:''}</div>${v.rx_data?`<img src="${v.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer;margin-top:8px" onclick="viewRxById('${v.id}')"/>`:''}  </div><div class="visit-item-actions"><button class="btn btn-ghost btn-sm" onclick="openEditVisit('${v.id}')">Edit</button></div>`;
-  return el;
-}
+// VISITS
+function renderVisits(){const c=document.getElementById('visits-list');c.innerHTML='';if(!userVisits.length){c.innerHTML='<div class="empty-state"><div class="icon">🏥</div><p>No visits yet.</p></div>';return;}
+  const sorted=[...userVisits].sort((a,b)=>a.visit_date.localeCompare(b.visit_date));const today=todayKey();const up=sorted.filter(v=>v.visit_date>=today);const past=sorted.filter(v=>v.visit_date<today);
+  if(up.length){const l=document.createElement('div');l.className='sec-label';l.innerHTML='🏥 Upcoming<div class="sec-line"></div>';c.appendChild(l);up.forEach(v=>c.appendChild(buildVisitCard(v)));}
+  if(past.length){const l=document.createElement('div');l.className='sec-label';l.innerHTML='📁 Past<div class="sec-line"></div>';c.appendChild(l);[...past].reverse().forEach(v=>c.appendChild(buildVisitCard(v)));}}
+function buildVisitCard(v){const el=document.createElement('div');el.className='visit-item';const d=new Date(v.visit_date+"T00:00:00");const ds=d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'long',year:'numeric'});const dl=Math.ceil((new Date(v.visit_date+"T00:00:00")-new Date())/86400000);const tag=dl>0?`<span style="font-size:10px;background:#e8dff7;color:var(--visit);padding:2px 8px;border-radius:20px;margin-left:8px">in ${dl}d</span>`:dl===0?`<span style="font-size:10px;background:#fde8d8;color:#a05000;padding:2px 8px;border-radius:20px;margin-left:8px">Today!</span>`:'';el.innerHTML=`<div class="visit-item-icon">🏥</div><div class="visit-item-info"><div class="visit-item-date">${ds}${tag}</div><div class="visit-item-note"><strong>${v.doctor||''}</strong>${v.note?'<br>'+v.note:''}</div>${v.rx_data?`<img src="${v.rx_data}" class="rx-img" style="max-height:100px;cursor:pointer;margin-top:8px" onclick="viewRxById('${v.id}')"/>`:''}  </div><div class="visit-item-actions"><button class="btn btn-ghost btn-sm" onclick="openEditVisit('${v.id}')">Edit</button></div>`;return el;}
 function viewRxById(id){const v=userVisits.find(x=>x.id===id);if(v&&v.rx_data){const w=window.open();w.document.write(`<img src="${v.rx_data}" style="max-width:100%"/>`);}}
-function openAddVisit(){
-  document.getElementById('visit-modal-title').textContent='Add Doctor Visit';
-  document.getElementById('visit-edit-id').value='';
-  document.getElementById('visit-date').value=todayKey();
-  document.getElementById('visit-doctor').value='';
-  document.getElementById('visit-note').value='';
-  document.getElementById('rx-preview').innerHTML='';
-  document.getElementById('visit-delete-btn').style.display='none';
-  rxBase64=null;rxMime=null;rxFileName=null;
-  document.getElementById('visit-modal').classList.add('open');
-}
-function openEditVisit(id){
-  const v=userVisits.find(x=>x.id===id);if(!v) return;
-  document.getElementById('visit-modal-title').textContent='Edit Doctor Visit';
-  document.getElementById('visit-edit-id').value=id;
-  document.getElementById('visit-date').value=v.visit_date||'';
-  document.getElementById('visit-doctor').value=v.doctor||'';
-  document.getElementById('visit-note').value=v.note||'';
-  document.getElementById('visit-delete-btn').style.display='';
-  rxBase64=null;rxMime=null;rxFileName=null;
-  const preview=document.getElementById('rx-preview');
-  if(v.rx_data){preview.innerHTML=`<img src="${v.rx_data}" class="rx-img" style="max-height:120px"/><div class="rx-file-name">Existing prescription</div>`;}
-  else{preview.innerHTML='';}
-  document.getElementById('visit-modal').classList.add('open');
-}
+function openAddVisit(){document.getElementById('visit-modal-title').textContent='Add Doctor Visit';document.getElementById('visit-edit-id').value='';document.getElementById('visit-date').value=todayKey();document.getElementById('visit-doctor').value='';document.getElementById('visit-note').value='';document.getElementById('rx-preview').innerHTML='';document.getElementById('visit-delete-btn').style.display='none';rxBase64=null;document.getElementById('visit-modal').classList.add('open');}
+function openEditVisit(id){const v=userVisits.find(x=>x.id===id);if(!v)return;document.getElementById('visit-modal-title').textContent='Edit Visit';document.getElementById('visit-edit-id').value=id;document.getElementById('visit-date').value=v.visit_date||'';document.getElementById('visit-doctor').value=v.doctor||'';document.getElementById('visit-note').value=v.note||'';document.getElementById('visit-delete-btn').style.display='';rxBase64=null;const p=document.getElementById('rx-preview');if(v.rx_data){p.innerHTML=`<img src="${v.rx_data}" class="rx-img" style="max-height:120px"/>`;}else{p.innerHTML='';}document.getElementById('visit-modal').classList.add('open');}
 function closeVisitModal(){document.getElementById('visit-modal').classList.remove('open');}
-function handleRxUpload(e){
-  const file=e.target.files[0];if(!file) return;
-  rxFileName=file.name;rxMime=file.type;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    rxBase64=ev.target.result;
-    const preview=document.getElementById('rx-preview');
-    if(file.type.startsWith('image/')){preview.innerHTML=`<img src="${rxBase64}" class="rx-img" style="max-height:140px"/><div class="rx-file-name">${file.name}</div>`;}
-    else{preview.innerHTML=`<div style="padding:10px;background:var(--blush);border-radius:10px;font-size:12px;color:var(--deep)">📄 ${file.name} selected</div>`;}
-  };
-  reader.readAsDataURL(file);
-}
-async function saveVisit(){
-  const id=document.getElementById('visit-edit-id').value;
-  const visit={visit_date:document.getElementById('visit-date').value,doctor:document.getElementById('visit-doctor').value.trim(),note:document.getElementById('visit-note').value.trim()};
-  if(!visit.visit_date){alert('Please select a date.');return;}
-  if(rxBase64) visit.rx_data=rxBase64;
-  setSyncStatus('loading','Saving…');
-  try{
-    if(id){await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(visit)});}
-    else{await sbFetch(`/medmama_visits`,{method:'POST',body:JSON.stringify({...visit,user_id:currentUser.id})});}
-    await loadUserVisits();setSyncStatus('ok','Saved ✓');closeVisitModal();renderVisits();
-  }catch(e){setSyncStatus('err','Save failed');console.error(e);alert('Failed to save.');}
-}
-async function deleteVisit(){
-  const id=document.getElementById('visit-edit-id').value;
-  if(!id||!confirm('Delete this visit?')) return;
-  setSyncStatus('loading','Deleting…');
-  try{await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'DELETE'});await loadUserVisits();setSyncStatus('ok','Deleted ✓');closeVisitModal();renderVisits();}
-  catch(e){setSyncStatus('err','Delete failed');}
-}
+function handleRxUpload(e){const file=e.target.files[0];if(!file)return;rxFileName=file.name;const reader=new FileReader();reader.onload=ev=>{rxBase64=ev.target.result;const p=document.getElementById('rx-preview');if(file.type.startsWith('image/')){p.innerHTML=`<img src="${rxBase64}" class="rx-img" style="max-height:140px"/>`;}else{p.innerHTML=`<div style="padding:10px;background:var(--blush);border-radius:10px;font-size:12px;color:var(--deep)">📄 ${file.name}</div>`;}};reader.readAsDataURL(file);}
+async function saveVisit(){const id=document.getElementById('visit-edit-id').value;const visit={visit_date:document.getElementById('visit-date').value,doctor:document.getElementById('visit-doctor').value.trim(),note:document.getElementById('visit-note').value.trim()};if(!visit.visit_date){alert('Select a date.');return;}if(rxBase64)visit.rx_data=rxBase64;setSyncStatus('loading','Saving…');try{if(id){await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(visit)});}else{await sbFetch('/medmama_visits',{method:'POST',body:JSON.stringify({...visit,user_id:currentUser.id})});}await loadUserVisits();setSyncStatus('ok','Saved ✓');closeVisitModal();renderVisits();}catch(e){setSyncStatus('err','Save failed');}}
+async function deleteVisit(){const id=document.getElementById('visit-edit-id').value;if(!id||!confirm('Delete?'))return;setSyncStatus('loading','Deleting…');try{await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'DELETE'});await loadUserVisits();setSyncStatus('ok','Deleted ✓');closeVisitModal();renderVisits();}catch(e){setSyncStatus('err','Delete failed');}}
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-// ── NUTRITION PANEL ───────────────────────────────────────────────
-function buildNutritionPanel(){
-  const container=document.getElementById('nut-cards');
-  container.innerHTML='';
-  NUTRIENTS.forEach((n,i)=>{
-    const card=document.createElement('div');
-    card.className='nut-card';
-    card.style.background=n.color;
-    card.style.animationDelay=(i*0.1)+'s';
-    card.innerHTML=`<div class="nut-icon" style="animation:${i%2===0?'float':'wiggle'} ${2+i*0.3}s ease-in-out infinite">${n.icon}</div><div class="nut-name">${n.name}</div><div class="nut-foods">${n.foods.split(',')[0].trim()}…</div>`;
-    card.onclick=()=>showNutTooltip(n);
-    container.appendChild(card);
-  });
-}
-function showNutTooltip(n){
-  document.getElementById('nt-icon').textContent=n.icon;
-  document.getElementById('nt-title').textContent=n.name;
-  document.getElementById('nt-body').innerHTML=`<strong>Why it matters:</strong> ${n.why}<br><br>${n.desc}`;
-  document.getElementById('nt-foods').innerHTML=`🥗 Best sources: ${n.foods}`;
-  document.getElementById('nut-overlay').style.display='block';
-  document.getElementById('nut-tooltip').style.display='block';
-}
+// NUTRITION
+function buildNutritionPanel(){const c=document.getElementById('nut-cards');c.innerHTML='';NUTRIENTS.forEach((n,i)=>{const card=document.createElement('div');card.className='nut-card';card.style.background=n.color;card.innerHTML=`<div class="nut-icon" style="animation:${i%2===0?'float':'wiggle'} ${2+i*0.3}s ease-in-out infinite">${n.icon}</div><div class="nut-name">${n.name}</div><div class="nut-foods">${n.foods.split(',')[0]}…</div>`;card.onclick=()=>showNutTooltip(n);c.appendChild(card);});}
+function showNutTooltip(n){document.getElementById('nt-icon').textContent=n.icon;document.getElementById('nt-title').textContent=n.name;document.getElementById('nt-body').innerHTML=`<strong>Why:</strong> ${n.why}<br><br>${n.desc}`;document.getElementById('nt-foods').innerHTML=`🥗 ${n.foods}`;document.getElementById('nut-overlay').style.display='block';document.getElementById('nut-tooltip').style.display='block';}
 function closeNutTooltip(){document.getElementById('nut-overlay').style.display='none';document.getElementById('nut-tooltip').style.display='none';}
 
-// ── BABY PANEL ────────────────────────────────────────────────────
-function renderBabyPanel(){
-  const weekGuess = 20;
-  const stage = BABY_STAGES.reduce((prev,curr)=>Math.abs(curr.week-weekGuess)<Math.abs(prev.week-weekGuess)?curr:prev);
-  document.getElementById('baby-week-badge').textContent=`Week ~${weekGuess} · ${stage.size}`;
-  document.getElementById('baby-tip').textContent=stage.tip;
-  const wrap=document.getElementById('baby-svg-wrap');
-  wrap.innerHTML=`
-  <svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" width="160" height="200">
-    <ellipse cx="80" cy="160" rx="55" ry="18" fill="${stage.color}" opacity="0.7"/>
-    <ellipse cx="80" cy="100" rx="52" ry="62" fill="${stage.color}" stroke="#e8a0a0" stroke-width="2" opacity="0.6"
-      style="animation:breathe 3s ease-in-out infinite;transform-origin:80px 100px"/>
-    <g style="animation:float 3.5s ease-in-out infinite;transform-origin:80px 105px">
-      <ellipse cx="80" cy="115" rx="18" ry="22" fill="#ffe8d8"/>
-      <circle cx="80" cy="86" r="20" fill="#ffe8d8"/>
-      <path d="M62 80 Q70 68 80 72 Q90 68 98 80" stroke="#c8907a" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <circle cx="73" cy="85" r="3" fill="#5a3a2a"/>
-      <circle cx="87" cy="85" r="3" fill="#5a3a2a"/>
-      <circle cx="74" cy="84" r="1" fill="#fff"/>
-      <circle cx="88" cy="84" r="1" fill="#fff"/>
-      <path d="M74 93 Q80 98 86 93" stroke="#c0627a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <circle cx="69" cy="91" r="5" fill="#f5a0a0" opacity="0.4"/>
-      <circle cx="91" cy="91" r="5" fill="#f5a0a0" opacity="0.4"/>
-      <path d="M62 110 Q50 105 48 118 Q50 126 58 124" stroke="#ffe8d8" stroke-width="8" fill="none" stroke-linecap="round"/>
-      <path d="M98 110 Q110 105 112 118 Q110 126 102 124" stroke="#ffe8d8" stroke-width="8" fill="none" stroke-linecap="round"/>
-      <circle cx="50" cy="122" r="6" fill="#ffe8d8"/>
-      <circle cx="110" cy="122" r="6" fill="#ffe8d8"/>
-      <path d="M70 136 Q65 148 68 158" stroke="#ffe8d8" stroke-width="9" fill="none" stroke-linecap="round"/>
-      <path d="M90 136 Q95 148 92 158" stroke="#ffe8d8" stroke-width="9" fill="none" stroke-linecap="round"/>
-      <ellipse cx="67" cy="161" rx="8" ry="5" fill="#ffe8d8"/>
-      <ellipse cx="93" cy="161" rx="8" ry="5" fill="#ffe8d8"/>
-      <circle cx="80" cy="118" r="2" fill="#f0c8a8"/>
-    </g>
-    <text x="20" y="30" font-size="12" style="animation:heartbeat 2s ease-in-out infinite">⭐</text>
-    <text x="130" y="40" font-size="10" style="animation:heartbeat 2.5s ease-in-out infinite">✨</text>
-    <text x="15" y="160" font-size="10" style="animation:float 2s ease-in-out infinite">🌸</text>
-    <text x="132" y="150" font-size="10" style="animation:float 2.8s ease-in-out infinite">💗</text>
-  </svg>`;
-}
+// BABY
+function renderBabyPanel(){const wk=20;const stage=BABY_STAGES.reduce((p,c)=>Math.abs(c.week-wk)<Math.abs(p.week-wk)?c:p);document.getElementById('baby-week-badge').textContent=`Week ~${wk} · ${stage.size}`;document.getElementById('baby-tip').textContent=stage.tip;
+  document.getElementById('baby-svg-wrap').innerHTML=`<svg viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" width="160" height="200"><ellipse cx="80" cy="160" rx="55" ry="18" fill="${stage.color}" opacity="0.7"/><ellipse cx="80" cy="100" rx="52" ry="62" fill="${stage.color}" stroke="#e8a0a0" stroke-width="2" opacity="0.6" style="animation:breathe 3s ease-in-out infinite;transform-origin:80px 100px"/><g style="animation:float 3.5s ease-in-out infinite;transform-origin:80px 105px"><ellipse cx="80" cy="115" rx="18" ry="22" fill="#ffe8d8"/><circle cx="80" cy="86" r="20" fill="#ffe8d8"/><path d="M62 80 Q70 68 80 72 Q90 68 98 80" stroke="#c8907a" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="73" cy="85" r="3" fill="#5a3a2a"/><circle cx="87" cy="85" r="3" fill="#5a3a2a"/><circle cx="74" cy="84" r="1" fill="#fff"/><circle cx="88" cy="84" r="1" fill="#fff"/><path d="M74 93 Q80 98 86 93" stroke="#c0627a" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="69" cy="91" r="5" fill="#f5a0a0" opacity="0.4"/><circle cx="91" cy="91" r="5" fill="#f5a0a0" opacity="0.4"/><path d="M62 110 Q50 105 48 118 Q50 126 58 124" stroke="#ffe8d8" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M98 110 Q110 105 112 118 Q110 126 102 124" stroke="#ffe8d8" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="50" cy="122" r="6" fill="#ffe8d8"/><circle cx="110" cy="122" r="6" fill="#ffe8d8"/><path d="M70 136 Q65 148 68 158" stroke="#ffe8d8" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M90 136 Q95 148 92 158" stroke="#ffe8d8" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="67" cy="161" rx="8" ry="5" fill="#ffe8d8"/><ellipse cx="93" cy="161" rx="8" ry="5" fill="#ffe8d8"/><circle cx="80" cy="118" r="2" fill="#f0c8a8"/></g><text x="20" y="30" font-size="12" style="animation:heartbeat 2s ease-in-out infinite">⭐</text><text x="130" y="40" font-size="10" style="animation:heartbeat 2.5s ease-in-out infinite">✨</text><text x="15" y="160" font-size="10" style="animation:float 2s ease-in-out infinite">🌸</text><text x="132" y="150" font-size="10" style="animation:float 2.8s ease-in-out infinite">💗</text></svg>`;}
 
-// ── WHATSAPP ALERT PREFS ──────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// WHATSAPP ALERTS + TEST BUTTON
+// ══════════════════════════════════════════════════════════════
 async function loadWaPrefs(){
   try{
     const rows=await sbFetch(`/medmama_wa_alerts?user_id=eq.${currentUser.id}&select=*`);
@@ -1159,30 +571,29 @@ async function loadWaPrefs(){
       document.getElementById('wa-enabled').checked=pref.enabled;
       document.getElementById('wa-phone').value=pref.phone||'';
       document.getElementById('wa-phone-section').style.display=pref.enabled?'block':'none';
+      document.getElementById('wa-test-section').style.display=pref.enabled?'block':'none';
       updateWaPreview();
     }
-  }catch(e){console.error('WA prefs load error',e);}
+  }catch(e){console.error(e);}
 }
 
 function toggleWaAlerts(){
   const on=document.getElementById('wa-enabled').checked;
   document.getElementById('wa-phone-section').style.display=on?'block':'none';
-  if(!on) saveWaPrefs();
+  document.getElementById('wa-test-section').style.display='none';
+  if(!on)saveWaPrefs();
 }
 
 async function saveWaPrefs(){
   const enabled=document.getElementById('wa-enabled').checked;
   const phone=document.getElementById('wa-phone').value.trim().replace(/\s+/g,'');
-  const statusEl=document.getElementById('wa-status');
+  const st=document.getElementById('wa-status');
 
   if(enabled&&!phone.match(/^\+\d{10,15}$/)){
-    statusEl.className='wa-status err';
-    statusEl.textContent='❌ Enter a valid phone with country code (e.g. +919876543210)';
-    return;
+    st.className='wa-status err';st.textContent='❌ Enter valid phone with country code (e.g. +919876543210)';return;
   }
 
-  statusEl.className='wa-status loading';
-  statusEl.textContent='⏳ Saving…';
+  st.className='wa-status loading';st.textContent='⏳ Saving…';
 
   try{
     await sbFetch('/medmama_wa_alerts',{
@@ -1190,15 +601,83 @@ async function saveWaPrefs(){
       headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},
       body:JSON.stringify({user_id:currentUser.id,phone:phone,enabled:enabled})
     });
-    statusEl.className='wa-status ok';
-    statusEl.textContent=enabled
-      ?'✅ WhatsApp alerts enabled! You\'ll get reminders for missed doses.'
-      :'✅ Alerts disabled. You won\'t receive WhatsApp messages.';
+
+    if(enabled){
+      // Send welcome message via edge function
+      st.textContent='⏳ Sending welcome message…';
+      try{
+        const res=await fetch(WA_FN,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${accessToken}`},
+          body:JSON.stringify({type:'welcome',user_id:currentUser.id})
+        });
+        if(res.ok){
+          st.className='wa-status ok';
+          st.textContent='✅ Alerts ON! Welcome message sent to your WhatsApp.';
+        }else{
+          st.className='wa-status ok';
+          st.textContent='✅ Alerts ON! (Deploy edge function to receive messages)';
+        }
+      }catch(e){
+        st.className='wa-status ok';
+        st.textContent='✅ Alerts saved! (Edge function not deployed yet)';
+      }
+      document.getElementById('wa-test-section').style.display='block';
+    }else{
+      st.className='wa-status ok';
+      st.textContent='✅ Alerts disabled.';
+      document.getElementById('wa-test-section').style.display='none';
+    }
   }catch(e){
-    statusEl.className='wa-status err';
-    statusEl.textContent='❌ Failed to save. Please try again.';
+    st.className='wa-status err';st.textContent='❌ Failed to save.';console.error(e);
+  }
+}
+
+async function sendTestAlert(){
+  const btn=document.getElementById('wa-test-btn');
+  const st=document.getElementById('wa-status');
+
+  btn.disabled=true;btn.textContent='📲 Sending…';
+  st.className='wa-status loading';st.textContent='⏳ Sending test alert with today\'s missed medicines…';
+
+  // Build missed meds list from today's data
+  const dayData=await loadDayFromDB(todayKey());
+  const missedMeds=userMeds.filter(m=>!dayData.checks[m.id]);
+
+  try{
+    const res=await fetch(WA_FN,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${accessToken}`},
+      body:JSON.stringify({
+        type:'test',
+        user_id:currentUser.id,
+        missed:missedMeds.map(m=>({
+          brand:m.brand,
+          purpose:getMedPurpose(m.brand,m.purpose),
+          time:m.time
+        }))
+      })
+    });
+
+    if(res.ok){
+      const data=await res.json();
+      st.className='wa-status ok';
+      if(missedMeds.length===0){
+        st.textContent='✅ Test sent! All medicines taken today — sent a congratulations message.';
+      }else{
+        st.textContent=`✅ Test sent! Alerted for ${missedMeds.length} missed medicine${missedMeds.length!==1?'s':''}.`;
+      }
+    }else{
+      st.className='wa-status err';
+      st.textContent='❌ Failed. Make sure edge function is deployed.';
+    }
+  }catch(e){
+    st.className='wa-status err';
+    st.textContent='❌ Network error. Check edge function deployment.';
     console.error(e);
   }
+
+  btn.disabled=false;btn.textContent='📲 Send Test Alert Now';
 }
 
 function updateWaPreview(){
@@ -1206,12 +685,8 @@ function updateWaPreview(){
   if(userMeds.length>0){
     const med=userMeds[0];
     const purpose=getMedPurpose(med.brand,med.purpose);
-    const timeLabel={morning:'Morning',noon:'Afternoon',evening:'Evening',night:'Night'}[med.time]||'Morning';
-    msg.innerHTML=`
-      🌸 <strong>MedMama Alert</strong><br><br>
-      You missed <span class="med-highlight">${med.brand}</span> (${timeLabel} dose).<br>
-      This medicine is needed for — <em>${purpose}</em><br><br>
-      💊 Open MedMama to mark it as taken.`;
+    const tl={morning:'Morning',noon:'Afternoon',evening:'Evening',night:'Night'}[med.time]||'Morning';
+    msg.innerHTML=`🌸 <strong>MedMama Alert</strong><br><br>You missed <span class="med-highlight">${med.brand}</span> (${tl} dose).<br>This medicine is needed for — <em>${purpose}</em><br><br>💊 Open MedMama to mark it as taken.`;
   }
 }
 </script>
