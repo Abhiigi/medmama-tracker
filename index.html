@@ -345,6 +345,67 @@ textarea::placeholder{color:#c4b4b4;}
   <div class="btn-row"><button class="btn btn-primary" onclick="saveFinTxn()">Save</button><button class="btn btn-ghost" onclick="closeFinTxnModal()">Cancel</button><button class="btn btn-danger" id="fin-txn-del-btn" onclick="deleteFinTxn()" style="display:none">Delete</button></div>
 </div></div>
 
+<!-- BANK UPLOAD -->
+<div class="card">
+  <div class="sec-label">📄 Bank Statement Upload <div class="sec-line"></div></div>
+
+  <input type="file" accept=".pdf" onchange="handleBankUpload(event)" />
+
+  <div style="font-size:12px;color:#888;margin-top:6px;">
+    Upload last 3 months statement → auto summary
+  </div>
+
+  <div id="bank-summary" style="margin-top:10px;font-size:12px;"></div>
+</div>
+
+
+<!-- DAILY THOUGHT -->
+<div class="card">
+  <div class="sec-label">🧠 Daily Thought / Plan <div class="sec-line"></div></div>
+
+  <textarea id="fin-thought" placeholder="Thought..."></textarea>
+  <textarea id="fin-plan" placeholder="Plan..."></textarea>
+  <textarea id="fin-idea" placeholder="New idea / interest..."></textarea>
+</div>
+
+
+<!-- RANDOM SPENDING -->
+<div class="card">
+  <div class="sec-label">💸 Random Spending <div class="sec-line"></div></div>
+  <textarea id="fin-random" placeholder="Impulse / unexpected spending..."></textarea>
+</div>
+
+
+<!-- DAILY LIMIT -->
+<div class="card">
+  <div class="sec-label">📊 Daily Budget <div class="sec-line"></div></div>
+
+  <div style="display:flex;gap:10px;">
+    <input id="fin-limit" placeholder="Suggested limit ₹" type="number"/>
+    <input id="fin-actual" placeholder="Spent ₹" type="number"/>
+  </div>
+</div>
+
+
+<!-- PREDICTION -->
+<div class="card">
+  <div class="sec-label">🔮 Prediction <div class="sec-line"></div></div>
+  <div id="fin-predict"></div>
+</div>
+
+
+<!-- LIFE EVENTS -->
+<div class="card">
+  <div class="sec-label">🎯 Life Events <div class="sec-line"></div></div>
+
+  <input id="event-title" placeholder="Event (Baby delivery / Trip / EMI)" />
+  <input id="event-cost" type="number" placeholder="Cost ₹"/>
+  <button onclick="saveEvent()" class="btn btn-primary btn-sm" style="margin-top:8px;">Save</button>
+
+  <div id="event-list" style="margin-top:10px;"></div>
+</div>
+
+  
 <!-- NUT TOOLTIP -->
 <div id="nut-overlay" class="nut-tooltip-overlay" style="display:none" onclick="closeNutTooltip()"></div>
 <div id="nut-tooltip" class="nut-tooltip" style="display:none"><button class="nt-close" onclick="closeNutTooltip()">✕</button><div class="nt-icon" id="nt-icon"></div><div class="nt-title" id="nt-title"></div><div class="nt-body" id="nt-body"></div><div class="nt-foods" id="nt-foods"></div></div>
@@ -457,6 +518,82 @@ function renderFinance(){
   loadFinTxns(selectedFinPerson).then(()=>renderFinMonth());
 }
 
+// =======================
+// BANK PDF SIMPLE PARSER
+// =======================
+async function handleBankUpload(e){
+  const file = e.target.files[0];
+  if(!file)return;
+
+  const text = await file.text(); // basic read (works for simple PDFs)
+
+  let totalIn = 0;
+  let totalOut = 0;
+
+  const amounts = text.match(/\d{2,3},\d{3}/g) || [];
+
+  amounts.forEach(a=>{
+    const val = parseInt(a.replace(/,/g,''));
+    if(val>50000) totalIn+=val;
+    else totalOut+=val;
+  });
+
+  document.getElementById('bank-summary').innerHTML =
+    `<b>Total Income:</b> ₹${totalIn}<br>
+     <b>Total Expense:</b> ₹${totalOut}<br>
+     <b>Estimated Savings:</b> ₹${totalIn-totalOut}`;
+
+  predictFinance(totalIn,totalOut);
+}
+
+
+// =======================
+// PREDICTION
+// =======================
+function predictFinance(income, expense){
+  let dailyLimit = Math.round((income-expense)/30);
+
+  document.getElementById('fin-predict').innerHTML =
+    `✅ Suggested Daily Spend: ₹${dailyLimit}<br>
+     ⚠️ Upcoming Month Expense: ₹${expense}<br>
+     💡 Keep buffer: ₹20,000`;
+}
+
+
+// =======================
+// LIFE EVENTS
+// =======================
+async function saveEvent(){
+  const title = document.getElementById('event-title').value;
+  const cost = document.getElementById('event-cost').value;
+
+  if(!title) return alert("Enter event");
+
+  await sbFetch('/medmama_finance_events',{
+    method:'POST',
+    body:JSON.stringify({
+      user_id:currentUser.id,
+      person_id:selectedFinPerson,
+      title:title,
+      estimated_cost:cost
+    })
+  });
+
+  loadEvents();
+}
+
+
+async function loadEvents(){
+  const rows = await sbFetch(`/medmama_finance_events?user_id=eq.${currentUser.id}`);
+
+  let html="";
+  rows.forEach(e=>{
+    html+=`<div>🎯 ${e.title} - ₹${e.estimated_cost}</div>`;
+  });
+
+  document.getElementById('event-list').innerHTML = html;
+}
+  
 function renderFinMonth(){
   document.getElementById('fin-month-title').textContent=`${MONTHS[finMonth]} ${finYear}`;
   const mKey=`${finYear}-${String(finMonth+1).padStart(2,'0')}`;
