@@ -1,638 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MedMama 🌸 Pregnancy Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
-:root{--blush:#f7e8e8;--rose:#e8a0a0;--deep:#c0627a;--deeper:#a04060;--sage:#7aaa80;--softgreen:#d4ead6;--cream:#fdf8f4;--white:#fffaf7;--text:#3a2a30;--light:#9a7878;--shadow:0 4px 24px rgba(192,98,122,.09);--visit:#7b5ea7;--visit-light:#ede8f7;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px;}
-.page-layout{display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative;}
-.side-panel{width:200px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow:hidden;}
-.side-panel-left{display:none;}.side-panel-right{display:none;}
-@media(min-width:900px){.side-panel-left{display:block;}.side-panel-right{display:block;}}
-.main-col{flex:1;max-width:520px;min-width:0;}
-.nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px;}
-.nutrition-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px;}
-.nut-card{background:#fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);text-align:center;cursor:pointer;transition:transform .2s;}
-.nut-card:hover{transform:scale(1.04);}
-.nut-icon{font-size:26px;margin-bottom:4px;}
-.nut-name{font-size:10px;font-weight:700;color:var(--deep);letter-spacing:.5px;}
-.nut-foods{font-size:9px;color:var(--sage);margin-top:3px;font-weight:600;}
-.baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px;}
-.baby-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;}
-.baby-svg-wrap{width:160px;height:200px;position:relative;}
-.week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep);text-align:center;}
-.baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center;}
-.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%);}
-.auth-box{background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(192,98,122,.13);}
-.auth-logo{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px;}
-.auth-sub{text-align:center;font-size:13px;color:var(--light);margin-bottom:28px;}
-.auth-tabs{display:flex;background:var(--blush);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px;}
-.auth-tab{flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;background:transparent;color:var(--light);transition:all .2s;}
-.auth-tab.active{background:#fff;color:var(--deep);box-shadow:0 2px 8px rgba(192,98,122,.12);}
-.auth-field{margin-bottom:14px;}
-.auth-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px;}
-.auth-field input{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border .2s;}
-.auth-field input:focus{border-color:var(--rose);}
-.auth-btn{width:100%;padding:13px;background:var(--deep);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;transition:background .2s;}
-.auth-btn:hover{background:var(--deeper);}.auth-btn:disabled{background:#ddd;cursor:not-allowed;}
-.auth-err{background:#fff0f0;border:1px solid #f5c0c0;border-radius:10px;padding:10px 14px;font-size:12px;color:#c04040;margin-top:12px;display:none;}
-.auth-ok{background:#f0fff4;border:1px solid #a0d4b0;border-radius:10px;padding:10px 14px;font-size:12px;color:#2a7040;margin-top:12px;display:none;}
-.topbar{background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px;}
-.logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;white-space:nowrap;}
-.topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
-.tabs{display:flex;gap:4px;flex-wrap:wrap;}
-.tab{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
-.tab.active{background:var(--deep);color:#fff;}.tab:not(.active){background:var(--blush);color:var(--light);}
-.signout-btn{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;background:#f5f0f0;color:var(--light);white-space:nowrap;}
-.signout-btn:hover{background:var(--blush);color:var(--deep);}
-.sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
-.sync-dot.ok{background:#7aaa80;}.sync-dot.err{background:#e07070;}.sync-dot.loading{background:#f5c842;animation:pulse 1s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.body{max-width:520px;margin:0 auto;padding:20px 16px;}
-.card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px;}
-.view{display:none;}.view.active{display:block;}
-#app{display:none;}
-.date-row{display:flex;justify-content:space-between;align-items:center;}
-.date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-.date-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);font-weight:600;}
-.today-badge{background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px;}
-.future-badge{background:#f0f4ff;color:#7b8fdb;font-size:10px;font-weight:600;padding:3px 12px;border-radius:20px;border:1px solid #c8d4f8;}
-.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px;}
-.prog-count{font-size:14px;font-weight:700;color:var(--deep);}
-.prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease;}
-.prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light);}
-.sec-label{display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);}
-.sec-line{flex:1;height:1px;background:rgba(0,0,0,.07);}
-.med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;transition:all .2s;border-left:4px solid #e8d8d8;animation:fadeUp .35s ease both;}
-.med-card.done{opacity:.8;}
-.med-card.morning{border-left-color:#f5c842;}.med-card.morning.done{background:#fffef0;}
-.med-card.noon{border-left-color:#f5944a;}.med-card.noon.done{background:#fff6f0;}
-.med-card.evening{border-left-color:#7b8fdb;}.med-card.evening.done{background:#f4f6ff;}
-.med-card.night{border-left-color:#9b7fe8;}.med-card.night.done{background:#f7f3ff;}
-.med-card.future-day{opacity:.5;filter:grayscale(.4);}
-.future-notice{background:#f0f4ff;border:1px solid #c8d4f8;border-radius:14px;padding:10px 16px;margin-bottom:14px;font-size:12px;color:#5a6aaa;display:flex;align-items:center;gap:8px;}
-.med-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.morning .med-icon{background:#fff8e1;}.noon .med-icon{background:#fff0e6;}.evening .med-icon{background:#f0f4ff;}.night .med-icon{background:#f0eaff;}
-.med-info{flex:1;min-width:0;}.med-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--deep);font-style:italic;}.med-name{font-size:12px;color:var(--text);font-weight:500;margin-top:1px;}.med-meta{font-size:10px;color:var(--light);margin-top:2px;}
-.med-dose{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
-.morning .med-dose{background:#fff8e1;color:#7a5c00;}.noon .med-dose{background:#fff0e6;color:#7a3500;}.evening .med-dose{background:#f0f4ff;color:#1a2870;}.night .med-dose{background:#f0eaff;color:#3a1a70;}
-.chk{width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;transition:all .2s;user-select:none;font-weight:700;}
-.morning .chk.checked{background:#f5c842;border-color:#f5c842;}.noon .chk.checked{background:#f5944a;border-color:#f5944a;}.evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb;}.night .chk.checked{background:#9b7fe8;border-color:#9b7fe8;}
-.notes-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
-textarea{width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:transparent;line-height:1.7;min-height:60px;}
-textarea::placeholder{color:#c4b4b4;}
-.visit-banner{background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;}
-.visit-banner-icon{font-size:22px;flex-shrink:0;}.visit-banner-info{flex:1;}.visit-banner-title{font-size:13px;font-weight:600;color:var(--visit);margin-bottom:2px;}.visit-banner-note{font-size:12px;color:#6a5090;line-height:1.5;}
-.rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush);}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600;}
-.cal-btn{background:var(--blush);border:none;border-radius:10px;padding:6px 16px;cursor:pointer;font-size:18px;color:var(--deep);}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px;}
-.cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--light);letter-spacing:1px;padding:4px 0;}
-.cal-day{border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px;aspect-ratio:1/1;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);font-family:'DM Sans',sans-serif;position:relative;}
-.cal-day.empty-cell{background:transparent;box-shadow:none;cursor:default;}
-.cal-day.future{background:#f0f4ff;color:#7b8fdb;}.cal-day.sel{background:var(--deep)!important;color:#fff!important;font-weight:700;}
-.cal-day.today-cell{background:var(--blush);font-weight:700;}.cal-day.full{background:var(--softgreen);color:#2a6a30;}.cal-day.partial{background:#fff3cd;color:#7a5c00;}.cal-day.none{background:#fff;}
-.cal-day.has-visit::after{content:'🏥';font-size:8px;position:absolute;top:1px;right:2px;}
-.cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px;}.cal-day.full .cal-dot{background:#2a6a30;}.cal-day.partial .cal-dot{background:#f5c842;}
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light);}.leg-dot{width:10px;height:10px;border-radius:3px;}
-.summary-line{font-size:13px;line-height:2.1;color:var(--text);}
-.modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;display:none;align-items:flex-end;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px 24px 40px;animation:slideUp .3s ease;}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
-.modal-close{background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--deep);display:flex;align-items:center;justify-content:center;}
-.field{margin-bottom:14px;}.field label{display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px;}
-.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;transition:border .2s;background:#fff;}
-.field input:focus,.field select:focus{border-color:var(--rose);}.field textarea{resize:vertical;min-height:70px;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .2s;}
-.btn-primary{background:var(--deep);color:#fff;}.btn-primary:hover{background:var(--deeper);}
-.btn-danger{background:#fff0f0;color:#c04040;}.btn-danger:hover{background:#ffe0e0;}
-.btn-ghost{background:var(--blush);color:var(--deep);}.btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
-.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-.med-list-item{background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.med-list-icon{font-size:20px;width:36px;text-align:center;}.med-list-info{flex:1;min-width:0;}
-.med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;}.med-list-meta{font-size:11px;color:var(--light);margin-top:1px;}
-.visit-item{background:var(--visit-light);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;border:1px solid #d8caf0;}
-.visit-item-icon{font-size:20px;flex-shrink:0;}.visit-item-info{flex:1;min-width:0;}.visit-item-date{font-size:13px;font-weight:600;color:var(--visit);}.visit-item-note{font-size:12px;color:#6a5090;margin-top:2px;}
-.upload-area{border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:background .2s;}
-.upload-area:hover{background:var(--blush);}.upload-area input[type=file]{display:none;}
-.empty-state{text-align:center;padding:32px 20px;color:var(--light);}.empty-state .icon{font-size:36px;margin-bottom:10px;}.empty-state p{font-size:13px;line-height:1.6;}
-.nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200;animation:fadeUp .2s ease;}
-.nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199;}
-.nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep);}
-.nt-icon{font-size:36px;text-align:center;margin:8px 0 4px;}.nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic;}
-.nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px;}.nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600;}
-/* WA */
-.wa-card{background:linear-gradient(135deg,#dcfce7 0%,#f0fdf4 100%);border:1.5px solid #86efac;border-radius:18px;padding:18px 20px;margin-bottom:14px;}
-.wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}.wa-icon{font-size:28px;}
-.wa-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:#166534;font-style:italic;}
-.wa-desc{font-size:12px;color:#4a7a5a;line-height:1.6;margin-bottom:14px;}
-.wa-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}.wa-toggle-label{font-size:13px;font-weight:600;color:#166534;}
-.wa-toggle{position:relative;width:48px;height:26px;cursor:pointer;}.wa-toggle input{opacity:0;width:0;height:0;}
-.wa-slider{position:absolute;inset:0;background:#ccc;border-radius:26px;transition:.3s;}
-.wa-slider::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
-.wa-toggle input:checked+.wa-slider{background:#22c55e;}.wa-toggle input:checked+.wa-slider::before{transform:translateX(22px);}
-.wa-phone-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;}.wa-phone-row .field{flex:1;margin-bottom:0;}.wa-phone-row .field input{border-color:#86efac;}
-.wa-schedule{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;}
-.wa-slot{background:#fff;border:1px solid #bbf7d0;border-radius:10px;padding:7px 10px;font-size:11px;color:#166534;text-align:center;font-weight:500;}.wa-slot-time{font-weight:700;font-size:13px;}
-.wa-status{margin-top:10px;padding:8px 14px;border-radius:10px;font-size:12px;display:none;}
-.wa-status.ok{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac;}
-.wa-status.err{display:block;background:#fff0f0;color:#c04040;border:1px solid #f5c0c0;}
-.wa-status.loading{display:block;background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
-.wa-preview{margin-top:14px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px;}
-.wa-preview-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;font-weight:600;}
-.wa-preview-msg{font-size:13px;color:#1f2937;line-height:1.7;}.wa-preview-msg .med-highlight{background:#dcfce7;padding:1px 6px;border-radius:6px;font-weight:600;color:#166534;}
-.wa-test-btn{margin-top:4px;background:#22c55e;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
-.wa-test-btn:hover{background:#16a34a;}.wa-test-btn:disabled{background:#a3a3a3;cursor:not-allowed;}
-/* FINANCE */
-.fin-person-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
-.fin-ptab{padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;transition:all .2s;background:#fff;color:var(--light);display:flex;align-items:center;gap:6px;}
-.fin-ptab.active{border-color:var(--deep);background:var(--deep);color:#fff;}
-.fin-add-p{padding:7px 14px;border-radius:20px;border:2px dashed var(--rose);cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:transparent;color:var(--rose);transition:all .2s;}
-.fin-add-p:hover{background:var(--blush);}
-.fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
-.fin-stat{border-radius:16px;padding:14px 10px;text-align:center;}
-.fin-stat-num{font-size:20px;font-weight:700;font-family:'Cormorant Garamond',serif;}
-.fin-stat-lbl{font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-.fin-stat.inc{background:#dcfce7;}.fin-stat.inc .fin-stat-num{color:#166534;}
-.fin-stat.exp{background:#fff0f0;}.fin-stat.exp .fin-stat-num{color:#c04040;}
-.fin-stat.sav{background:#f0f4ff;}.fin-stat.sav .fin-stat-num{color:#3a5aba;}
-.fin-stat.sav.neg{background:#fff0f0;}.fin-stat.sav.neg .fin-stat-num{color:#c04040;}
-.fin-bar-wrap{margin-bottom:10px;}.fin-bar-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
-.fin-bar{height:8px;background:#f0e8e8;border-radius:8px;overflow:hidden;}.fin-bar-fill{height:100%;border-radius:8px;transition:width .4s;}
-.fin-txn{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f0f0;}
-.fin-txn:last-child{border-bottom:none;}
-.fin-txn-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.fin-txn-ic.i{background:#dcfce7;}.fin-txn-ic.e{background:#fff0f0;}
-.fin-txn-info{flex:1;min-width:0;}.fin-txn-cat{font-size:13px;font-weight:500;}.fin-txn-note{font-size:10px;color:var(--light);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fin-txn-r{text-align:right;flex-shrink:0;}.fin-txn-amt{font-size:14px;font-weight:700;}
-.fin-txn-amt.i{color:#166534;}.fin-txn-amt.e{color:#c04040;}
-.fin-txn-date{font-size:9px;color:var(--light);margin-top:1px;}
-.fin-del{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;opacity:.4;transition:opacity .2s;}.fin-del:hover{opacity:1;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
-@keyframes wiggle{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
-@keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.12);}28%{transform:scale(1);}42%{transform:scale(1.06);}70%{transform:scale(1);}}
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedMama 🌸 Pregnancy Tracker</title>
+
+  https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap
+  https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.jsscript>
+
+  <style>
+    :root{
+      --blush:#f7e8e8;--rose:#e8a0a0;--deep:#c0627a;--deeper:#a04060;
+      --sage:#7aaa80;--softgreen:#d4ead6;--cream:#fdf8f4;--white:#fffaf7;
+      --text:#3a2a30;--light:#9a7878;--shadow:0 4px 24px rgba(192,98,122,.09);
+      --visit:#7b5ea7;--visit-light:#ede8f7;
+      --ok:#1e8e3e;--bad:#c04040;--warn:#b37700;--info:#3757c8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
+      min-height:100vh;padding-bottom:80px
+    }
+    .page-layout{display:flex;align-items:flex-start;justify-content:center;position:relative}
+    .side-panel{width:190px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow:hidden}
+    .side-panel-left,.side-panel-right{display:none}
+    @media(min-width:980px){.side-panel-left,.side-panel-right{display:block}}
+    .main-col{flex:1;max-width:640px;min-width:0}
+
+    /* Side panels */
+    .nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px}
+    .nutrition-title,.baby-title{
+      font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px
+    }
+    .nut-card{
+      background:#fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);
+      text-align:center;cursor:pointer;transition:transform .2s
+    }
+    .nut-card:hover{transform:scale(1.03)}
+    .nut-icon{font-size:26px;margin-bottom:4px}
+    .nut-name{font-size:10px;font-weight:700;color:var(--deep);letter-spacing:.5px}
+    .nut-foods{font-size:9px;color:var(--sage);margin-top:3px;font-weight:600}
+    .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px}
+    .baby-svg-wrap{width:160px;height:200px}
+    .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep)}
+    .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center}
+
+    /* Auth */
+    .auth-screen{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+      background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%)
+    }
+    .auth-box{
+      background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;
+      box-shadow:0 8px 40px rgba(192,98,122,.13)
+    }
+    .auth-logo{
+      font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--deep);
+      font-style:italic;text-align:center;margin-bottom:4px
+    }
+    .auth-sub{text-align:center;font-size:13px;color:var(--light);margin-bottom:28px}
+    .auth-tabs{display:flex;background:var(--blush);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
+    .auth-tab{
+      flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;
+      font-weight:500;background:transparent;color:var(--light);transition:all .2s
+    }
+    .auth-tab.active{background:#fff;color:var(--deep);box-shadow:0 2px 8px rgba(192,98,122,.12)}
+    .auth-field{margin-bottom:14px}
+    .auth-field label{
+      display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+      color:var(--light);margin-bottom:5px
+    }
+    .auth-field input{
+      width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:11px 14px;
+      font-size:14px;color:var(--text);outline:none;transition:border .2s
+    }
+    .auth-field input:focus{border-color:var(--rose)}
+    .auth-btn{
+      width:100%;padding:13px;background:var(--deep);color:#fff;border:none;border-radius:14px;
+      font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;transition:background .2s
+    }
+    .auth-btn:hover{background:var(--deeper)}
+    .auth-btn:disabled{background:#ddd;cursor:not-allowed}
+    .auth-err,.auth-ok{border-radius:10px;padding:10px 14px;font-size:12px;margin-top:12px;display:none}
+    .auth-err{background:#fff0f0;border:1px solid #f5c0c0;color:#c04040}
+    .auth-ok{background:#f0fff4;border:1px solid #a0d4b0;color:#2a7040}
+
+    /* Topbar */
+    .topbar{
+      background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px
+    }
+    .logo{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--deep);font-style:italic}
+    .topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .tabs{display:flex;gap:4px;flex-wrap:wrap}
+    .tab{
+      padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;
+      transition:all .2s;white-space:nowrap
+    }
+    .tab.active{background:var(--deep);color:#fff}
+    .tab:not(.active){background:var(--blush);color:var(--light)}
+    .signout-btn{
+      padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;
+      background:#f5f0f0;color:var(--light)
+    }
+    .signout-btn:hover{background:var(--blush);color:var(--deep)}
+
+    .sync-bar{
+      display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;
+      background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada
+    }
+    .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
+    .sync-dot.ok{background:#7aaa80}
+    .sync-dot.err{background:#e07070}
+    .sync-dot.loading{background:#f5c842;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* Layout */
+    .body{max-width:640px;margin:0 auto;padding:20px 16px}
+    .card{
+      background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px
+    }
+    .view{display:none}
+    .view.active{display:block}
+    #app{display:none}
+
+    .date-row{display:flex;justify-content:space-between;align-items:center}
+    .date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+    .date-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);font-weight:600}
+    .today-badge{
+      background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;
+      letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px
+    }
+    .future-badge{
+      background:#f0f4ff;color:#7b8fdb;font-size:10px;font-weight:600;padding:3px 12px;
+      border-radius:20px;border:1px solid #c8d4f8
+    }
+
+    .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px}
+    .prog-count{font-size:14px;font-weight:700;color:var(--deep)}
+    .prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease}
+    .prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light)}
+
+    .sec-label{
+      display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:10px;font-weight:600;
+      letter-spacing:1.5px;text-transform:uppercase;color:var(--light)
+    }
+    .sec-line{flex:1;height:1px;background:rgba(0,0,0,.07)}
+
+    /* Medicine cards */
+    .med-card{
+      background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);
+      display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8
+    }
+    .med-card.done{opacity:.8}
+    .med-card.morning{border-left-color:#f5c842}.med-card.morning.done{background:#fffef0}
+    .med-card.noon{border-left-color:#f5944a}.med-card.noon.done{background:#fff6f0}
+    .med-card.evening{border-left-color:#7b8fdb}.med-card.evening.done{background:#f4f6ff}
+    .med-card.night{border-left-color:#9b7fe8}.med-card.night.done{background:#f7f3ff}
+    .med-card.future-day{opacity:.5;filter:grayscale(.4)}
+    .future-notice{
+      background:#f0f4ff;border:1px solid #c8d4f8;border-radius:14px;padding:10px 16px;
+      margin-bottom:14px;font-size:12px;color:#5a6aaa;display:flex;align-items:center;gap:8px
+    }
+    .med-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .morning .med-icon{background:#fff8e1}.noon .med-icon{background:#fff0e6}.evening .med-icon{background:#f0f4ff}.night .med-icon{background:#f0eaff}
+    .med-info{flex:1;min-width:0}
+    .med-brand{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--deep);font-style:italic}
+    .med-name{font-size:12px;color:var(--text);font-weight:500;margin-top:1px}
+    .med-meta{font-size:10px;color:var(--light);margin-top:2px}
+    .med-dose{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+    .morning .med-dose{background:#fff8e1;color:#7a5c00}
+    .noon .med-dose{background:#fff0e6;color:#7a3500}
+    .evening .med-dose{background:#f0f4ff;color:#1a2870}
+    .night .med-dose{background:#f0eaff;color:#3a1a70}
+    .chk{
+      width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;cursor:pointer;
+      flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700
+    }
+    .morning .chk.checked{background:#f5c842;border-color:#f5c842}
+    .noon .chk.checked{background:#f5944a;border-color:#f5944a}
+    .evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb}
+    .night .chk.checked{background:#9b7fe8;border-color:#9b7fe8}
+
+    textarea{
+      width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;
+      color:var(--text);background:transparent;line-height:1.7;min-height:60px
+    }
+    textarea::placeholder{color:#c4b4b4}
+
+    /* Visits */
+    .visit-banner{
+      background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;
+      margin-bottom:14px;display:flex;gap:12px;align-items:flex-start
+    }
+    .visit-banner-icon{font-size:22px;flex-shrink:0}
+    .visit-banner-info{flex:1}
+    .visit-banner-title{font-size:13px;font-weight:600;color:var(--visit);margin-bottom:2px}
+    .visit-banner-note{font-size:12px;color:#6a5090;line-height:1.5}
+    .rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush)}
+
+    /* Calendar */
+    .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600}
+    .cal-btn{background:var(--blush);border:none;border-radius:10px;padding:6px 16px;cursor:pointer;font-size:18px;color:var(--deep)}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+    .cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--light);letter-spacing:1px;padding:4px 0}
+    .cal-day{
+      border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:5px 2px;aspect-ratio:1/1;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative
+    }
+    .cal-day.empty-cell{background:transparent;box-shadow:none;cursor:default}
+    .cal-day.future{background:#f0f4ff;color:#7b8fdb}
+    .cal-day.sel{background:var(--deep)!important;color:#fff!important;font-weight:700}
+    .cal-day.today-cell{background:var(--blush);font-weight:700}
+    .cal-day.full{background:var(--softgreen);color:#2a6a30}
+    .cal-day.partial{background:#fff3cd;color:#7a5c00}
+    .cal-day.none{background:#fff}
+    .cal-day.has-visit::after{content:'🏥';font-size:8px;position:absolute;top:1px;right:2px}
+    .cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px}
+    .cal-day.full .cal-dot{background:#2a6a30}
+    .cal-day.partial .cal-dot{background:#f5c842}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light)}
+    .leg-dot{width:10px;height:10px;border-radius:3px}
+
+    /* Modals */
+    .modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{
+      background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;
+      padding:28px 24px 40px;animation:slideUp .3s ease
+    }
+    .modal-title{
+      font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;
+      margin-bottom:20px;display:flex;justify-content:space-between;align-items:center
+    }
+    .modal-close{
+      background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;
+      color:var(--deep);display:flex;align-items:center;justify-content:center
+    }
+    .field{margin-bottom:14px}
+    .field label{
+      display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px
+    }
+    .field input,.field select,.field textarea{
+      width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--text);outline:none;background:#fff
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose)}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600}
+    .btn-primary{background:var(--deep);color:#fff}
+    .btn-primary:hover{background:var(--deeper)}
+    .btn-danger{background:#fff0f0;color:#c04040}
+    .btn-ghost{background:var(--blush);color:var(--deep)}
+    .btn-sm{padding:6px 14px;font-size:12px;border-radius:10px}
+    .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+    .med-list-item,.visit-item{
+      background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px
+    }
+    .visit-item{background:var(--visit-light);border:1px solid #d8caf0}
+    .med-list-icon,.visit-item-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+    .med-list-info,.visit-item-info{flex:1;min-width:0}
+    .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic}
+    .med-list-meta,.visit-item-note{font-size:11px;color:var(--light);margin-top:1px}
+    .visit-item-date{font-size:13px;font-weight:600;color:var(--visit)}
+
+    .upload-area{
+      border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;cursor:pointer
+    }
+    .upload-area input[type=file]{display:none}
+    .empty-state{text-align:center;padding:32px 20px;color:var(--light)}
+    .empty-state .icon{font-size:36px;margin-bottom:10px}
+
+    /* nutrition tooltip */
+    .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200}
+    .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199}
+    .nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep)}
+    .nt-icon{font-size:36px;text-align:center;margin:8px 0 4px}
+    .nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic}
+    .nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px}
+    .nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600}
+
+    /* WhatsApp */
+    .wa-card{background:linear-gradient(135deg,#dcfce7 0%,#f0fdf4 100%);border:1.5px solid #86efac;border-radius:18px;padding:18px 20px;margin-bottom:14px}
+    .wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .wa-icon{font-size:28px}
+    .wa-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:#166534;font-style:italic}
+    .wa-desc{font-size:12px;color:#4a7a5a;line-height:1.6;margin-bottom:14px}
+    .wa-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .wa-toggle-label{font-size:13px;font-weight:600;color:#166534}
+    .wa-toggle{position:relative;width:48px;height:26px;cursor:pointer}
+    .wa-toggle input{opacity:0;width:0;height:0}
+    .wa-slider{position:absolute;inset:0;background:#ccc;border-radius:26px;transition:.3s}
+    .wa-slider::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+    .wa-toggle input:checked+.wa-slider{background:#22c55e}
+    .wa-toggle input:checked+.wa-slider::before{transform:translateX(22px)}
+    .wa-phone-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px}
+    .wa-phone-row .field{flex:1;margin-bottom:0}
+    .wa-schedule{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+    .wa-slot{background:#fff;border:1px solid #bbf7d0;border-radius:10px;padding:7px 10px;font-size:11px;color:#166534;text-align:center;font-weight:500}
+    .wa-status{margin-top:10px;padding:8px 14px;border-radius:10px;font-size:12px;display:none}
+    .wa-status.ok{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac}
+    .wa-status.err{display:block;background:#fff0f0;color:#c04040;border:1px solid #f5c0c0}
+    .wa-status.loading{display:block;background:#fef9c3;color:#854d0e;border:1px solid #fde047}
+    .wa-preview{margin-top:14px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px}
+    .wa-preview-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;font-weight:600}
+    .wa-preview-msg{font-size:13px;color:#1f2937;line-height:1.7}
+    .wa-preview-msg .med-highlight{background:#dcfce7;padding:1px 6px;border-radius:6px;font-weight:600;color:#166534}
+    .wa-test-btn{margin-top:4px;background:#22c55e;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer}
+    .wa-test-btn:disabled{background:#a3a3a3;cursor:not-allowed}
+
+    /* Finance */
+    .fin-person-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+    .fin-ptab{
+      padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;
+      background:#fff;color:var(--light);display:flex;align-items:center;gap:6px
+    }
+    .fin-ptab.active{border-color:var(--deep);background:var(--deep);color:#fff}
+    .fin-add-p{padding:7px 14px;border-radius:20px;border:2px dashed var(--rose);cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--rose)}
+    .fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+    .fin-stat{border-radius:16px;padding:14px 10px;text-align:center}
+    .fin-stat-num{font-size:20px;font-weight:700;font-family:'Cormorant Garamond',serif}
+    .fin-stat-lbl{font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+    .fin-stat.inc{background:#dcfce7}.fin-stat.inc .fin-stat-num{color:#166534}
+    .fin-stat.exp{background:#fff0f0}.fin-stat.exp .fin-stat-num{color:#c04040}
+    .fin-stat.sav{background:#eef2ff}.fin-stat.sav .fin-stat-num{color:#3757c8}
+    .fin-stat.sav.neg{background:#fff0f0}.fin-stat.sav.neg .fin-stat-num{color:#c04040}
+    .fin-bar-wrap{margin-bottom:10px}
+    .fin-bar-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+    .fin-bar{height:8px;background:#f0e8e8;border-radius:8px;overflow:hidden}
+    .fin-bar-fill{height:100%;border-radius:8px;transition:width .4s}
+    .fin-txn{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f0f0}
+    .fin-txn:last-child{border-bottom:none}
+    .fin-txn-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .fin-txn-ic.i{background:#dcfce7}.fin-txn-ic.e{background:#fff0f0}
+    .fin-txn-info{flex:1;min-width:0}
+    .fin-txn-cat{font-size:13px;font-weight:500}
+    .fin-txn-note{font-size:10px;color:var(--light);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .fin-txn-r{text-align:right;flex-shrink:0}
+    .fin-txn-amt{font-size:14px;font-weight:700}
+    .fin-txn-amt.i{color:#166534}.fin-txn-amt.e{color:#c04040}
+    .fin-txn-date{font-size:9px;color:var(--light);margin-top:1px}
+    .fin-del{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;opacity:.4}
+    .fin-upload-box{
+      background:linear-gradient(135deg,#fffdf7 0%,#fff7f0 100%);
+      border:1.5px solid #f5d5b8;border-radius:18px;padding:16px 18px;margin-bottom:14px
+    }
+    .fin-upload-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:#a35b32;font-style:italic;margin-bottom:8px}
+    .fin-upload-desc{font-size:12px;color:#8a6a56;line-height:1.6;margin-bottom:12px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .pill.ok{background:#dcfce7;color:#166534}
+    .pill.warn{background:#fff3cd;color:#8a6500}
+    .pill.bad{background:#fff0f0;color:#c04040}
+  </style>
 </head>
 <body>
 
-<div id="auth-screen" class="auth-screen"><div class="auth-box">
-  <div class="auth-logo">🌸 MedMama</div><div class="auth-sub">Your personal pregnancy medicine tracker</div>
-  <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button><button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button></div>
-  <div class="auth-field"><label>Email</label><input id="auth-email" type="email" placeholder="you@example.com"/></div>
-  <div class="auth-field"><label>Password</label><input id="auth-password" type="password" placeholder="••••••••"/></div>
-  <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
-  <div class="auth-err" id="auth-err"></div><div class="auth-ok" id="auth-ok"></div>
-</div></div>
+  <!-- AUTH -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-box">
+      <div class="auth-logo">🌸 MedMama</div>
+      <div class="auth-sub">Your personal pregnancy medicine tracker</div>
 
-<div id="app">
-  <div class="topbar"><div class="logo">🌸 MedMama</div><div class="topbar-right"><div class="tabs" id="main-tabs">
-    <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
-    <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
-    <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
-    <button class="tab" id="tab-visits" onclick="showView('visits')">Visits</button>
-    <button class="tab" id="tab-mymeds" onclick="showView('mymeds')">My Meds</button>
-    <button class="tab" id="tab-alerts" onclick="showView('alerts')">🔔</button>
-    <button class="tab" id="tab-finance" onclick="showView('finance')">💰</button>
-  </div><button class="signout-btn" onclick="signOut()">Sign out</button></div></div>
-  <div class="sync-bar"><div class="sync-dot" id="sync-dot"></div><span id="sync-text">Loading…</span></div>
-
-  <div class="page-layout">
-    <div class="side-panel side-panel-left"><div class="nutrition-panel"><div class="nutrition-title">🥗 Pregnancy Nutrition</div><div id="nut-cards"></div></div></div>
-    <div class="main-col"><div class="body">
-
-      <div id="view-otherday" class="view">
-        <div id="otherday-visit-banner"></div>
-        <div class="card"><div class="date-row"><div><div class="date-lbl">Viewing</div><div class="date-val" id="otherday-date-display">—</div></div><div style="display:flex;gap:8px;align-items:center;"><div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div><button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button></div></div></div>
-        <div id="otherday-future-notice" style="display:none" class="future-notice">📅 <span>Future date — can't check off yet.</span></div>
-        <div class="card"><div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="otherday-prog-count">0/0</span></div><div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div><div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div></div>
-        <div id="otherday-med-sections"></div>
-        <div id="otherday-notes-wrap"><div class="sec-label">📝 Notes<div class="sec-line"></div></div><div class="card"><textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea></div></div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
       </div>
 
-      <div id="view-today" class="view active">
-        <div id="visit-today-banner"></div>
-        <div class="card"><div class="date-row"><div><div class="date-lbl">Date</div><div class="date-val" id="date-display">—</div></div><div id="today-badge" class="today-badge" style="display:none">Today</div></div></div>
-        <div class="card"><div class="prog-top"><span class="prog-lbl">Doses taken</span><span class="prog-count" id="prog-count">0/0</span></div><div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div><div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div></div>
-        <div id="med-sections"></div>
-        <div id="no-meds-msg" style="display:none" class="empty-state"><div class="icon">💊</div><p>No medicines yet. Go to <strong>My Meds</strong>.</p></div>
-        <div class="sec-label">📝 Notes<div class="sec-line"></div></div>
-        <div class="card"><textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea></div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input id="auth-email" type="email" placeholder="you@example.com"/>
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input id="auth-password" type="password" placeholder="••••••••"/>
       </div>
 
-      <div id="view-calendar" class="view">
-        <div class="card"><div class="cal-nav"><button class="cal-btn" onclick="changeMonth(-1)">‹</button><div class="cal-title" id="cal-title">—</div><button class="cal-btn" onclick="changeMonth(1)">›</button></div><div class="cal-grid" id="cal-grid"></div><div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All</div><div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div><div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div><div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div></div></div>
-        <div class="card"><div class="summary-line" id="month-summary">Loading…</div></div>
-      </div>
+      <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+      <div class="auth-err" id="auth-err"></div>
+      <div class="auth-ok" id="auth-ok"></div>
+    </div>
+  </div>
 
-      <div id="view-visits" class="view">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">Doctor Visits</div><button class="btn btn-primary btn-sm" onclick="openAddVisit()">+ Add Visit</button></div>
-        <div id="visits-list"></div>
+  <!-- APP -->
+  <div id="app">
+    <div class="topbar">
+      <div class="logo">🌸 MedMama</div>
+      <div class="topbar-right">
+        <div class="tabs">
+          <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
+          <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
+          <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
+          <button class="tab" id="tab-visits" onclick="showView('visits')">Visits</button>
+          <button class="tab" id="tab-mymeds" onclick="showView('mymeds')">My Meds</button>
+          <button class="tab" id="tab-alerts" onclick="showView('alerts')">🔔</button>
+          <button class="tab" id="tab-finance" onclick="showView('finance')">💰</button>
+        </div>
+        <button class="signout-btn" onclick="signOut()">Sign out</button>
       </div>
+    </div>
 
-      <div id="view-mymeds" class="view">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">My Medicines</div><button class="btn btn-primary btn-sm" onclick="openAddMed()">+ Add Med</button></div>
-        <div id="meds-list"></div>
-      </div>
+    <div class="sync-bar">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Loading…</span>
+    </div>
 
-      <div id="view-alerts" class="view">
-        <div class="wa-card">
-          <div class="wa-header"><div class="wa-icon">💬</div><div class="wa-title">WhatsApp Alerts</div></div>
-          <div class="wa-desc">Free alerts via <strong>CallMeBot</strong>. <strong>4 times daily</strong> for missed medicines.</div>
-          <div class="wa-toggle-row"><div class="wa-toggle-label">Enable Alerts</div><label class="wa-toggle"><input type="checkbox" id="wa-enabled" onchange="toggleWaAlerts()"/><span class="wa-slider"></span></label></div>
-          <div id="wa-phone-section" style="display:none">
-            <div class="wa-phone-row"><div class="field"><label>WhatsApp Number</label><input id="wa-phone" type="tel" placeholder="+919876543210"/></div></div>
-            <div class="wa-phone-row" style="margin-top:8px;"><div class="field"><label>CallMeBot API Key</label><input id="wa-apikey" type="text" placeholder="e.g. 1234567"/></div><button class="btn btn-primary btn-sm" onclick="saveWaPrefs()" style="height:42px;margin-bottom:0;">Save</button></div>
-            <div style="background:#fff;border:1px solid #bbf7d0;border-radius:12px;padding:12px;margin-top:12px;font-size:11px;color:#166534;line-height:1.8;"><strong>🔑 Get free API key:</strong><br>1. WhatsApp → <strong>+34 644 71 99 88</strong><br>2. Send: <code>I allow callmebot to send me messages</code><br>3. Paste API key above ✅</div>
-            <div class="wa-schedule" style="margin-top:14px;"><div class="wa-slot">🌅 10:30 AM</div><div class="wa-slot">🌞 2:30 PM</div><div class="wa-slot">🌇 6:30 PM</div><div class="wa-slot">🌃 10:30 PM</div></div>
-            <div id="wa-test-section" style="margin-top:14px;display:none;"><button class="wa-test-btn" id="wa-test-btn" onclick="sendTestAlert()">📲 Send Test Alert Now</button></div>
-            <div class="wa-preview" style="margin-top:14px;"><div class="wa-preview-label">Sample Message</div><div class="wa-preview-msg" id="wa-preview-msg">🌸 <strong>MedMama Alert</strong><br><br>You missed <span class="med-highlight">Folvite</span> (Morning).<br>Needed for — <em>Folic acid prevents neural tube defects.</em></div></div>
-          </div>
-          <div class="wa-status" id="wa-status"></div>
+    <div class="page-layout">
+      <!-- LEFT -->
+      <div class="side-panel side-panel-left">
+        <div class="nutrition-panel">
+          <div class="nutrition-title">🥗 Pregnancy Nutrition</div>
+          <div id="nut-cards"></div>
         </div>
       </div>
 
-      <!-- ══ FINANCE VIEW ══ -->
-      <div id="view-finance" class="view">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic;">💰 Finance</div>
-        </div>
-        <div class="fin-person-tabs" id="fin-person-tabs"></div>
-        <div id="fin-no-person" class="empty-state"><div class="icon">💰</div><p>Add a person to start tracking.<br>Up to <strong>3 people</strong> (You, Wife, Family).</p></div>
-        <div id="fin-page" style="display:none;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <div style="font-size:14px;font-weight:600;color:var(--deep);" id="fin-person-name"></div>
-            <div style="display:flex;gap:6px;">
-              <button class="btn btn-primary btn-sm" onclick="openAddTxn('income')">+ Income</button>
-              <button class="btn btn-sm" style="background:#fff0f0;color:#c04040;" onclick="openAddTxn('expense')">+ Expense</button>
-              <button class="btn btn-ghost btn-sm" onclick="openEditFinPerson()">✏️</button>
+      <!-- MAIN -->
+      <div class="main-col">
+        <div class="body">
+
+          <!-- TODAY -->
+          <div id="view-today" class="view active">
+            <div id="visit-today-banner"></div>
+
+            <div class="card">
+              <div class="date-row">
+                <div>
+                  <div class="date-lbl">Date</div>
+                  <div class="date-val" id="date-display">—</div>
+                </div>
+                <div id="today-badge" class="today-badge" style="display:none">Today</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="prog-top">
+                <span class="prog-lbl">Doses taken</span>
+                <span class="prog-count" id="prog-count">0 / 0</span>
+              </div>
+              <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+              <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
+            </div>
+
+            <div id="med-sections"></div>
+
+            <div id="no-meds-msg" class="empty-state" style="display:none">
+              <div class="icon">💊</div>
+              <p>No medicines yet. Go to <strong>My Meds</strong>.</p>
+            </div>
+
+            <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
+            <div class="card">
+              <textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea>
             </div>
           </div>
-          <div class="card" style="margin-bottom:10px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-              <button class="cal-btn" onclick="changeFinMonth(-1)" style="padding:4px 12px;font-size:14px;">‹</button>
-              <div id="fin-month-title" style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;">—</div>
-              <button class="cal-btn" onclick="changeFinMonth(1)" style="padding:4px 12px;font-size:14px;">›</button>
+
+          <!-- OTHER DAY -->
+          <div id="view-otherday" class="view">
+            <div id="otherday-visit-banner"></div>
+
+            <div class="card">
+              <div class="date-row">
+                <div>
+                  <div class="date-lbl">Viewing</div>
+                  <div class="date-val" id="otherday-date-display">—</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div>
+                  <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
+                </div>
+              </div>
             </div>
-            <div class="fin-summary">
-              <div class="fin-stat inc"><div class="fin-stat-num" id="fin-inc">₹0</div><div class="fin-stat-lbl">Income</div></div>
-              <div class="fin-stat exp"><div class="fin-stat-num" id="fin-exp">₹0</div><div class="fin-stat-lbl">Expense</div></div>
-              <div class="fin-stat sav" id="fin-sav-card"><div class="fin-stat-num" id="fin-sav">₹0</div><div class="fin-stat-lbl">Savings</div></div>
+
+            <div id="otherday-future-notice" class="future-notice" style="display:none">
+              📅 <span>Future date — can't check off yet.</span>
+            </div>
+
+            <div class="card">
+              <div class="prog-top">
+                <span class="prog-lbl">Doses taken</span>
+                <span class="prog-count" id="otherday-prog-count">0 / 0</span>
+              </div>
+              <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
+              <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
+            </div>
+
+            <div id="otherday-med-sections"></div>
+
+            <div id="otherday-notes-wrap">
+              <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
+              <div class="card">
+                <textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea>
+              </div>
             </div>
           </div>
-          <div class="card" id="fin-cat-card"><div class="sec-label">📊 Category Breakdown<div class="sec-line"></div></div><div id="fin-cats"></div></div>
-          <div class="card"><div class="sec-label">📋 Transactions<div class="sec-line"></div></div><div id="fin-txns"></div></div>
-        </div>
-      </div>
 
-    </div></div>
-    <div class="side-panel side-panel-right"><div class="baby-panel"><div class="baby-title">👶 Baby Today</div><div class="baby-svg-wrap" id="baby-svg-wrap"></div><div class="week-badge" id="baby-week-badge">Week —</div><div class="baby-tip" id="baby-tip">Loading…</div></div></div>
-  </div>
-</div>
-
-<!-- MED MODAL -->
-<div class="modal-overlay" id="med-modal"><div class="modal">
-  <div class="modal-title"><span id="med-modal-title">Add Medicine</span><button class="modal-close" onclick="closeMedModal()">✕</button></div>
-  <input type="hidden" id="med-edit-id"/>
-  <div class="field"><label>Brand Name</label><input id="med-brand" placeholder="e.g. Folvite"/></div>
-  <div class="field"><label>Generic / Purpose</label><input id="med-name" placeholder="e.g. Folic Acid"/></div>
-  <div class="field-row"><div class="field"><label>Icon</label><input id="med-icon" placeholder="💊" maxlength="4"/></div><div class="field"><label>Dose</label><input id="med-dose" placeholder="1 tablet"/></div></div>
-  <div class="field-row"><div class="field"><label>Time</label><select id="med-time"><option value="morning">🌅 Morning</option><option value="noon">🌞 Noon</option><option value="evening">🌇 Evening</option><option value="night">🌃 Night</option></select></div><div class="field"><label>When</label><input id="med-timing" placeholder="After Breakfast"/></div></div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="saveMed()">Save</button><button class="btn btn-ghost" onclick="closeMedModal()">Cancel</button><button class="btn btn-danger" id="med-delete-btn" onclick="deleteMed()" style="display:none">Delete</button></div>
-</div></div>
-
-<!-- VISIT MODAL -->
-<div class="modal-overlay" id="visit-modal"><div class="modal">
-  <div class="modal-title"><span id="visit-modal-title">Add Visit</span><button class="modal-close" onclick="closeVisitModal()">✕</button></div>
-  <input type="hidden" id="visit-edit-id"/>
-  <div class="field"><label>Date</label><input id="visit-date" type="date"/></div>
-  <div class="field"><label>Doctor</label><input id="visit-doctor" placeholder="Dr. Sharma"/></div>
-  <div class="field"><label>Notes</label><textarea id="visit-note" placeholder="Carry reports…"></textarea></div>
-  <div class="field"><label>Prescription</label><div class="upload-area" onclick="document.getElementById('rx-upload').click()"><div style="font-size:28px">📋</div><div style="font-size:13px;color:var(--light)">Tap to upload</div><input type="file" id="rx-upload" accept="image/*,.pdf" onchange="handleRxUpload(event)"/></div><div id="rx-preview"></div></div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="saveVisit()">Save</button><button class="btn btn-ghost" onclick="closeVisitModal()">Cancel</button><button class="btn btn-danger" id="visit-delete-btn" onclick="deleteVisit()" style="display:none">Delete</button></div>
-</div></div>
-
-<!-- FINANCE PERSON MODAL -->
-<div class="modal-overlay" id="fin-person-modal"><div class="modal">
-  <div class="modal-title"><span id="fin-person-modal-title">Add Person</span><button class="modal-close" onclick="closeFinPersonModal()">✕</button></div>
-  <input type="hidden" id="fin-person-edit-id"/>
-  <div class="field"><label>Name</label><input id="fin-person-name-input" placeholder="e.g. Abhimanyu, Wife, Family"/></div>
-  <div class="field-row"><div class="field"><label>Icon</label><input id="fin-person-icon" placeholder="👤" maxlength="4"/></div><div class="field"><label>Color</label><input id="fin-person-color" type="color" value="#c0627a"/></div></div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="saveFinPerson()">Save</button><button class="btn btn-ghost" onclick="closeFinPersonModal()">Cancel</button><button class="btn btn-danger" id="fin-person-del-btn" onclick="deleteFinPerson()" style="display:none">Delete Person & Data</button></div>
-</div></div>
-
-<!-- FINANCE TXN MODAL -->
-<div class="modal-overlay" id="fin-txn-modal"><div class="modal">
-  <div class="modal-title"><span id="fin-txn-modal-title">Add Transaction</span><button class="modal-close" onclick="closeFinTxnModal()">✕</button></div>
-  <input type="hidden" id="fin-txn-edit-id"/>
-  <input type="hidden" id="fin-txn-type-val"/>
-  <div class="field"><label>Date</label><input id="fin-txn-date" type="date"/></div>
-  <div class="field"><label>Amount (₹)</label><input id="fin-txn-amount" type="number" placeholder="0" step="0.01"/></div>
-  <div class="field"><label>Category</label><select id="fin-txn-category"></select></div>
-  <div class="field"><label>Note</label><input id="fin-txn-note" placeholder="Optional note"/></div>
-  <div class="btn-row"><button class="btn btn-primary" onclick="saveFinTxn()">Save</button><button class="btn btn-ghost" onclick="closeFinTxnModal()">Cancel</button><button class="btn btn-danger" id="fin-txn-del-btn" onclick="deleteFinTxn()" style="display:none">Delete</button></div>
-</div></div>
-
-<!-- BANK UPLOAD -->
-<div class="card">
-  <div class="sec-label">📄 Bank Statement Upload <div class="sec-line"></div></div>
-
-  <input type="file" accept=".pdf" onchange="handleBankUpload(event)" />
-
-  <div style="font-size:12px;color:#888;margin-top:6px;">
-    Upload last 3 months statement → auto summary
-  </div>
-
-  <div id="bank-summary" style="margin-top:10px;font-size:12px;"></div>
-</div>
-
-
-<!-- DAILY THOUGHT -->
-<div class="card">
-  <div class="sec-label">🧠 Daily Thought / Plan <div class="sec-line"></div></div>
-
-  <textarea id="fin-thought" placeholder="Thought..."></textarea>
-  <textarea id="fin-plan" placeholder="Plan..."></textarea>
-  <textarea id="fin-idea" placeholder="New idea / interest..."></textarea>
-</div>
-
-
-<!-- RANDOM SPENDING -->
-<div class="card">
-  <div class="sec-label">💸 Random Spending <div class="sec-line"></div></div>
-  <textarea id="fin-random" placeholder="Impulse / unexpected spending..."></textarea>
-</div>
-
-
-<!-- DAILY LIMIT -->
-<div class="card">
-  <div class="sec-label">📊 Daily Budget <div class="sec-line"></div></div>
-
-  <div style="display:flex;gap:10px;">
-    <input id="fin-limit" placeholder="Suggested limit ₹" type="number"/>
-    <input id="fin-actual" placeholder="Spent ₹" type="number"/>
-  </div>
-</div>
-
-
-<!-- PREDICTION -->
-<div class="card">
-  <div class="sec-label">🔮 Prediction <div class="sec-line"></div></div>
-  <div id="fin-predict"></div>
-</div>
-
-
-<!-- LIFE EVENTS -->
-<div class="card">
-  <div class="sec-label">🎯 Life Events <div class="sec-line"></div></div>
-
-  <input id="event-title" placeholder="Event (Baby delivery / Trip / EMI)" />
-  <input id="event-cost" type="number" placeholder="Cost ₹"/>
-  <button onclick="saveEvent()" class="btn btn-primary btn-sm" style="margin-top:8px;">Save</button>
-
-  <div id="event-list" style="margin-top:10px;"></div>
-</div>
-
-  
-<!-- NUT TOOLTIP -->
-<div id="nut-overlay" class="nut-tooltip-overlay" style="display:none" onclick="closeNutTooltip()"></div>
-<div id="nut-tooltip" class="nut-tooltip" style="display:none"><button class="nt-close" onclick="closeNutTooltip()">✕</button><div class="nt-icon" id="nt-icon"></div><div class="nt-title" id="nt-title"></div><div class="nt-body" id="nt-body"></div><div class="nt-foods" id="nt-foods"></div></div>
-
-<script>
-const SUPABASE_URL="https://pwzppkcdhzcidkpygklk.supabase.co",SUPABASE_KEY="sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT";
-const REST=`${SUPABASE_URL}/rest/v1`,AUTH=`${SUPABASE_URL}/auth/v1`;
-const SECTIONS=[{key:"morning",label:"Morning",emoji:"🌅",sub:"Before Breakfast"},{key:"noon",label:"Noon",emoji:"🌞",sub:"After Lunch"},{key:"evening",label:"Evening",emoji:"🌇",sub:"Evening"},{key:"night",label:"Night",emoji:"🌃",sub:"After Dinner"}];
-const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
-const NUTRIENTS=[{icon:"🅰️",name:"Vitamin A",color:"#fff3e0",desc:"Baby's eye development.",foods:"Sweet potato, carrots, spinach",why:"Organ formation."},{icon:"🅱️",name:"Vitamin B12",color:"#e8f5e9",desc:"Neural tube development.",foods:"Dairy, eggs, cereals",why:"Preterm birth risk."},{icon:"🍊",name:"Vitamin C",color:"#fff8e1",desc:"Iron absorption.",foods:"Oranges, guava, amla",why:"Plant-iron absorption."},{icon:"☀️",name:"Vitamin D",color:"#fffde7",desc:"Baby's bones.",foods:"Sunlight, milk, fish",why:"Common deficiency."},{icon:"🩸",name:"Iron",color:"#fce4ec",desc:"Prevents anaemia.",foods:"Spinach, dal, jaggery",why:"Doubles in pregnancy."},{icon:"🦴",name:"Calcium",color:"#e3f2fd",desc:"Bones and teeth.",foods:"Milk, curd, ragi",why:"Baby takes from mom."},{icon:"🧬",name:"Folic Acid",color:"#f3e5f5",desc:"Neural tube defects.",foods:"Leafy veg, beans, citrus",why:"Critical weeks 1-12."},{icon:"🐟",name:"Omega-3",color:"#e0f7fa",desc:"Brain development.",foods:"Flaxseeds, walnuts, fish",why:"DHA in 3rd trimester."}];
-const BABY_STAGES=[{week:4,size:"Poppy seed",tip:"Cells implanting!",color:"#fde8f0"},{week:8,size:"Raspberry",tip:"Organs forming!",color:"#f3e8fd"},{week:12,size:"Lime",tip:"1st trimester done 🎉",color:"#e8fde8"},{week:16,size:"Avocado",tip:"Baby hears you.",color:"#e8fde8"},{week:20,size:"Banana",tip:"Halfway!",color:"#fefde8"},{week:24,size:"Corn",tip:"Sleep-wake cycle.",color:"#fef3e8"},{week:28,size:"Eggplant",tip:"Eyes open!",color:"#ede8fd"},{week:32,size:"Coconut",tip:"Gaining fat.",color:"#e8f3fd"},{week:36,size:"Papaya",tip:"Almost ready!",color:"#fde8f8"},{week:40,size:"Pumpkin",tip:"Full term! 🌟",color:"#fef8e8"}];
-const MED_PURPOSE_DB={'folvite':'Folic acid prevents neural tube defects.','folic acid':'Folic acid prevents neural tube defects.','susten':'Progesterone prevents miscarriage.','progesterone':'Progesterone prevents miscarriage.','calcium':'Calcium builds baby\'s bones.','shelcal':'Calcium + D3 for bones.','iron':'Iron prevents anaemia.','thyronorm':'Thyroid for baby\'s brain.','vitamin d':'Vitamin D for bone growth.','dha':'DHA for brain development.','omega 3':'Omega-3 for brain & eyes.','b12':'B12 prevents neural defects.','ecosprin':'Aspirin prevents preeclampsia.','doxinate':'For pregnancy nausea.','metformin':'For gestational diabetes.','default':'Supports healthy pregnancy.'};
-function getMedPurpose(b,p){if(p&&p.trim().length>15)return p.trim();const k=(b||'').toLowerCase();for(const[x,v]of Object.entries(MED_PURPOSE_DB))if(k.includes(x))return v;const q=(p||'').toLowerCase();for(const[x,v]of Object.entries(MED_PURPOSE_DB))if(q.includes(x))return v;return p||MED_PURPOSE_DB['default'];}
-
-const INC_CATS=['💰 Salary','💵 Freelance','🏦 Interest','👨‍👩‍👦 Family Support','🏧 Cash Deposit','📦 Other Income'];
-const EXP_CATS=['🚗 Car EMI','💳 Credit Card','🍕 Food & Dining','⛽ Fuel','🛍️ Shopping','💊 Medical','⚡ Electricity','📱 Subscriptions','📞 Telecom','🎬 Entertainment','🏢 Rent/Housing','👨‍👩‍👦 Family Transfer','🧹 Services','🏦 Bank Charges','📦 Other Expense'];
-const CAT_COLORS={'💰 Salary':'#22c55e','💵 Freelance':'#10b981','🏦 Interest':'#6366f1','👨‍👩‍👦 Family Support':'#8b5cf6','🏧 Cash Deposit':'#06b6d4','📦 Other Income':'#64748b','🚗 Car EMI':'#ef4444','💳 Credit Card':'#f97316','🍕 Food & Dining':'#eab308','⛽ Fuel':'#84cc16','🛍️ Shopping':'#ec4899','💊 Medical':'#14b8a6','⚡ Electricity':'#f59e0b','📱 Subscriptions':'#8b5cf6','📞 Telecom':'#3b82f6','🎬 Entertainment':'#a855f7','🏢 Rent/Housing':'#64748b','👨‍👩‍👦 Family Transfer':'#6366f1','🧹 Services':'#78716c','🏦 Bank Charges':'#94a3b8','📦 Other Expense':'#9ca3af'};
-
-let currentUser=null,accessToken=null,selectedDate,calYear,calMonth,cache={},noteTimer=null,authMode='login',userMeds=[],userVisits=[];
-let rxBase64=null;
-let finPersons=[],finTxns=[],selectedFinPerson=null,finYear,finMonth;
-(function(){const n=new Date();selectedDate=n.toISOString().slice(0,10);calYear=n.getFullYear();calMonth=n.getMonth();finYear=n.getFullYear();finMonth=n.getMonth();})();
-
-function toKey(d){return d.toISOString().slice(0,10);}function todayKey(){return toKey(new Date());}function isFutureDate(ds){return ds>todayKey();}
-function inr(n){return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:0});}
-
-// AUTH
-function switchAuthTab(m){authMode=m;document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&m==='login')||(i===1&&m==='signup')));document.getElementById('auth-submit-btn').textContent=m==='login'?'Sign In':'Create Account';document.getElementById('auth-err').style.display='none';document.getElementById('auth-ok').style.display='none';}
-function showAuthError(m){document.getElementById('auth-err').textContent=m;document.getElementById('auth-err').style.display='block';document.getElementById('auth-ok').style.display='none';}
-function showAuthOk(m){document.getElementById('auth-ok').textContent=m;document.getElementById('auth-ok').style.display='block';document.getElementById('auth-err').style.display='none';}
-async function handleAuth(){const email=document.getElementById('auth-email').value.trim(),pw=document.getElementById('auth-password').value,btn=document.getElementById('auth-submit-btn');if(!email||!pw){showAuthError('Enter email & password.');return;}btn.disabled=true;btn.textContent=authMode==='login'?'Signing in…':'Creating…';try{const ep=authMode==='login'?'/token?grant_type=password':'/signup';const res=await fetch(`${AUTH}${ep}`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify({email,password:pw})});const data=await res.json();if(!res.ok){showAuthError(data.error_description||'Failed.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';return;}if(authMode==='signup'&&!data.access_token){showAuthOk('✅ Account created! Check email.');btn.disabled=false;btn.textContent='Create Account';return;}accessToken=data.access_token;currentUser=data.user;cache={};document.getElementById('auth-screen').style.display='none';document.getElementById('app').style.display='block';setSyncStatus('ok',`${currentUser.email}`);await loadUserMeds();await loadUserVisits();await loadFinPersons();renderToday();buildNutritionPanel();renderBabyPanel();}catch(e){showAuthError('Network error.');btn.disabled=false;btn.textContent=authMode==='login'?'Sign In':'Create Account';}}
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('auth-screen').style.display!=='none')handleAuth();});
-async function signOut(){try{await fetch(`${AUTH}/logout`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`}});}catch(e){}accessToken=null;currentUser=null;cache={};userMeds=[];userVisits=[];finPersons=[];finTxns=[];document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='flex';switchAuthTab('login');}
-function setSyncStatus(s,m){document.getElementById('sync-dot').className='sync-dot '+s;document.getElementById('sync-text').textContent=m;}
-function authHeaders(){return{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${accessToken}`,'Prefer':'return=representation'};}
-async function sbFetch(p,o={}){const r=await fetch(`${REST}${p}`,{headers:authHeaders(),...o});if(!r.ok)throw new Error(await r.text());const t=await r.text();return t?JSON.parse(t):null;}
-
-// DATA
-async function loadUserMeds(){try{userMeds=(await sbFetch(`/medmama_meds?user_id=eq.${currentUser.id}&order=sort_order.asc`))||[];}catch(e){}}
-async function loadUserVisits(){try{userVisits=(await sbFetch(`/medmama_visits?user_id=eq.${currentUser.id}&order=visit_date.asc`))||[];}catch(e){}}
-function getVisitForDate(ds){return userVisits.find(v=>v.visit_date===ds);}
-async function loadDayFromDB(dk){if(cache[dk])return cache[dk];try{const r=await sbFetch(`/medmama_tracker?date=eq.${dk}&user_id=eq.${currentUser.id}&select=*`);cache[dk]=(r&&r.length)?{checks:r[0].checks||{},note:r[0].note||""}:{checks:{},note:""};return cache[dk];}catch(e){return{checks:{},note:""};}}
-async function saveDayToDB(dk,d){setSyncStatus('loading','Saving…');try{await sbFetch('/medmama_tracker',{method:'POST',headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({date:dk,user_id:currentUser.id,checks:d.checks,note:d.note})});cache[dk]=d;setSyncStatus('ok','Synced ✓');}catch(e){setSyncStatus('err','Save failed');}}
-
-// VIEWS
-function showView(v){document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');updateTabBar(v);if(v==='today')renderToday();if(v==='otherday')renderOtherday();if(v==='calendar')renderCalendar();if(v==='visits')renderVisits();if(v==='mymeds')renderMyMeds();if(v==='alerts'){loadWaPrefs();updateWaPreview();}if(v==='finance')renderFinance();}
-function goToday(){selectedDate=todayKey();document.getElementById('tab-otherday').style.display='none';showView('today');}
-function updateTabBar(v){['today','otherday','calendar','visits','mymeds','alerts','finance'].forEach(x=>{const el=document.getElementById('tab-'+x);if(el)el.classList.toggle('active',x===v);});}
-function selectOtherDay(ds){selectedDate=ds;const d=new Date(ds+"T00:00:00");document.getElementById('tab-otherday').textContent=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});document.getElementById('tab-otherday').style.display='';showView('otherday');}
-
-function buildMedSections(c,dd,f){c.innerHTML='';if(!userMeds.length){c.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No meds yet.</p></div>';return{checked:0,total:0};}const ck=f?0:userMeds.filter(m=>dd.checks[m.id]).length;SECTIONS.forEach(s=>{const meds=userMeds.filter(m=>m.time===s.key);if(!meds.length)return;const l=document.createElement('div');l.className='sec-label';l.innerHTML=`${s.emoji} ${s.label}<div class="sec-line"></div>`;c.appendChild(l);meds.forEach(m=>{const done=!f&&!!dd.checks[m.id];const card=document.createElement('div');card.className=`med-card ${m.time} ${done?'done':''} ${f?'future-day':''}`;card.innerHTML=`<div class="med-icon">${m.icon||'💊'}</div><div class="med-info"><div class="med-brand">${m.brand}</div><div class="med-name">${m.purpose||''}</div><div class="med-meta">${m.timing||''}</div><div class="med-dose">${m.dose||''}</div></div>${f?'<div class="chk" style="cursor:not-allowed;background:#f0f0f0;border-color:#ddd;">·</div>':`<div class="chk ${done?'checked':''}" onclick="toggleCheck('${m.id}')">${done?'✓':''}</div>`}`;c.appendChild(card);});});return{checked:ck,total:userMeds.length};}
-
-async function renderToday(){setSyncStatus('loading','…');const dd=await loadDayFromDB(selectedDate);setSyncStatus('ok','✓');document.getElementById('date-display').textContent=new Date(selectedDate+"T00:00:00").toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('today-badge').style.display='';const v=getVisitForDate(selectedDate),nv=userVisits.filter(x=>x.visit_date>todayKey()).sort((a,b)=>a.visit_date.localeCompare(b.visit_date))[0],bn=document.getElementById('visit-today-banner');if(v)bn.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">Visit Today — ${v.doctor||''}</div><div class="visit-banner-note">${v.note||''}</div></div></div>`;else if(nv){const dl=Math.ceil((new Date(nv.visit_date+"T00:00:00")-new Date())/864e5);bn.innerHTML=`<div class="visit-banner" style="cursor:pointer" onclick="selectOtherDay('${nv.visit_date}')"><div class="visit-banner-icon">📅</div><div class="visit-banner-info"><div class="visit-banner-title">Next: ${nv.doctor||''} in ${dl}d</div></div></div>`;}else bn.innerHTML='';if(!userMeds.length){document.getElementById('no-meds-msg').style.display='block';document.getElementById('prog-count').textContent='0/0';document.getElementById('prog-fill').style.width='0%';document.getElementById('med-sections').innerHTML='';}else{document.getElementById('no-meds-msg').style.display='none';const{checked:ck,total:tt}=buildMedSections(document.getElementById('med-sections'),dd,false);const p=Math.round(ck/tt*100);document.getElementById('prog-count').textContent=`${ck}/${tt} · ${p}%`;document.getElementById('prog-fill').style.width=p+'%';}document.getElementById('notes-input').value=dd.note||'';}
-async function toggleCheck(id){if(isFutureDate(selectedDate))return;const d=await loadDayFromDB(selectedDate);d.checks[id]=!d.checks[id];await saveDayToDB(selectedDate,d);selectedDate===todayKey()?renderToday():renderOtherday();}
-function saveNote(){if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(async()=>{const d=await loadDayFromDB(selectedDate);d.note=document.getElementById('notes-input').value;await saveDayToDB(selectedDate,d);},800);}
-function saveOtherdayNote(){if(noteTimer)clearTimeout(noteTimer);noteTimer=setTimeout(async()=>{if(isFutureDate(selectedDate))return;const d=await loadDayFromDB(selectedDate);d.note=document.getElementById('otherday-notes-input').value;await saveDayToDB(selectedDate,d);},800);}
-async function renderOtherday(){const f=isFutureDate(selectedDate);const dd=f?{checks:{},note:""}:await loadDayFromDB(selectedDate);document.getElementById('otherday-date-display').textContent=new Date(selectedDate+"T00:00:00").toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('otherday-future-notice').style.display=f?'flex':'none';document.getElementById('otherday-future-badge').style.display=f?'':'none';document.getElementById('otherday-notes-wrap').style.display=f?'none':'';const v=getVisitForDate(selectedDate),bn=document.getElementById('otherday-visit-banner');if(v)bn.innerHTML=`<div class="visit-banner"><div class="visit-banner-icon">🏥</div><div class="visit-banner-info"><div class="visit-banner-title">${v.doctor||''}</div><div class="visit-banner-note">${v.note||''}</div></div></div>`;else bn.innerHTML='';const{checked:ck,total:tt}=buildMedSections(document.getElementById('otherday-med-sections'),dd,f);if(f){document.getElementById('otherday-prog-count').textContent=`${tt} meds`;document.getElementById('otherday-prog-fill').style.width='0%';}else{const p=tt?Math.round(ck/tt*100):0;document.getElementById('otherday-prog-count').textContent=`${ck}/${tt} · ${p}%`;document.getElementById('otherday-prog-fill').style.width=p+'%';}if(!f)document.getElementById('otherday-notes-input').value=dd.note||'';}
-
-async function renderCalendar(){document.getElementById('cal-title').textContent=`${MONTHS[calMonth]} ${calYear}`;const g=document.getElementById('cal-grid');g.innerHTML='';['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const e=document.createElement('div');e.className='cal-dow';e.textContent=d;g.appendChild(e);});const fd=new Date(calYear,calMonth,1).getDay(),dm=new Date(calYear,calMonth+1,0).getDate(),td=todayKey();for(let i=0;i<fd;i++){const e=document.createElement('div');e.className='cal-day empty-cell';g.appendChild(e);}try{const m=String(calMonth+1).padStart(2,'0');const rows=await sbFetch(`/medmama_tracker?date=gte.${calYear}-${m}-01&date=lte.${calYear}-${m}-${String(dm).padStart(2,'0')}&user_id=eq.${currentUser.id}&select=*`);if(rows)rows.forEach(r=>{cache[r.date]={checks:r.checks||{},note:r.note||""};});}catch(e){}let fl=0,pt=0,em=0;for(let day=1;day<=dm;day++){const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const fu=ds>td,it=ds===td,is=ds===selectedDate;const hv=!!getVisitForDate(ds);let st='none';if(!fu&&userMeds.length){const dd=cache[ds]||{checks:{}};const c=userMeds.filter(m=>dd.checks[m.id]).length;st=c===0?'none':c>=userMeds.length?'full':'partial';}if(!fu){if(st==='full')fl++;else if(st==='partial')pt++;else em++;}const el=document.createElement('button');el.className=`cal-day ${fu?'future':st} ${it&&!is?'today-cell':''} ${is?'sel':''} ${hv?'has-visit':''}`;el.innerHTML=`${day}<div class="cal-dot"></div>`;el.onclick=()=>ds===todayKey()?goToday():selectOtherDay(ds);g.appendChild(el);}document.getElementById('month-summary').innerHTML=`✅ ${fl} · 🟡 ${pt} · ⬜ ${em}`;setSyncStatus('ok','✓');}
-function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-
-// MEDS
-function renderMyMeds(){const c=document.getElementById('meds-list');c.innerHTML='';if(!userMeds.length){c.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No meds yet.</p></div>';return;}SECTIONS.forEach(s=>{const meds=userMeds.filter(m=>m.time===s.key);if(!meds.length)return;const l=document.createElement('div');l.className='sec-label';l.innerHTML=`${s.emoji} ${s.label}<div class="sec-line"></div>`;c.appendChild(l);meds.forEach(m=>{const e=document.createElement('div');e.className='med-list-item';e.innerHTML=`<div class="med-list-icon">${m.icon||'💊'}</div><div class="med-list-info"><div class="med-list-brand">${m.brand}</div><div class="med-list-meta">${m.purpose||''} · ${m.dose||''}</div></div><button class="btn btn-ghost btn-sm" onclick="openEditMed('${m.id}')">Edit</button>`;c.appendChild(e);});});}
-function openAddMed(){document.getElementById('med-modal-title').textContent='Add Medicine';document.getElementById('med-edit-id').value='';['med-brand','med-name','med-dose','med-timing'].forEach(x=>document.getElementById(x).value='');document.getElementById('med-icon').value='💊';document.getElementById('med-time').value='morning';document.getElementById('med-delete-btn').style.display='none';document.getElementById('med-modal').classList.add('open');}
-function openEditMed(id){const m=userMeds.find(x=>x.id===id);if(!m)return;document.getElementById('med-modal-title').textContent='Edit';document.getElementById('med-edit-id').value=id;document.getElementById('med-brand').value=m.brand||'';document.getElementById('med-name').value=m.purpose||'';document.getElementById('med-icon').value=m.icon||'💊';document.getElementById('med-dose').value=m.dose||'';document.getElementById('med-time').value=m.time||'morning';document.getElementById('med-timing').value=m.timing||'';document.getElementById('med-delete-btn').style.display='';document.getElementById('med-modal').classList.add('open');}
-function closeMedModal(){document.getElementById('med-modal').classList.remove('open');}
-async function saveMed(){const id=document.getElementById('med-edit-id').value,med={brand:document.getElementById('med-brand').value.trim(),purpose:document.getElementById('med-name').value.trim(),icon:document.getElementById('med-icon').value.trim()||'💊',dose:document.getElementById('med-dose').value.trim(),time:document.getElementById('med-time').value,timing:document.getElementById('med-timing').value.trim()};if(!med.brand)return alert('Enter name.');try{if(id)await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(med)});else await sbFetch('/medmama_meds',{method:'POST',body:JSON.stringify({...med,user_id:currentUser.id,sort_order:Date.now()})});await loadUserMeds();cache={};closeMedModal();renderMyMeds();}catch(e){alert('Failed.');}}
-async function deleteMed(){const id=document.getElementById('med-edit-id').value;if(!id||!confirm('Delete?'))return;try{await sbFetch(`/medmama_meds?id=eq.${id}`,{method:'DELETE'});await loadUserMeds();cache={};closeMedModal();renderMyMeds();}catch(e){}}
-
-// VISITS
-function renderVisits(){const c=document.getElementById('visits-list');c.innerHTML='';if(!userVisits.length){c.innerHTML='<div class="empty-state"><div class="icon">🏥</div><p>No visits yet.</p></div>';return;}[...userVisits].sort((a,b)=>b.visit_date.localeCompare(a.visit_date)).forEach(v=>{const e=document.createElement('div');e.className='visit-item';const d=new Date(v.visit_date+"T00:00:00").toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});e.innerHTML=`<div style="font-size:20px">🏥</div><div class="visit-item-info"><div class="visit-item-date">${d}</div><div class="visit-item-note"><strong>${v.doctor||''}</strong> ${v.note||''}</div></div><button class="btn btn-ghost btn-sm" onclick="openEditVisit('${v.id}')">Edit</button>`;c.appendChild(e);});}
-function openAddVisit(){document.getElementById('visit-modal-title').textContent='Add Visit';document.getElementById('visit-edit-id').value='';document.getElementById('visit-date').value=todayKey();document.getElementById('visit-doctor').value='';document.getElementById('visit-note').value='';document.getElementById('rx-preview').innerHTML='';document.getElementById('visit-delete-btn').style.display='none';rxBase64=null;document.getElementById('visit-modal').classList.add('open');}
-function openEditVisit(id){const v=userVisits.find(x=>x.id===id);if(!v)return;document.getElementById('visit-modal-title').textContent='Edit';document.getElementById('visit-edit-id').value=id;document.getElementById('visit-date').value=v.visit_date;document.getElementById('visit-doctor').value=v.doctor||'';document.getElementById('visit-note').value=v.note||'';document.getElementById('visit-delete-btn').style.display='';rxBase64=null;document.getElementById('rx-preview').innerHTML=v.rx_data?`<img src="${v.rx_data}" class="rx-img" style="max-height:100px"/>`:'';document.getElementById('visit-modal').classList.add('open');}
-function closeVisitModal(){document.getElementById('visit-modal').classList.remove('open');}
-function handleRxUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{rxBase64=ev.target.result;document.getElementById('rx-preview').innerHTML=f.type.startsWith('image/')?`<img src="${rxBase64}" class="rx-img" style="max-height:140px"/>`:`<div style="padding:10px;background:var(--blush);border-radius:10px;font-size:12px">📄 ${f.name}</div>`;};r.readAsDataURL(f);}
-async function saveVisit(){const id=document.getElementById('visit-edit-id').value,v={visit_date:document.getElementById('visit-date').value,doctor:document.getElementById('visit-doctor').value.trim(),note:document.getElementById('visit-note').value.trim()};if(!v.visit_date)return alert('Select date.');if(rxBase64)v.rx_data=rxBase64;try{if(id)await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(v)});else await sbFetch('/medmama_visits',{method:'POST',body:JSON.stringify({...v,user_id:currentUser.id})});await loadUserVisits();closeVisitModal();renderVisits();}catch(e){alert('Failed.');}}
-async function deleteVisit(){const id=document.getElementById('visit-edit-id').value;if(!id||!confirm('Delete?'))return;try{await sbFetch(`/medmama_visits?id=eq.${id}`,{method:'DELETE'});await loadUserVisits();closeVisitModal();renderVisits();}catch(e){}}
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
-
-// NUTRITION
-function buildNutritionPanel(){const c=document.getElementById('nut-cards');c.innerHTML='';NUTRIENTS.forEach((n,i)=>{const d=document.createElement('div');d.className='nut-card';d.style.background=n.color;d.innerHTML=`<div class="nut-icon" style="animation:${i%2?'wiggle':'float'} ${2+i*.3}s ease-in-out infinite">${n.icon}</div><div class="nut-name">${n.name}</div><div class="nut-foods">${n.foods.split(',')[0]}…</div>`;d.onclick=()=>{document.getElementById('nt-icon').textContent=n.icon;document.getElementById('nt-title').textContent=n.name;document.getElementById('nt-body').innerHTML=`<strong>Why:</strong> ${n.why}<br><br>${n.desc}`;document.getElementById('nt-foods').innerHTML=`🥗 ${n.foods}`;document.getElementById('nut-overlay').style.display='block';document.getElementById('nut-tooltip').style.display='block';};c.appendChild(d);});}
-function closeNutTooltip(){document.getElementById('nut-overlay').style.display='none';document.getElementById('nut-tooltip').style.display='none';}
-
-// BABY
-function renderBabyPanel(){const wk=20,st=BABY_STAGES.reduce((p,c)=>Math.abs(c.week-wk)<Math.abs(p.week-wk)?c:p);document.getElementById('baby-week-badge').textContent=`Week ~${wk} · ${st.size}`;document.getElementById('baby-tip').textContent=st.tip;document.getElementById('baby-svg-wrap').innerHTML=`<svg viewBox="0 0 160 200" width="160" height="200"><ellipse cx="80" cy="100" rx="52" ry="62" fill="${st.color}" stroke="#e8a0a0" stroke-width="2" opacity=".6" style="animation:breathe 3s ease-in-out infinite;transform-origin:80px 100px"/><g style="animation:float 3.5s ease-in-out infinite;transform-origin:80px 105px"><ellipse cx="80" cy="115" rx="18" ry="22" fill="#ffe8d8"/><circle cx="80" cy="86" r="20" fill="#ffe8d8"/><circle cx="73" cy="85" r="3" fill="#5a3a2a"/><circle cx="87" cy="85" r="3" fill="#5a3a2a"/><path d="M74 93 Q80 98 86 93" stroke="#c0627a" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="69" cy="91" r="5" fill="#f5a0a0" opacity=".4"/><circle cx="91" cy="91" r="5" fill="#f5a0a0" opacity=".4"/></g><text x="20" y="30" font-size="12" style="animation:heartbeat 2s infinite">⭐</text><text x="130" y="40" font-size="10" style="animation:heartbeat 2.5s infinite">✨</text></svg>`;}
-
-// WA ALERTS (CallMeBot)
-async function loadWaPrefs(){try{const r=await sbFetch(`/medmama_wa_alerts?user_id=eq.${currentUser.id}&select=*`);if(r&&r.length){const p=r[0];document.getElementById('wa-enabled').checked=p.enabled;document.getElementById('wa-phone').value=p.phone||'';document.getElementById('wa-apikey').value=p.apikey||'';document.getElementById('wa-phone-section').style.display=p.enabled?'block':'none';document.getElementById('wa-test-section').style.display=(p.enabled&&p.apikey)?'block':'none';}}catch(e){}}
-function toggleWaAlerts(){const on=document.getElementById('wa-enabled').checked;document.getElementById('wa-phone-section').style.display=on?'block':'none';document.getElementById('wa-test-section').style.display='none';if(!on)saveWaPrefs();}
-async function saveWaPrefs(){const en=document.getElementById('wa-enabled').checked,ph=document.getElementById('wa-phone').value.trim().replace(/\s+/g,''),ak=document.getElementById('wa-apikey').value.trim(),st=document.getElementById('wa-status');if(en&&!ph.match(/^\+\d{10,15}$/)){st.className='wa-status err';st.textContent='❌ Valid phone needed.';return;}if(en&&!ak){st.className='wa-status err';st.textContent='❌ API key needed.';return;}st.className='wa-status loading';st.textContent='⏳ Saving…';try{await sbFetch('/medmama_wa_alerts',{method:'POST',headers:{...authHeaders(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:currentUser.id,phone:ph,enabled:en,apikey:ak})});if(en){const ok=await sendCMB(ph,ak,'🌸 *MedMama Alerts Enabled!* You\'ll get reminders at 10:30AM, 2:30PM, 6:30PM, 10:30PM if you miss medicine. 💪');st.className='wa-status '+(ok?'ok':'err');st.textContent=ok?'✅ ON! Welcome sent!':'❌ Check phone & key.';document.getElementById('wa-test-section').style.display=ok?'block':'none';}else{st.className='wa-status ok';st.textContent='✅ Disabled.';document.getElementById('wa-test-section').style.display='none';}}catch(e){st.className='wa-status err';st.textContent='❌ Failed.';}}
-async function sendCMB(ph,ak,txt){try{await fetch(`https://api.callmebot.com/whatsapp.php?phone=${ph.replace('+','')}&text=${encodeURIComponent(txt)}&apikey=${ak}`,{mode:'no-cors'});return true;}catch(e){return false;}}
-async function sendTestAlert(){const ph=document.getElementById('wa-phone').value.trim().replace(/\s+/g,''),ak=document.getElementById('wa-apikey').value.trim(),btn=document.getElementById('wa-test-btn'),st=document.getElementById('wa-status');if(!ph||!ak){st.className='wa-status err';st.textContent='❌ Save phone & key first.';return;}btn.disabled=true;btn.textContent='📲 Sending…';const dd=await loadDayFromDB(todayKey()),missed=userMeds.filter(m=>!dd.checks[m.id]),tl={morning:'Morning',noon:'Afternoon',evening:'Evening',night:'Night'};let msg='🌸 *MedMama Test*\n\n';if(!missed.length)msg+='🎉 All taken today! 💪';else{msg+=`⚠️ Missed ${missed.length}:\n\n`;missed.forEach(m=>{msg+=`❌ *${m.brand}* (${tl[m.time]||''})\nNeeded: ${getMedPurpose(m.brand,m.purpose)}\n\n`;});msg+='💊 Take them now!';}const ok=await sendCMB(ph,ak,msg);st.className='wa-status '+(ok?'ok':'err');st.textContent=ok?`✅ Sent! ${missed.length} missed.`:'❌ Failed.';btn.disabled=false;btn.textContent='📲 Send Test Alert Now';}
-function updateWaPreview(){if(userMeds.length){const m=userMeds[0],p=getMedPurpose(m.brand,m.purpose),tl={morning:'Morning',noon:'Afternoon',evening:'Evening',night:'Night'}[m.time]||'';document.getElementById('wa-preview-msg').innerHTML=`🌸 <strong>MedMama Alert</strong><br><br>You missed <span class="med-highlight">${m.brand}</span> (${tl}).<br>Needed for — <em>${p}</em>`;}}
-
-// ══════════════════════════════════════════════════════════════
-// FINANCE
-// ══════════════════════════════════════════════════════════════
-async function loadFinPersons(){try{finPersons=(await sbFetch(`/medmama_finance_persons?user_id=eq.${currentUser.id}&order=sort_order.asc`))||[];}catch(e){}}
-async function loadFinTxns(pid){try{finTxns=(await sbFetch(`/medmama_finance_txns?user_id=eq.${currentUser.id}&person_id=eq.${pid}&order=txn_date.desc,created_at.desc`))||[];}catch(e){finTxns=[];}}
-
-function renderFinance(){
-  const tabs=document.getElementById('fin-person-tabs');tabs.innerHTML='';
-  finPersons.forEach(p=>{const b=document.createElement('button');b.className='fin-ptab'+(selectedFinPerson===p.id?' active':'');b.innerHTML=`<span>${p.icon||'👤'}</span> ${p.name}`;b.onclick=()=>{selectedFinPerson=p.id;renderFinance();};tabs.appendChild(b);});
-  if(finPersons.length<3){const a=document.createElement('button');a.className='fin-add-p';a.textContent='+ Person';a.onclick=openAddFinPerson;tabs.appendChild(a);}
-  if(!finPersons.length){document.getElementById('fin-no-person').style.display='';document.getElementById('fin-page').style.display='none';return;}
-  document.getElementById('fin-no-person').style.display='none';document.getElementById('fin-page').style.display='';
-  if(!selectedFinPerson)selectedFinPerson=finPersons[0].id;
-  const person=finPersons.find(p=>p.id===selectedFinPerson);
-  document.getElementById('fin-person-name').textContent=`${person.icon||'👤'} ${person.name}`;
-  loadFinTxns(selectedFinPerson).then(()=>renderFinMonth());
-}
-
-// =======================
-// BANK PDF SIMPLE PARSER
-// =======================
-async function handleBankUpload(e){
-  const file = e.target.files[0];
-  if(!file)return;
-
-  const text = await file.text(); // basic read (works for simple PDFs)
-
-  let totalIn = 0;
-  let totalOut = 0;
-
-  const amounts = text.match(/\d{2,3},\d{3}/g) || [];
-
-  amounts.forEach(a=>{
-    const val = parseInt(a.replace(/,/g,''));
-    if(val>50000) totalIn+=val;
-    else totalOut+=val;
-  });
-
-  document.getElementById('bank-summary').innerHTML =
-    `<b>Total Income:</b> ₹${totalIn}<br>
-     <b>Total Expense:</b> ₹${totalOut}<br>
-     <b>Estimated Savings:</b> ₹${totalIn-totalOut}`;
-
-  predictFinance(totalIn,totalOut);
-}
-
-
-// =======================
-// PREDICTION
-// =======================
-function predictFinance(income, expense){
-  let dailyLimit = Math.round((income-expense)/30);
-
-  document.getElementById('fin-predict').innerHTML =
-    `✅ Suggested Daily Spend: ₹${dailyLimit}<br>
-     ⚠️ Upcoming Month Expense: ₹${expense}<br>
-     💡 Keep buffer: ₹20,000`;
-}
-
-
-// =======================
-// LIFE EVENTS
-// =======================
-async function saveEvent(){
-  const title = document.getElementById('event-title').value;
-  const cost = document.getElementById('event-cost').value;
-
-  if(!title) return alert("Enter event");
-
-  await sbFetch('/medmama_finance_events',{
-    method:'POST',
-    body:JSON.stringify({
-      user_id:currentUser.id,
-      person_id:selectedFinPerson,
-      title:title,
-      estimated_cost:cost
-    })
-  });
-
-  loadEvents();
-}
-
-
-async function loadEvents(){
-  const rows = await sbFetch(`/medmama_finance_events?user_id=eq.${currentUser.id}`);
-
-  let html="";
-  rows.forEach(e=>{
-    html+=`<div>🎯 ${e.title} - ₹${e.estimated_cost}</div>`;
-  });
-
-  document.getElementById('event-list').innerHTML = html;
-}
-  
-function renderFinMonth(){
-  document.getElementById('fin-month-title').textContent=`${MONTHS[finMonth]} ${finYear}`;
-  const mKey=`${finYear}-${String(finMonth+1).padStart(2,'0')}`;
-  const mTxns=finTxns.filter(t=>t.txn_date.startsWith(mKey));
-  let inc=0,exp=0;const catMap={};
-  mTxns.forEach(t=>{const a=parseFloat(t.amount);if(t.txn_type==='income')inc+=a;else{exp+=a;catMap[t.category]=(catMap[t.category]||0)+a;}});
-  const sav=inc-exp;
-  document.getElementById('fin-inc').textContent=inr(inc);
-  document.getElementById('fin-exp').textContent=inr(exp);
-  document.getElementById('fin-sav').textContent=(sav>=0?'':'-')+inr(Math.abs(sav));
-  const savCard=document.getElementById('fin-sav-card');savCard.className='fin-stat sav'+(sav<0?' neg':'');
-
-  // Category bars
-  const cats=document.getElementById('fin-cats');cats.innerHTML='';
-  const sorted=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
-  if(!sorted.length)cats.innerHTML='<div style="font-size:12px;color:var(--light);padding:10px 0;">No expenses this month.</div>';
-  sorted.forEach(([cat,amt])=>{const pct=exp>0?Math.round(amt/exp*100):0;const color=CAT_COLORS[cat]||'var(--rose)';const d=document.createElement('div');d.className='fin-bar-wrap';d.innerHTML=`<div class="fin-bar-row"><span style="font-weight:500;">${cat}</span><span style="color:var(--light)">${inr(amt)} (${pct}%)</span></div><div class="fin-bar"><div class="fin-bar-fill" style="width:${pct}%;background:${color}"></div></div>`;cats.appendChild(d);});
-
-  // Transactions list
-  const txnC=document.getElementById('fin-txns');txnC.innerHTML='';
-  if(!mTxns.length){txnC.innerHTML='<div style="font-size:12px;color:var(--light);padding:10px 0;">No transactions. Tap + to add.</div>';return;}
-  mTxns.forEach(t=>{const isI=t.txn_type==='income';const d=document.createElement('div');d.className='fin-txn';d.innerHTML=`<div class="fin-txn-ic ${isI?'i':'e'}">${isI?'📈':'📉'}</div><div class="fin-txn-info"><div class="fin-txn-cat">${t.category}</div><div class="fin-txn-note">${t.note||''}</div></div><div class="fin-txn-r"><div class="fin-txn-amt ${isI?'i':'e'}">${isI?'+':'−'}${inr(t.amount)}</div><div class="fin-txn-date">${new Date(t.txn_date+"T00:00:00").toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div></div><button class="fin-del" onclick="editFinTxn('${t.id}')">✏️</button>`;txnC.appendChild(d);});
-}
-
-function changeFinMonth(d){finMonth+=d;if(finMonth>11){finMonth=0;finYear++;}if(finMonth<0){finMonth=11;finYear--;}renderFinMonth();}
-
-// Person CRUD
-function openAddFinPerson(){if(finPersons.length>=3)return alert('Max 3 persons.');document.getElementById('fin-person-modal-title').textContent='Add Person';document.getElementById('fin-person-edit-id').value='';document.getElementById('fin-person-name-input').value='';document.getElementById('fin-person-icon').value='👤';document.getElementById('fin-person-color').value='#c0627a';document.getElementById('fin-person-del-btn').style.display='none';document.getElementById('fin-person-modal').classList.add('open');}
-function openEditFinPerson(){const p=finPersons.find(x=>x.id===selectedFinPerson);if(!p)return;document.getElementById('fin-person-modal-title').textContent='Edit Person';document.getElementById('fin-person-edit-id').value=p.id;document.getElementById('fin-person-name-input').value=p.name;document.getElementById('fin-person-icon').value=p.icon||'👤';document.getElementById('fin-person-color').value=p.color||'#c0627a';document.getElementById('fin-person-del-btn').style.display='';document.getElementById('fin-person-modal').classList.add('open');}
-function closeFinPersonModal(){document.getElementById('fin-person-modal').classList.remove('open');}
-async function saveFinPerson(){const id=document.getElementById('fin-person-edit-id').value,name=document.getElementById('fin-person-name-input').value.trim(),icon=document.getElementById('fin-person-icon').value.trim()||'👤',color=document.getElementById('fin-person-color').value;if(!name)return alert('Enter name.');try{if(id)await sbFetch(`/medmama_finance_persons?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({name,icon,color})});else await sbFetch('/medmama_finance_persons',{method:'POST',body:JSON.stringify({user_id:currentUser.id,name,icon,color,sort_order:Date.now()})});await loadFinPersons();closeFinPersonModal();if(!selectedFinPerson&&finPersons.length)selectedFinPerson=finPersons[0].id;renderFinance();}catch(e){alert('Failed.');}}
-async function deleteFinPerson(){const id=document.getElementById('fin-person-edit-id').value;if(!id||!confirm('Delete person & ALL their transactions?'))return;try{await sbFetch(`/medmama_finance_persons?id=eq.${id}`,{method:'DELETE'});await loadFinPersons();selectedFinPerson=finPersons.length?finPersons[0].id:null;closeFinPersonModal();renderFinance();}catch(e){alert('Failed.');}}
-
-// Txn CRUD
-function openAddTxn(type){document.getElementById('fin-txn-modal-title').textContent=type==='income'?'Add Income':'Add Expense';document.getElementById('fin-txn-edit-id').value='';document.getElementById('fin-txn-type-val').value=type;document.getElementById('fin-txn-date').value=todayKey();document.getElementById('fin-txn-amount').value='';document.getElementById('fin-txn-note').value='';document.getElementById('fin-txn-del-btn').style.display='none';const sel=document.getElementById('fin-txn-category');sel.innerHTML='';(type==='income'?INC_CATS:EXP_CATS).forEach(c=>{sel.innerHTML+=`<option value="${c}">${c}</option>`;});document.getElementById('fin-txn-modal').classList.add('open');}
-function editFinTxn(id){const t=finTxns.find(x=>x.id===id);if(!t)return;document.getElementById('fin-txn-modal-title').textContent='Edit';document.getElementById('fin-txn-edit-id').value=id;document.getElementById('fin-txn-type-val').value=t.txn_type;document.getElementById('fin-txn-date').value=t.txn_date;document.getElementById('fin-txn-amount').value=t.amount;document.getElementById('fin-txn-note').value=t.note||'';document.getElementById('fin-txn-del-btn').style.display='';const sel=document.getElementById('fin-txn-category');sel.innerHTML='';(t.txn_type==='income'?INC_CATS:EXP_CATS).forEach(c=>{sel.innerHTML+=`<option value="${c}" ${c===t.category?'selected':''}>${c}</option>`;});document.getElementById('fin-txn-modal').classList.add('open');}
-function closeFinTxnModal(){document.getElementById('fin-txn-modal').classList.remove('open');}
-async function saveFinTxn(){const id=document.getElementById('fin-txn-edit-id').value,txn={txn_date:document.getElementById('fin-txn-date').value,txn_type:document.getElementById('fin-txn-type-val').value,amount:parseFloat(document.getElementById('fin-txn-amount').value)||0,category:document.getElementById('fin-txn-category').value,note:document.getElementById('fin-txn-note').value.trim()};if(!txn.amount||txn.amount<=0)return alert('Enter amount.');try{if(id)await sbFetch(`/medmama_finance_txns?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(txn)});else await sbFetch('/medmama_finance_txns',{method:'POST',body:JSON.stringify({...txn,user_id:currentUser.id,person_id:selectedFinPerson})});await loadFinTxns(selectedFinPerson);closeFinTxnModal();renderFinMonth();}catch(e){alert('Failed.');}}
-async function deleteFinTxn(){const id=document.getElementById('fin-txn-edit-id').value;if(!id||!confirm('Delete?'))return;try{await sbFetch(`/medmama_finance_txns?id=eq.${id}`,{method:'DELETE'});await loadFinTxns(selectedFinPerson);closeFinTxnModal();renderFinMonth();}catch(e){}}
-</script>
-</body>
-</html>
+          <!-- CALENDAR -->
+          <div id="view-calendar" class="view">
+            <div class="card">
+              <div class="cal-nav">
+                <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+                <div class="cal-title" id="cal-title">—</div>
+                <button class="cal-btn" onclick="changeMonth(1)">›</button>
+              </div>
+              <div class="cal-grid" id="cal-grid"></div>
+              <div class="legend">
+                <div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All</div>
+                <div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div>
+                <div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div>
+                <div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="summary-line" id="month-summary">Loading…</div>
+            </div>
+          </div>
+
+          <!-- VISITS -->
+          <div id="view-visits" class="view
