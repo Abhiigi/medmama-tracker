@@ -634,52 +634,37 @@ async function saveWaPrefs(){
 }
 
 async function sendTestAlert(){
-  const btn=document.getElementById('wa-test-btn');
+  const phone=document.getElementById('wa-phone').value.trim().replace(/\s+/g,'').replace('+','');
   const st=document.getElementById('wa-status');
 
-  btn.disabled=true;btn.textContent='📲 Sending…';
-  st.className='wa-status loading';st.textContent='⏳ Sending test alert with today\'s missed medicines…';
+  if(!phone){st.className='wa-status err';st.textContent='❌ Save your phone number first.';return;}
 
-  // Build missed meds list from today's data
+  // Build missed meds from today
   const dayData=await loadDayFromDB(todayKey());
-  const missedMeds=userMeds.filter(m=>!dayData.checks[m.id]);
+  const missed=userMeds.filter(m=>!dayData.checks[m.id]);
+  const tl={morning:'Morning',noon:'Afternoon',evening:'Evening',night:'Night'};
 
-  try{
-    const res=await fetch(WA_FN,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${accessToken}`},
-      body:JSON.stringify({
-        type:'test',
-        user_id:currentUser.id,
-        missed:missedMeds.map(m=>({
-          brand:m.brand,
-          purpose:getMedPurpose(m.brand,m.purpose),
-          time:m.time
-        }))
-      })
+  let msg='🌸 *MedMama Alert*\n\n';
+
+  if(missed.length===0){
+    msg+='🎉 Amazing! All medicines taken today!\nKeep it up mama! 💪';
+  }else{
+    msg+=`⚠️ You missed ${missed.length} medicine(s) today:\n\n`;
+    missed.forEach(m=>{
+      const purpose=getMedPurpose(m.brand,m.purpose);
+      msg+=`❌ *${m.brand}* (${tl[m.time]||''} dose)\nNeeded for: ${purpose}\n\n`;
     });
-
-    if(res.ok){
-      const data=await res.json();
-      st.className='wa-status ok';
-      if(missedMeds.length===0){
-        st.textContent='✅ Test sent! All medicines taken today — sent a congratulations message.';
-      }else{
-        st.textContent=`✅ Test sent! Alerted for ${missedMeds.length} missed medicine${missedMeds.length!==1?'s':''}.`;
-      }
-    }else{
-      st.className='wa-status err';
-      st.textContent='❌ Failed. Make sure edge function is deployed.';
-    }
-  }catch(e){
-    st.className='wa-status err';
-    st.textContent='❌ Network error. Check edge function deployment.';
-    console.error(e);
+    msg+='💊 Please take them now if you can.';
   }
 
-  btn.disabled=false;btn.textContent='📲 Send Test Alert Now';
-}
+  // Open WhatsApp with pre-filled message
+  const encoded=encodeURIComponent(msg);
+  const waUrl=`https://wa.me/${phone}?text=${encoded}`;
+  window.open(waUrl,'_blank');
 
+  st.className='wa-status ok';
+  st.textContent=`✅ WhatsApp opened with ${missed.length} missed medicine${missed.length!==1?'s':''}. Send the message!`;
+}
 function updateWaPreview(){
   const msg=document.getElementById('wa-preview-msg');
   if(userMeds.length>0){
