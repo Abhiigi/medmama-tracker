@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MedMama 🌸 Pregnancy Tracker</title>
 
- 
- <!-- ✅ Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 
-  <!-- ✅ PDF Parser (CRITICAL) -->
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.js"></script>
 
   <style>
@@ -19,37 +20,12 @@
       --text:#3a2a30;--light:#9a7878;--shadow:0 4px 24px rgba(192,98,122,.09);
       --visit:#7b5ea7;--visit-light:#ede8f7;
       --ok:#1e8e3e;--bad:#c04040;--warn:#b37700;--info:#3757c8;
+      --trim1:#e8a0a0;--trim2:#f5c842;--trim3:#7aaa80;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);
-      min-height:100vh;padding-bottom:80px
-    }
-    .page-layout{display:flex;align-items:flex-start;justify-content:center;position:relative}
-    .side-panel{width:190px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow:hidden}
-    .side-panel-left,.side-panel-right{display:none}
-    @media(min-width:980px){.side-panel-left,.side-panel-right{display:block}}
-    .main-col{flex:1;max-width:640px;min-width:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px}
 
-    /* Side panels */
-    .nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px}
-    .nutrition-title,.baby-title{
-      font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px
-    }
-    .nut-card{
-      background:#fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);
-      text-align:center;cursor:pointer;transition:transform .2s
-    }
-    .nut-card:hover{transform:scale(1.03)}
-    .nut-icon{font-size:26px;margin-bottom:4px}
-    .nut-name{font-size:10px;font-weight:700;color:var(--deep);letter-spacing:.5px}
-    .nut-foods{font-size:9px;color:var(--sage);margin-top:3px;font-weight:600}
-    .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px}
-    .baby-svg-wrap{width:160px;height:200px}
-    .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep)}
-    .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center}
-
-    /* Auth */
+    /* ── Auth ─────────────────────────────── */
     .auth-screen{
       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
       background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%)
@@ -58,88 +34,78 @@
       background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;
       box-shadow:0 8px 40px rgba(192,98,122,.13)
     }
-    .auth-logo{
-      font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--deep);
-      font-style:italic;text-align:center;margin-bottom:4px
-    }
+    .auth-logo{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px}
     .auth-sub{text-align:center;font-size:13px;color:var(--light);margin-bottom:28px}
     .auth-tabs{display:flex;background:var(--blush);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
-    .auth-tab{
-      flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;
-      font-weight:500;background:transparent;color:var(--light);transition:all .2s
-    }
+    .auth-tab{flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:transparent;color:var(--light);transition:all .2s}
     .auth-tab.active{background:#fff;color:var(--deep);box-shadow:0 2px 8px rgba(192,98,122,.12)}
     .auth-field{margin-bottom:14px}
-    .auth-field label{
-      display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
-      color:var(--light);margin-bottom:5px
-    }
-    .auth-field input{
-      width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:11px 14px;
-      font-size:14px;color:var(--text);outline:none;transition:border .2s
-    }
+    .auth-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px}
+    .auth-field input{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;transition:border .2s;font-family:'DM Sans',sans-serif}
     .auth-field input:focus{border-color:var(--rose)}
-    .auth-btn{
-      width:100%;padding:13px;background:var(--deep);color:#fff;border:none;border-radius:14px;
-      font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;transition:background .2s
-    }
+    .auth-btn{width:100%;padding:13px;background:var(--deep);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px;transition:background .2s;font-family:'DM Sans',sans-serif}
     .auth-btn:hover{background:var(--deeper)}
     .auth-btn:disabled{background:#ddd;cursor:not-allowed}
     .auth-err,.auth-ok{border-radius:10px;padding:10px 14px;font-size:12px;margin-top:12px;display:none}
     .auth-err{background:#fff0f0;border:1px solid #f5c0c0;color:#c04040}
     .auth-ok{background:#f0fff4;border:1px solid #a0d4b0;color:#2a7040}
 
-    /* Topbar */
+    /* ── App Shell ───────────────────────── */
+    #app{display:none}
     .topbar{
       background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;
-      border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px
+      border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px;flex-wrap:wrap
     }
     .logo{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--deep);font-style:italic}
     .topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
     .tabs{display:flex;gap:4px;flex-wrap:wrap}
-    .tab{
-      padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;
-      transition:all .2s;white-space:nowrap
-    }
+    .tab{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
     .tab.active{background:var(--deep);color:#fff}
     .tab:not(.active){background:var(--blush);color:var(--light)}
-    .signout-btn{
-      padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;
-      background:#f5f0f0;color:var(--light)
-    }
+    .signout-btn{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;background:#f5f0f0;color:var(--light);font-family:'DM Sans',sans-serif}
     .signout-btn:hover{background:var(--blush);color:var(--deep)}
-
-    .sync-bar{
-      display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;
-      background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada
-    }
+    .sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
-    .sync-dot.ok{background:#7aaa80}
-    .sync-dot.err{background:#e07070}
+    .sync-dot.ok{background:#7aaa80}.sync-dot.err{background:#e07070}
     .sync-dot.loading{background:#f5c842;animation:pulse 1s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-    /* Layout */
+    /* ── Layout ──────────────────────────── */
+    .page-layout{display:flex;align-items:flex-start;justify-content:center;position:relative}
+    .side-panel{width:190px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow-y:auto}
+    .side-panel-left,.side-panel-right{display:none}
+    @media(min-width:980px){.side-panel-left,.side-panel-right{display:block}}
+    .main-col{flex:1;max-width:640px;min-width:0}
     .body{max-width:640px;margin:0 auto;padding:20px 16px}
-    .card{
-      background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px
-    }
-    .view{display:none}
-    .view.active{display:block}
-    #app{display:none}
 
+    /* ── Side Panels ─────────────────────── */
+    .nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px}
+    .nutrition-title,.baby-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px}
+    .nut-card{background:#fff;border-radius:16px;padding:10px 12px;box-shadow:var(--shadow);text-align:center;cursor:pointer;transition:transform .2s}
+    .nut-card:hover{transform:scale(1.03)}
+    .nut-icon{font-size:26px;margin-bottom:4px}
+    .nut-name{font-size:10px;font-weight:700;color:var(--deep);letter-spacing:.5px}
+    .nut-foods{font-size:9px;color:var(--sage);margin-top:3px;font-weight:600}
+    .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px}
+    .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep)}
+    .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center}
+
+    /* ── Cards / Common ──────────────────── */
+    .card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+    .view{display:none}.view.active{display:block}
     .date-row{display:flex;justify-content:space-between;align-items:center}
     .date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
     .date-val{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);font-weight:600}
-    .today-badge{
-      background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;
-      letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px
-    }
-    .future-badge{
-      background:#f0f4ff;color:#7b8fdb;font-size:10px;font-weight:600;padding:3px 12px;
-      border-radius:20px;border:1px solid #c8d4f8
-    }
+    .today-badge{background:var(--blush);color:var(--deep);font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 12px;border-radius:20px}
+    .future-badge{background:#f0f4ff;color:#7b8fdb;font-size:10px;font-weight:600;padding:3px 12px;border-radius:20px;border:1px solid #c8d4f8}
+    .sec-label{display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--light)}
+    .sec-line{flex:1;height:1px;background:rgba(0,0,0,.07)}
+    .empty-state{text-align:center;padding:32px 20px;color:var(--light)}
+    .empty-state .icon{font-size:36px;margin-bottom:10px}
+    textarea{width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:transparent;line-height:1.7;min-height:60px}
+    textarea::placeholder{color:#c4b4b4}
 
+    /* ── Progress ────────────────────────── */
     .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
     .prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px}
     .prog-count{font-size:14px;font-weight:700;color:var(--deep)}
@@ -147,27 +113,39 @@
     .prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease}
     .prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light)}
 
-    .sec-label{
-      display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:10px;font-weight:600;
-      letter-spacing:1.5px;text-transform:uppercase;color:var(--light)
-    }
-    .sec-line{flex:1;height:1px;background:rgba(0,0,0,.07)}
+    /* ── Pregnancy Card ──────────────────── */
+    .preg-card{background:linear-gradient(135deg,#fff5f7 0%,#f9f0ff 100%);border:1.5px solid var(--rose);border-radius:20px;padding:18px 20px;margin-bottom:14px}
+    .preg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .preg-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic}
+    .preg-edit-btn{background:var(--blush);border:none;border-radius:10px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--deep);cursor:pointer}
+    .preg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .preg-stat{background:#fff;border-radius:14px;padding:10px 12px;text-align:center}
+    .preg-stat-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--deep)}
+    .preg-stat-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+    .trim-bar-wrap{margin-top:10px}
+    .trim-bar-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+    .trim-bar-track{height:10px;background:var(--blush);border-radius:10px;overflow:hidden;position:relative}
+    .trim-bar-fill{height:100%;border-radius:10px;transition:width .6s ease}
+    .trim1-fill{background:linear-gradient(90deg,#f7b8c8,#e8a0a0)}
+    .trim2-fill{background:linear-gradient(90deg,#f7e0a0,#f5c842)}
+    .trim3-fill{background:linear-gradient(90deg,#a8d8a8,#7aaa80)}
+    .trim-badge{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700}
+    .trim1-badge{background:#ffe0e8;color:#c0627a}
+    .trim2-badge{background:#fff3cd;color:#7a5c00}
+    .trim3-badge{background:#d4ead6;color:#2a6a30}
+    .preg-setup{text-align:center;padding:20px}
+    .preg-setup p{font-size:13px;color:var(--light);margin-bottom:12px}
+    .preg-setup-btn{background:var(--deep);color:#fff;border:none;border-radius:14px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-    /* Medicine cards */
-    .med-card{
-      background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);
-      display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8
-    }
+    /* ── Med Cards ───────────────────────── */
+    .med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8}
     .med-card.done{opacity:.8}
     .med-card.morning{border-left-color:#f5c842}.med-card.morning.done{background:#fffef0}
     .med-card.noon{border-left-color:#f5944a}.med-card.noon.done{background:#fff6f0}
     .med-card.evening{border-left-color:#7b8fdb}.med-card.evening.done{background:#f4f6ff}
     .med-card.night{border-left-color:#9b7fe8}.med-card.night.done{background:#f7f3ff}
     .med-card.future-day{opacity:.5;filter:grayscale(.4)}
-    .future-notice{
-      background:#f0f4ff;border:1px solid #c8d4f8;border-radius:14px;padding:10px 16px;
-      margin-bottom:14px;font-size:12px;color:#5a6aaa;display:flex;align-items:center;gap:8px
-    }
+    .future-notice{background:#f0f4ff;border:1px solid #c8d4f8;border-radius:14px;padding:10px 16px;margin-bottom:14px;font-size:12px;color:#5a6aaa;display:flex;align-items:center;gap:8px}
     .med-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
     .morning .med-icon{background:#fff8e1}.noon .med-icon{background:#fff0e6}.evening .med-icon{background:#f0f4ff}.night .med-icon{background:#f0eaff}
     .med-info{flex:1;min-width:0}
@@ -179,42 +157,46 @@
     .noon .med-dose{background:#fff0e6;color:#7a3500}
     .evening .med-dose{background:#f0f4ff;color:#1a2870}
     .night .med-dose{background:#f0eaff;color:#3a1a70}
-    .chk{
-      width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;cursor:pointer;
-      flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700
-    }
+    .med-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+    .med-tag{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--blush);color:var(--deep)}
+    .med-tag.sym{background:#f0eaff;color:#6040b0}
+    .chk{width:30px;height:30px;border-radius:9px;border:2px solid #ddd;background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700;transition:all .2s}
     .morning .chk.checked{background:#f5c842;border-color:#f5c842}
     .noon .chk.checked{background:#f5944a;border-color:#f5944a}
     .evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb}
     .night .chk.checked{background:#9b7fe8;border-color:#9b7fe8}
 
-    textarea{
-      width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;
-      color:var(--text);background:transparent;line-height:1.7;min-height:60px
-    }
-    textarea::placeholder{color:#c4b4b4}
+    /* ── My Meds View ────────────────────── */
+    .mymeds-filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+    .mf-tab{padding:6px 14px;border-radius:20px;border:1.5px solid var(--blush);cursor:pointer;font-size:11px;font-weight:600;background:#fff;color:var(--light);transition:all .2s;font-family:'DM Sans',sans-serif}
+    .mf-tab.active{background:var(--deep);color:#fff;border-color:var(--deep)}
+    .med-list-item{background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+    .med-list-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+    .med-list-info{flex:1;min-width:0}
+    .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic}
+    .med-list-meta{font-size:11px;color:var(--light);margin-top:1px}
+    .med-list-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 
-    /* Visits */
-    .visit-banner{
-      background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;
-      margin-bottom:14px;display:flex;gap:12px;align-items:flex-start
-    }
+    /* ── Visits ──────────────────────────── */
+    .visit-banner{background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
     .visit-banner-icon{font-size:22px;flex-shrink:0}
     .visit-banner-info{flex:1}
     .visit-banner-title{font-size:13px;font-weight:600;color:var(--visit);margin-bottom:2px}
     .visit-banner-note{font-size:12px;color:#6a5090;line-height:1.5}
+    .visit-item{background:var(--visit-light);border:1px solid #d8caf0;border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+    .visit-item-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+    .visit-item-info{flex:1;min-width:0}
+    .visit-item-date{font-size:13px;font-weight:600;color:var(--visit)}
+    .visit-item-note{font-size:11px;color:var(--light);margin-top:1px}
     .rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush)}
 
-    /* Calendar */
+    /* ── Calendar ────────────────────────── */
     .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
     .cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600}
     .cal-btn{background:var(--blush);border:none;border-radius:10px;padding:6px 16px;cursor:pointer;font-size:18px;color:var(--deep)}
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
     .cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--light);letter-spacing:1px;padding:4px 0}
-    .cal-day{
-      border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:5px 2px;aspect-ratio:1/1;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative
-    }
+    .cal-day{border-radius:10px;border:none;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 2px;aspect-ratio:1/1;transition:all .15s;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative}
     .cal-day.empty-cell{background:transparent;box-shadow:none;cursor:default}
     .cal-day.future{background:#f0f4ff;color:#7b8fdb}
     .cal-day.sel{background:var(--deep)!important;color:#fff!important;font-weight:700}
@@ -224,71 +206,35 @@
     .cal-day.none{background:#fff}
     .cal-day.has-visit::after{content:'🏥';font-size:8px;position:absolute;top:1px;right:2px}
     .cal-dot{width:5px;height:5px;border-radius:50%;margin-top:1px}
-    .cal-day.full .cal-dot{background:#2a6a30}
-    .cal-day.partial .cal-dot{background:#f5c842}
+    .cal-day.full .cal-dot{background:#2a6a30}.cal-day.partial .cal-dot{background:#f5c842}
     .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light)}
     .leg-dot{width:10px;height:10px;border-radius:3px}
 
-    /* Modals */
+    /* ── Modals ──────────────────────────── */
     .modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
-    .modal{
-      background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;
-      padding:28px 24px 40px;animation:slideUp .3s ease
-    }
-    .modal-title{
-      font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;
-      margin-bottom:20px;display:flex;justify-content:space-between;align-items:center
-    }
-    .modal-close{
-      background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;
-      color:var(--deep);display:flex;align-items:center;justify-content:center
-    }
+    .modal{background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;padding:28px 24px 40px;animation:slideUp .3s ease}
+    @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+    .modal-close{background:var(--blush);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--deep);display:flex;align-items:center;justify-content:center}
     .field{margin-bottom:14px}
-    .field label{
-      display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px
-    }
-    .field input,.field select,.field textarea{
-      width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--text);outline:none;background:#fff
-    }
+    .field label{display:block;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:5px}
+    .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--blush);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--text);outline:none;background:#fff;font-family:'DM Sans',sans-serif}
     .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose)}
     .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600}
-    .btn-primary{background:var(--deep);color:#fff}
-    .btn-primary:hover{background:var(--deeper)}
+    .btn{padding:11px 20px;border-radius:14px;border:none;cursor:pointer;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif}
+    .btn-primary{background:var(--deep);color:#fff}.btn-primary:hover{background:var(--deeper)}
     .btn-danger{background:#fff0f0;color:#c04040}
     .btn-ghost{background:var(--blush);color:var(--deep)}
     .btn-sm{padding:6px 14px;font-size:12px;border-radius:10px}
     .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-
-    .med-list-item,.visit-item{
-      background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px
-    }
-    .visit-item{background:var(--visit-light);border:1px solid #d8caf0}
-    .med-list-icon,.visit-item-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0}
-    .med-list-info,.visit-item-info{flex:1;min-width:0}
-    .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic}
-    .med-list-meta,.visit-item-note{font-size:11px;color:var(--light);margin-top:1px}
-    .visit-item-date{font-size:13px;font-weight:600;color:var(--visit)}
-
-    .upload-area{
-      border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;cursor:pointer
-    }
+    .upload-area{border:2px dashed var(--rose);border-radius:14px;padding:20px;text-align:center;cursor:pointer}
     .upload-area input[type=file]{display:none}
-    .empty-state{text-align:center;padding:32px 20px;color:var(--light)}
-    .empty-state .icon{font-size:36px;margin-bottom:10px}
+    .conditional-field{display:none}
+    .conditional-field.show{display:block}
 
-    /* nutrition tooltip */
-    .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200}
-    .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199}
-    .nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep)}
-    .nt-icon{font-size:36px;text-align:center;margin:8px 0 4px}
-    .nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic}
-    .nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px}
-    .nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600}
-
-    /* WhatsApp */
+    /* ── Alerts / WA ─────────────────────── */
     .wa-card{background:linear-gradient(135deg,#dcfce7 0%,#f0fdf4 100%);border:1.5px solid #86efac;border-radius:18px;padding:18px 20px;margin-bottom:14px}
     .wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
     .wa-icon{font-size:28px}
@@ -310,21 +256,12 @@
     .wa-status.ok{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac}
     .wa-status.err{display:block;background:#fff0f0;color:#c04040;border:1px solid #f5c0c0}
     .wa-status.loading{display:block;background:#fef9c3;color:#854d0e;border:1px solid #fde047}
-    .wa-preview{margin-top:14px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px}
-    .wa-preview-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#9ca3af;margin-bottom:8px;font-weight:600}
-    .wa-preview-msg{font-size:13px;color:#1f2937;line-height:1.7}
-    .wa-preview-msg .med-highlight{background:#dcfce7;padding:1px 6px;border-radius:6px;font-weight:600;color:#166534}
-    .wa-test-btn{margin-top:4px;background:#22c55e;color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer}
-    .wa-test-btn:disabled{background:#a3a3a3;cursor:not-allowed}
 
-    /* Finance */
+    /* ── Finance ─────────────────────────── */
     .fin-person-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-    .fin-ptab{
-      padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;
-      background:#fff;color:var(--light);display:flex;align-items:center;gap:6px
-    }
+    .fin-ptab{padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;background:#fff;color:var(--light);display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
     .fin-ptab.active{border-color:var(--deep);background:var(--deep);color:#fff}
-    .fin-add-p{padding:7px 14px;border-radius:20px;border:2px dashed var(--rose);cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--rose)}
+    .fin-add-p{padding:7px 14px;border-radius:20px;border:2px dashed var(--rose);cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--rose);font-family:'DM Sans',sans-serif}
     .fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
     .fin-stat{border-radius:16px;padding:14px 10px;text-align:center}
     .fin-stat-num{font-size:20px;font-weight:700;font-family:'Cormorant Garamond',serif}
@@ -332,11 +269,6 @@
     .fin-stat.inc{background:#dcfce7}.fin-stat.inc .fin-stat-num{color:#166534}
     .fin-stat.exp{background:#fff0f0}.fin-stat.exp .fin-stat-num{color:#c04040}
     .fin-stat.sav{background:#eef2ff}.fin-stat.sav .fin-stat-num{color:#3757c8}
-    .fin-stat.sav.neg{background:#fff0f0}.fin-stat.sav.neg .fin-stat-num{color:#c04040}
-    .fin-bar-wrap{margin-bottom:10px}
-    .fin-bar-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
-    .fin-bar{height:8px;background:#f0e8e8;border-radius:8px;overflow:hidden}
-    .fin-bar-fill{height:100%;border-radius:8px;transition:width .4s}
     .fin-txn{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f0f0}
     .fin-txn:last-child{border-bottom:none}
     .fin-txn-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -349,179 +281,1476 @@
     .fin-txn-amt.i{color:#166534}.fin-txn-amt.e{color:#c04040}
     .fin-txn-date{font-size:9px;color:var(--light);margin-top:1px}
     .fin-del{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;opacity:.4}
-    .fin-upload-box{
-      background:linear-gradient(135deg,#fffdf7 0%,#fff7f0 100%);
-      border:1.5px solid #f5d5b8;border-radius:18px;padding:16px 18px;margin-bottom:14px
-    }
-    .fin-upload-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:#a35b32;font-style:italic;margin-bottom:8px}
-    .fin-upload-desc{font-size:12px;color:#8a6a56;line-height:1.6;margin-bottom:12px}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .pill{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
     .pill.ok{background:#dcfce7;color:#166534}
     .pill.warn{background:#fff3cd;color:#8a6500}
     .pill.bad{background:#fff0f0;color:#c04040}
+
+    /* ── Nutrition tooltip ───────────────── */
+    .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200}
+    .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199}
+    .nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep)}
+    .nt-icon{font-size:36px;text-align:center;margin:8px 0 4px}
+    .nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic}
+    .nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px}
+    .nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600}
   </style>
 </head>
 <body>
 
-  <!-- AUTH -->
-  <div id="auth-screen" class="auth-screen">
-    <div class="auth-box">
-      <div class="auth-logo">🌸 MedMama</div>
-      <div class="auth-sub">Your personal pregnancy medicine tracker</div>
+<!-- ══════════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">🌸 MedMama</div>
+    <div class="auth-sub">Your personal pregnancy medicine tracker</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+    <div class="auth-field">
+      <label>Email</label>
+      <input id="auth-email" type="email" placeholder="you@example.com"/>
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input id="auth-password" type="password" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') handleAuth()"/>
+    </div>
+    <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-ok"  id="auth-ok"></div>
+  </div>
+</div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
-        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+<!-- ══════════════════════════════════════════
+     APP
+══════════════════════════════════════════ -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">🌸 MedMama</div>
+    <div class="topbar-right">
+      <div class="tabs">
+        <button class="tab active" id="tab-today"    onclick="goToday()">Today</button>
+        <button class="tab" id="tab-otherday"        onclick="showView('otherday')" style="display:none"></button>
+        <button class="tab" id="tab-calendar"        onclick="showView('calendar')">Calendar</button>
+        <button class="tab" id="tab-visits"          onclick="showView('visits')">Visits</button>
+        <button class="tab" id="tab-mymeds"          onclick="showView('mymeds')">My Meds</button>
+        <button class="tab" id="tab-alerts"          onclick="showView('alerts')">🔔</button>
+        <button class="tab" id="tab-finance"         onclick="showView('finance')">💰</button>
       </div>
-
-      <div class="auth-field">
-        <label>Email</label>
-        <input id="auth-email" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input id="auth-password" type="password" placeholder="••••••••"/>
-      </div>
-
-      <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
-      <div class="auth-err" id="auth-err"></div>
-      <div class="auth-ok" id="auth-ok"></div>
+      <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
 
-  <!-- APP -->
-  <div id="app">
-    <div class="topbar">
-      <div class="logo">🌸 MedMama</div>
-      <div class="topbar-right">
-        <div class="tabs">
-          <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
-          <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
-          <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
-          <button class="tab" id="tab-visits" onclick="showView('visits')">Visits</button>
-          <button class="tab" id="tab-mymeds" onclick="showView('mymeds')">My Meds</button>
-          <button class="tab" id="tab-alerts" onclick="showView('alerts')">🔔</button>
-          <button class="tab" id="tab-finance" onclick="showView('finance')">💰</button>
-        </div>
-        <button class="signout-btn" onclick="signOut()">Sign out</button>
+  <div class="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-text">Loading…</span>
+  </div>
+
+  <!-- Page Layout -->
+  <div class="page-layout">
+
+    <!-- LEFT: Nutrition -->
+    <div class="side-panel side-panel-left">
+      <div class="nutrition-panel">
+        <div class="nutrition-title">🥗 Pregnancy Nutrition</div>
+        <div id="nut-cards"></div>
       </div>
     </div>
 
-    <div class="sync-bar">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-text">Loading…</span>
-    </div>
+    <!-- MAIN COLUMN -->
+    <div class="main-col">
+      <div class="body">
 
-    <div class="page-layout">
-      <!-- LEFT -->
-      <div class="side-panel side-panel-left">
-        <div class="nutrition-panel">
-          <div class="nutrition-title">🥗 Pregnancy Nutrition</div>
-          <div id="nut-cards"></div>
+        <!-- ── TODAY ────────────────────────── -->
+        <div id="view-today" class="view active">
+          <div id="visit-today-banner"></div>
+
+          <!-- Pregnancy card -->
+          <div id="preg-card-today"></div>
+
+          <div class="card">
+            <div class="date-row">
+              <div>
+                <div class="date-lbl">Date</div>
+                <div class="date-val" id="date-display">—</div>
+              </div>
+              <div id="today-badge" class="today-badge" style="display:none">Today</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="prog-top">
+              <span class="prog-lbl">Doses taken</span>
+              <span class="prog-count" id="prog-count">0 / 0</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+            <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
+          </div>
+
+          <div id="med-sections"></div>
+
+          <div id="no-meds-msg" class="empty-state" style="display:none">
+            <div class="icon">💊</div>
+            <p>No medicines yet. Go to <strong>My Meds</strong>.</p>
+          </div>
+
+          <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
+          <div class="card">
+            <textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea>
+          </div>
         </div>
-      </div>
 
-      <!-- MAIN -->
-      <div class="main-col">
-        <div class="body">
-
-          <!-- TODAY -->
-          <div id="view-today" class="view active">
-            <div id="visit-today-banner"></div>
-
-            <div class="card">
-              <div class="date-row">
-                <div>
-                  <div class="date-lbl">Date</div>
-                  <div class="date-val" id="date-display">—</div>
-                </div>
-                <div id="today-badge" class="today-badge" style="display:none">Today</div>
+        <!-- ── OTHER DAY ─────────────────────── -->
+        <div id="view-otherday" class="view">
+          <div id="otherday-visit-banner"></div>
+          <div class="card">
+            <div class="date-row">
+              <div>
+                <div class="date-lbl">Viewing</div>
+                <div class="date-val" id="otherday-date-display">—</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div>
+                <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
               </div>
             </div>
-
-            <div class="card">
-              <div class="prog-top">
-                <span class="prog-lbl">Doses taken</span>
-                <span class="prog-count" id="prog-count">0 / 0</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-              <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
+          </div>
+          <div id="otherday-future-notice" class="future-notice" style="display:none">
+            📅 <span>Future date — can't check off yet.</span>
+          </div>
+          <div class="card">
+            <div class="prog-top">
+              <span class="prog-lbl">Doses taken</span>
+              <span class="prog-count" id="otherday-prog-count">0 / 0</span>
             </div>
-
-            <div id="med-sections"></div>
-
-            <div id="no-meds-msg" class="empty-state" style="display:none">
-              <div class="icon">💊</div>
-              <p>No medicines yet. Go to <strong>My Meds</strong>.</p>
-            </div>
-
+            <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
+            <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
+          </div>
+          <div id="otherday-med-sections"></div>
+          <div id="otherday-notes-wrap">
             <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
             <div class="card">
-              <textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea>
+              <textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea>
             </div>
           </div>
+        </div>
 
-          <!-- OTHER DAY -->
-          <div id="view-otherday" class="view">
-            <div id="otherday-visit-banner"></div>
-
-            <div class="card">
-              <div class="date-row">
-                <div>
-                  <div class="date-lbl">Viewing</div>
-                  <div class="date-val" id="otherday-date-display">—</div>
-                </div>
-                <div style="display:flex;gap:8px;align-items:center;">
-                  <div id="otherday-future-badge" class="future-badge" style="display:none">📅 Upcoming</div>
-                  <button class="btn btn-ghost btn-sm" onclick="goToday()">← Today</button>
-                </div>
-              </div>
+        <!-- ── CALENDAR ──────────────────────── -->
+        <div id="view-calendar" class="view">
+          <div class="card">
+            <div class="cal-nav">
+              <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+              <div class="cal-title" id="cal-title">—</div>
+              <button class="cal-btn" onclick="changeMonth(1)">›</button>
             </div>
-
-            <div id="otherday-future-notice" class="future-notice" style="display:none">
-              📅 <span>Future date — can't check off yet.</span>
-            </div>
-
-            <div class="card">
-              <div class="prog-top">
-                <span class="prog-lbl">Doses taken</span>
-                <span class="prog-count" id="otherday-prog-count">0 / 0</span>
-              </div>
-              <div class="prog-track"><div class="prog-fill" id="otherday-prog-fill" style="width:0%"></div></div>
-              <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
-            </div>
-
-            <div id="otherday-med-sections"></div>
-
-            <div id="otherday-notes-wrap">
-              <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
-              <div class="card">
-                <textarea id="otherday-notes-input" placeholder="Notes…" oninput="saveOtherdayNote()"></textarea>
-              </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div class="legend">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div>
             </div>
           </div>
+          <div class="card">
+            <div id="month-summary">Loading…</div>
+          </div>
+        </div>
 
-          <!-- CALENDAR -->
-          <div id="view-calendar" class="view">
-            <div class="card">
-              <div class="cal-nav">
-                <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
-                <div class="cal-title" id="cal-title">—</div>
-                <button class="cal-btn" onclick="changeMonth(1)">›</button>
-              </div>
-              <div class="cal-grid" id="cal-grid"></div>
-              <div class="legend">
-                <div class="leg-item"><div class="leg-dot" style="background:var(--softgreen)"></div>All</div>
-                <div class="leg-item"><div class="leg-dot" style="background:#fff3cd"></div>Partial</div>
-                <div class="leg-item"><div class="leg-dot" style="background:#f0f0f0"></div>Missed</div>
-                <div class="leg-item"><div class="leg-dot" style="background:#e0e8ff"></div>Future</div>
-              </div>
+        <!-- ── VISITS ────────────────────────── -->
+        <div id="view-visits" class="view">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic">Doctor Visits</div>
+            <button class="btn btn-primary btn-sm" onclick="openVisitModal()">+ Add Visit</button>
+          </div>
+          <div id="visits-list"></div>
+        </div>
+
+        <!-- ── MY MEDS ───────────────────────── -->
+        <div id="view-mymeds" class="view">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic">My Medicines</div>
+            <button class="btn btn-primary btn-sm" onclick="openAddMedModal()">+ Add Med</button>
+          </div>
+          <div class="mymeds-filter-tabs" id="mymeds-filter-tabs">
+            <button class="mf-tab active" data-filter="all"        onclick="setMedFilter('all',this)">All</button>
+            <button class="mf-tab"        data-filter="trim1"      onclick="setMedFilter('trim1',this)">T1</button>
+            <button class="mf-tab"        data-filter="trim2"      onclick="setMedFilter('trim2',this)">T2</button>
+            <button class="mf-tab"        data-filter="trim3"      onclick="setMedFilter('trim3',this)">T3</button>
+            <button class="mf-tab"        data-filter="alltrimes"  onclick="setMedFilter('alltrimes',this)">All Trimesters</button>
+            <button class="mf-tab"        data-filter="symptom"    onclick="setMedFilter('symptom',this)">By Symptom</button>
+          </div>
+          <div id="mymeds-list"></div>
+        </div>
+
+        <!-- ── ALERTS ────────────────────────── -->
+        <div id="view-alerts" class="view">
+          <div class="wa-card">
+            <div class="wa-header">
+              <div class="wa-icon">📱</div>
+              <div class="wa-title">WhatsApp Reminders</div>
             </div>
-            <div class="card">
-              <div class="summary-line" id="month-summary">Loading…</div>
+            <div class="wa-desc">Get daily medicine reminders sent to WhatsApp. Powered by Twilio. Enter your number and toggle on to activate.</div>
+            <div class="wa-toggle-row">
+              <div class="wa-toggle-label">Enable Reminders</div>
+              <label class="wa-toggle"><input type="checkbox" id="wa-toggle-chk" onchange="toggleWA()"><span class="wa-slider"></span></label>
+            </div>
+            <div class="wa-phone-row">
+              <div class="field">
+                <label>WhatsApp Number (with country code)</label>
+                <input id="wa-phone" type="tel" placeholder="+919876543210"/>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="saveWASettings()" style="flex-shrink:0;margin-bottom:0">Save</button>
+            </div>
+            <div class="wa-schedule">
+              <div class="wa-slot">🌅 Morning — 8:00 AM</div>
+              <div class="wa-slot">🌞 Noon — 1:00 PM</div>
+              <div class="wa-slot">🌇 Evening — 6:00 PM</div>
+              <div class="wa-slot">🌃 Night — 9:30 PM</div>
+            </div>
+            <div class="wa-status" id="wa-status"></div>
+          </div>
+          <div class="card">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Reminder Preview</div>
+            <div style="font-size:12px;color:var(--light);line-height:1.8" id="wa-preview-text">
+              Configure your medicines to see a preview.
             </div>
           </div>
+        </div>
 
-          <!-- VISITS -->
-          <div id="view-visits" class="view
+        <!-- ── FINANCE ───────────────────────── -->
+        <div id="view-finance" class="view">
+          <div class="fin-person-tabs" id="fin-person-tabs">
+            <button class="fin-ptab active" id="fin-ptab-main" onclick="selectFinPerson('main',this)">👤 Me</button>
+            <button class="fin-add-p" onclick="openAddPersonModal()">+ Add Person</button>
+          </div>
+          <div class="fin-summary" id="fin-summary"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:12px;font-weight:600;color:var(--light);text-transform:uppercase;letter-spacing:1px">Transactions</div>
+            <button class="btn btn-primary btn-sm" onclick="openAddTxnModal()">+ Add</button>
+          </div>
+          <div class="card" id="fin-txn-list"><div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div></div>
+        </div>
+
+      </div><!-- /body -->
+    </div><!-- /main-col -->
+
+    <!-- RIGHT: Baby size -->
+    <div class="side-panel side-panel-right">
+      <div class="baby-panel">
+        <div class="baby-title">👶 Baby This Week</div>
+        <div id="baby-info-panel"></div>
+      </div>
+    </div>
+
+  </div><!-- /page-layout -->
+</div><!-- /app -->
+
+<!-- ══════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════ -->
+
+<!-- Add/Edit Med -->
+<div class="modal-overlay" id="modal-addmed">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="addmed-title">Add Medicine</span>
+      <button class="modal-close" onclick="closeModal('modal-addmed')">×</button>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Brand Name</label>
+        <input id="med-brand-in" placeholder="e.g. Pregnacare"/>
+      </div>
+      <div class="field">
+        <label>Generic Name</label>
+        <input id="med-name-in" placeholder="e.g. Folic Acid"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Dose / Strength</label>
+        <input id="med-dose-in" placeholder="e.g. 1 tablet"/>
+      </div>
+      <div class="field">
+        <label>Icon (emoji)</label>
+        <input id="med-icon-in" placeholder="💊" maxlength="4"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Time of Day</label>
+      <select id="med-time-in">
+        <option value="morning">🌅 Morning</option>
+        <option value="noon">🌞 Noon</option>
+        <option value="evening">🌇 Evening</option>
+        <option value="night">🌃 Night</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Notes / Instructions</label>
+      <input id="med-notes-in" placeholder="e.g. After food"/>
+    </div>
+
+    <!-- Category type -->
+    <div class="field">
+      <label>Category Type</label>
+      <select id="med-cat-type" onchange="onCatTypeChange()">
+        <option value="always">Always (every day)</option>
+        <option value="trimester">By Trimester</option>
+        <option value="symptom">By Symptom</option>
+      </select>
+    </div>
+
+    <!-- Trimester selector -->
+    <div class="field conditional-field" id="field-trimesters">
+      <label>Trimester(s)</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;text-transform:none;letter-spacing:0">
+          <input type="checkbox" id="trim-chk-1" value="1"> 1st Trimester
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;text-transform:none;letter-spacing:0">
+          <input type="checkbox" id="trim-chk-2" value="2"> 2nd Trimester
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:13px;text-transform:none;letter-spacing:0">
+          <input type="checkbox" id="trim-chk-3" value="3"> 3rd Trimester
+        </label>
+      </div>
+    </div>
+
+    <!-- Symptom input -->
+    <div class="field conditional-field" id="field-symptom">
+      <label>Symptom / Condition</label>
+      <input id="med-symptom-in" placeholder="e.g. Nausea, Heartburn, Leg cramps…"/>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveMed()">Save Medicine</button>
+      <button class="btn btn-danger" id="del-med-btn" onclick="deleteMed()" style="display:none">Delete</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-addmed')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Visit -->
+<div class="modal-overlay" id="modal-addvisit">
+  <div class="modal">
+    <div class="modal-title">
+      Add Doctor Visit
+      <button class="modal-close" onclick="closeModal('modal-addvisit')">×</button>
+    </div>
+    <div class="field">
+      <label>Visit Date</label>
+      <input id="visit-date-in" type="date"/>
+    </div>
+    <div class="field">
+      <label>Doctor / Hospital</label>
+      <input id="visit-doctor-in" placeholder="Dr. Name or Hospital"/>
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <input id="visit-notes-in" placeholder="Purpose, findings, etc."/>
+    </div>
+    <div class="field">
+      <label>Prescription Image (optional)</label>
+      <div class="upload-area" onclick="document.getElementById('visit-rx-file').click()">
+        <input type="file" id="visit-rx-file" accept="image/*,application/pdf" onchange="previewRx(event)"/>
+        <div id="rx-preview-wrap">📎 Tap to upload prescription</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveVisit()">Save Visit</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-addvisit')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pregnancy Setup -->
+<div class="modal-overlay" id="modal-preg">
+  <div class="modal">
+    <div class="modal-title">
+      Pregnancy Details
+      <button class="modal-close" onclick="closeModal('modal-preg')">×</button>
+    </div>
+    <div class="field">
+      <label>Last Menstrual Period (LMP)</label>
+      <input id="preg-lmp-in" type="date"/>
+    </div>
+    <div class="field">
+      <label>Or enter EDD directly (optional)</label>
+      <input id="preg-edd-in" type="date"/>
+    </div>
+    <div style="font-size:11px;color:var(--light);margin-top:-8px;margin-bottom:14px">LMP is used to auto-calculate EDD (LMP + 280 days). You can override with EDD.</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="savePregnancy()">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-preg')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Finance Person -->
+<div class="modal-overlay" id="modal-addperson">
+  <div class="modal">
+    <div class="modal-title">
+      Add Person
+      <button class="modal-close" onclick="closeModal('modal-addperson')">×</button>
+    </div>
+    <div class="field">
+      <label>Name</label>
+      <input id="fin-person-name-in" placeholder="e.g. Husband"/>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveFinPerson()">Add</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-addperson')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Transaction -->
+<div class="modal-overlay" id="modal-addtxn">
+  <div class="modal">
+    <div class="modal-title">
+      Add Transaction
+      <button class="modal-close" onclick="closeModal('modal-addtxn')">×</button>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select id="txn-type-in">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Amount (₹)</label>
+        <input id="txn-amt-in" type="number" placeholder="0"/>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <input id="txn-cat-in" placeholder="e.g. Salary, Medicine"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Note</label>
+      <input id="txn-note-in" placeholder="Optional note"/>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input id="txn-date-in" type="date"/>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveTxn()">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-addtxn')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nutrition tooltip -->
+<div class="nut-tooltip-overlay" id="nut-overlay" style="display:none" onclick="closeNutTooltip()"></div>
+<div class="nut-tooltip" id="nut-tooltip" style="display:none">
+  <button class="nt-close" onclick="closeNutTooltip()">×</button>
+  <div class="nt-icon" id="nt-icon"></div>
+  <div class="nt-title" id="nt-title"></div>
+  <div class="nt-body" id="nt-body"></div>
+  <div class="nt-foods" id="nt-foods"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://dpns302dfhmv3y9ms1qg.supabase.co'; // ← replace if needed
+const SUPABASE_KEY = 'sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBv0'; // ← publishable key
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentUser = null;
+let medicines = [];
+let visits = [];
+let checks = {};      // {dateStr: {medId: true/false}}
+let notes = {};       // {dateStr: text}
+let pregData = null;  // {lmp, edd}
+let finPersons = ['main'];
+let finPersonNames = {main:'Me'};
+let finTxns = {};     // {personId: [{...}]}
+let currentFinPerson = 'main';
+let waSettings = {};
+let medFilter = 'all';
+let editMedId = null;
+let calYear, calMonth;
+let viewingDate = todayStr();
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function fmtDate(s){
+  if(!s) return '—';
+  const [y,m,d]=s.split('-');
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+}
+function addDays(dateStr,n){
+  const d=new Date(dateStr); d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function diffDays(a,b){
+  return Math.floor((new Date(a)-new Date(b))/(1000*60*60*24));
+}
+function setSyncStatus(status,text){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-text');
+  dot.className='sync-dot '+status;
+  txt.textContent=text;
+}
+
+// ─── AUTH ────────────────────────────────────────────────────────────────────
+let authMode = 'login';
+function switchAuthTab(mode){
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (mode==='login'&&i===0)||(mode==='signup'&&i===1));
+  });
+  document.getElementById('auth-submit-btn').textContent = mode==='login' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-err').style.display='none';
+  document.getElementById('auth-ok').style.display='none';
+}
+
+async function handleAuth(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass =document.getElementById('auth-password').value;
+  const btn  =document.getElementById('auth-submit-btn');
+  const err  =document.getElementById('auth-err');
+  const ok   =document.getElementById('auth-ok');
+  err.style.display='none'; ok.style.display='none';
+  if(!email||!pass){ showAuthErr('Please enter email and password.'); return; }
+  btn.disabled=true; btn.textContent='Please wait…';
+  try {
+    let res;
+    if(authMode==='login'){
+      res = await sb.auth.signInWithPassword({email,password:pass});
+    } else {
+      res = await sb.auth.signUp({email,password:pass});
+    }
+    if(res.error) throw res.error;
+    if(authMode==='signup'){
+      ok.textContent='Account created! Check your email to verify, then sign in.';
+      ok.style.display='block';
+    }
+    // onAuthStateChange will handle the rest
+  } catch(e){
+    showAuthErr(e.message || 'Authentication failed.');
+  } finally {
+    btn.disabled=false; btn.textContent=authMode==='login'?'Sign In':'Create Account';
+  }
+}
+function showAuthErr(msg){
+  const el=document.getElementById('auth-err');
+  el.textContent=msg; el.style.display='block';
+}
+
+async function signOut(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    await loadAll();
+  } else {
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('app').style.display='none';
+  }
+});
+
+// Check existing session on load
+(async ()=>{
+  const {data:{session}} = await sb.auth.getSession();
+  if(session?.user){
+    currentUser=session.user;
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    await loadAll();
+  }
+})();
+
+// ─── LOAD ────────────────────────────────────────────────────────────────────
+async function loadAll(){
+  setSyncStatus('loading','Syncing…');
+  try {
+    await Promise.all([loadMedicines(), loadVisits(), loadChecks(), loadNotes(), loadPreg(), loadFinance(), loadWA()]);
+    setSyncStatus('ok','Synced');
+  } catch(e){
+    setSyncStatus('err','Sync error');
+    console.error(e);
+  }
+  initCalendar();
+  renderAll();
+}
+
+async function loadMedicines(){
+  const {data,error}=await sb.from('medicines').select('*').eq('user_id',currentUser.id).order('created_at');
+  if(error) throw error;
+  medicines=data||[];
+}
+async function loadVisits(){
+  const {data,error}=await sb.from('visits').select('*').eq('user_id',currentUser.id).order('visit_date',{ascending:false});
+  if(error) throw error;
+  visits=data||[];
+}
+async function loadChecks(){
+  const {data,error}=await sb.from('checks').select('*').eq('user_id',currentUser.id);
+  if(error) throw error;
+  checks={};
+  (data||[]).forEach(r=>{ if(!checks[r.date]) checks[r.date]={}; checks[r.date][r.med_id]=r.checked; });
+}
+async function loadNotes(){
+  const {data,error}=await sb.from('notes').select('*').eq('user_id',currentUser.id);
+  if(error) throw error;
+  notes={};
+  (data||[]).forEach(r=>{ notes[r.date]=r.note; });
+}
+async function loadPreg(){
+  const {data,error}=await sb.from('pregnancy').select('*').eq('user_id',currentUser.id).maybeSingle();
+  if(error) throw error;
+  pregData=data||null;
+}
+async function loadFinance(){
+  const {data,error}=await sb.from('finance').select('*').eq('user_id',currentUser.id).maybeSingle();
+  if(error) throw error;
+  if(data){
+    finPersons=data.persons||['main'];
+    finPersonNames=data.person_names||{main:'Me'};
+    finTxns=data.transactions||{};
+  }
+}
+async function loadWA(){
+  const {data,error}=await sb.from('settings').select('*').eq('user_id',currentUser.id).maybeSingle();
+  if(error) throw error;
+  waSettings=data?.wa_settings||{};
+  if(waSettings.phone) document.getElementById('wa-phone').value=waSettings.phone;
+  if(waSettings.enabled) document.getElementById('wa-toggle-chk').checked=true;
+}
+
+// ─── RENDER ALL ──────────────────────────────────────────────────────────────
+function renderAll(){
+  renderTodayView();
+  renderMymeds();
+  renderVisitsList();
+  renderCalendar();
+  renderFinance();
+  renderNutrition();
+  renderBabyPanel();
+  renderWAPreview();
+}
+
+// ─── VIEW SWITCHING ──────────────────────────────────────────────────────────
+const VIEW_IDS = ['today','otherday','calendar','visits','mymeds','alerts','finance'];
+function showView(id){
+  VIEW_IDS.forEach(v=>{
+    document.getElementById('view-'+v)?.classList.toggle('active',v===id);
+    const tab=document.getElementById('tab-'+v);
+    if(tab) tab.classList.toggle('active',v===id);
+  });
+  if(id==='calendar') renderCalendar();
+  if(id==='mymeds') renderMymeds();
+  if(id==='visits') renderVisitsList();
+  if(id==='finance') renderFinance();
+}
+function goToday(){
+  viewingDate=todayStr();
+  document.getElementById('tab-otherday').style.display='none';
+  showView('today');
+  renderTodayView();
+}
+
+// ─── TODAY VIEW ──────────────────────────────────────────────────────────────
+function renderTodayView(date){
+  const d = date||todayStr();
+  viewingDate=d;
+  const isToday = d===todayStr();
+  const isFuture = d>todayStr();
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const [y,m,day]=d.split('-');
+  document.getElementById('date-display').textContent=`${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+  document.getElementById('today-badge').style.display=isToday?'block':'none';
+
+  // Pregnancy card
+  renderPregCard('preg-card-today');
+
+  // Visit banner
+  const todayVisit=visits.find(v=>v.visit_date===d);
+  const bannerEl=document.getElementById('visit-today-banner');
+  bannerEl.innerHTML = todayVisit ? `
+    <div class="visit-banner">
+      <div class="visit-banner-icon">🏥</div>
+      <div class="visit-banner-info">
+        <div class="visit-banner-title">Doctor Visit Today</div>
+        <div class="visit-banner-note">${todayVisit.doctor||''} ${todayVisit.notes?'· '+todayVisit.notes:''}</div>
+      </div>
+    </div>` : '';
+
+  // Meds
+  renderMedSections('med-sections','prog-fill','prog-count', d, isFuture);
+  document.getElementById('notes-input').value=notes[d]||'';
+}
+
+// ─── PREG CARD ───────────────────────────────────────────────────────────────
+function renderPregCard(containerId){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  if(!pregData||(!pregData.lmp&&!pregData.edd)){
+    el.innerHTML=`<div class="preg-card">
+      <div class="preg-setup">
+        <p>Track your pregnancy week by week.</p>
+        <button class="preg-setup-btn" onclick="openPregModal()">🌸 Set Up Pregnancy</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const edd = pregData.edd || addDays(pregData.lmp, 280);
+  const today = todayStr();
+  const lmp = pregData.lmp || addDays(edd, -280);
+  const daysPreg = diffDays(today, lmp);
+  const daysLeft = diffDays(edd, today);
+  const weeksPreg = Math.max(0, Math.floor(daysPreg/7));
+  const daysIntoWeek = Math.max(0, daysPreg%7);
+  const pct = Math.min(100, Math.max(0, Math.round((daysPreg/280)*100)));
+
+  let trimester=1, trimLabel='1st Trimester', trimClass='trim1';
+  if(weeksPreg>=28){trimester=3;trimLabel='3rd Trimester';trimClass='trim3';}
+  else if(weeksPreg>=14){trimester=2;trimLabel='2nd Trimester';trimClass='trim2';}
+
+  // trim-specific fill pct
+  let trimPct=0;
+  if(trimester===1) trimPct=Math.min(100,Math.round((weeksPreg/13)*100));
+  else if(trimester===2) trimPct=Math.min(100,Math.round(((weeksPreg-13)/14)*100));
+  else trimPct=Math.min(100,Math.round(((weeksPreg-27)/13)*100));
+
+  el.innerHTML=`
+  <div class="preg-card">
+    <div class="preg-header">
+      <div class="preg-title">🌸 Pregnancy Tracker</div>
+      <button class="preg-edit-btn" onclick="openPregModal()">Edit</button>
+    </div>
+    <div class="preg-grid">
+      <div class="preg-stat">
+        <div class="preg-stat-val">${weeksPreg}<span style="font-size:14px">w</span> ${daysIntoWeek}<span style="font-size:14px">d</span></div>
+        <div class="preg-stat-lbl">Pregnant</div>
+      </div>
+      <div class="preg-stat">
+        <div class="preg-stat-val">${Math.max(0,daysLeft)}</div>
+        <div class="preg-stat-lbl">Days to EDD</div>
+      </div>
+      <div class="preg-stat">
+        <div class="preg-stat-val">${pct}%</div>
+        <div class="preg-stat-lbl">Complete</div>
+      </div>
+      <div class="preg-stat">
+        <div class="preg-stat-val">${fmtDate(edd).split(',')[0]}</div>
+        <div class="preg-stat-lbl">Due Date</div>
+      </div>
+    </div>
+    <div class="trim-bar-wrap">
+      <div class="trim-bar-labels">
+        <span>Week 1</span><span>Week 14</span><span>Week 28</span><span>Week 40</span>
+      </div>
+      <div class="trim-bar-track">
+        <div class="trim-bar-fill ${trimClass}-fill" style="width:${pct}%"></div>
+      </div>
+      <span class="trim-badge ${trimClass}-badge">${trimLabel} · Week ${weeksPreg}</span>
+    </div>
+  </div>`;
+}
+
+function currentTrimester(){
+  if(!pregData) return null;
+  const edd = pregData.edd || addDays(pregData.lmp||'',280);
+  const lmp = pregData.lmp || addDays(edd,-280);
+  const weeks = Math.floor(diffDays(todayStr(),lmp)/7);
+  if(weeks>=28) return 3;
+  if(weeks>=14) return 2;
+  return 1;
+}
+
+// ─── MED SECTIONS ────────────────────────────────────────────────────────────
+function getMedsForDate(dateStr){
+  const trim = currentTrimester();
+  return medicines.filter(m=>{
+    if(m.category_type==='trimester'){
+      const trims = m.trimesters||[];
+      return trim ? trims.includes(String(trim)) : true;
+    }
+    // always or symptom — show always
+    return true;
+  });
+}
+
+function renderMedSections(sectionsId, fillId, countId, date, isFuture){
+  const el=document.getElementById(sectionsId);
+  const slots=['morning','noon','evening','night'];
+  const labels={morning:'🌅 Morning',noon:'🌞 Noon',evening:'🌇 Evening',night:'🌃 Night'};
+  const meds=getMedsForDate(date);
+
+  if(meds.length===0){
+    el.innerHTML='';
+    document.getElementById('no-meds-msg') && (document.getElementById('no-meds-msg').style.display='block');
+    document.getElementById(fillId).style.width='0%';
+    document.getElementById(countId).textContent='0 / 0';
+    return;
+  }
+  document.getElementById('no-meds-msg') && (document.getElementById('no-meds-msg').style.display='none');
+
+  let totalChecked=0, totalMeds=0;
+  let html='';
+  slots.forEach(slot=>{
+    const slotMeds=meds.filter(m=>m.time_of_day===slot);
+    if(!slotMeds.length) return;
+    html+=`<div class="sec-label">${labels[slot]} <div class="sec-line"></div></div>`;
+    slotMeds.forEach(med=>{
+      totalMeds++;
+      const isChecked = !isFuture && checks[date]?.[med.id];
+      if(isChecked) totalChecked++;
+      const tags = buildMedTags(med);
+      html+=`
+      <div class="med-card ${slot}${isChecked?' done':''}${isFuture?' future-day':''}">
+        <div class="med-icon">${med.icon||'💊'}</div>
+        <div class="med-info">
+          <div class="med-brand">${med.brand||''}</div>
+          <div class="med-name">${med.generic_name||''}</div>
+          <div class="med-meta">${med.notes||''}</div>
+          <span class="med-dose">${med.dose||''}</span>
+          ${tags ? `<div class="med-tags">${tags}</div>` : ''}
+        </div>
+        <div class="chk${isChecked?' checked':''}" onclick="${isFuture?'':` toggleCheck('${med.id}','${date}','${slot}',this)`}">${isChecked?'✓':''}</div>
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+
+  const pct=totalMeds?Math.round((totalChecked/totalMeds)*100):0;
+  document.getElementById(fillId).style.width=pct+'%';
+  document.getElementById(countId).textContent=`${totalChecked} / ${totalMeds}`;
+}
+
+function buildMedTags(med){
+  let tags='';
+  if(med.category_type==='trimester'){
+    const t=med.trimesters||[];
+    t.forEach(x=>{ tags+=`<span class="med-tag">T${x}</span>`; });
+  } else if(med.category_type==='symptom' && med.symptom){
+    tags+=`<span class="med-tag sym">${med.symptom}</span>`;
+  }
+  return tags;
+}
+
+async function toggleCheck(medId, date, slot, el){
+  const cur = checks[date]?.[medId];
+  const newVal = !cur;
+  if(!checks[date]) checks[date]={};
+  checks[date][medId]=newVal;
+
+  // Optimistic UI
+  const card=el.closest('.med-card');
+  el.classList.toggle('checked',newVal);
+  el.textContent=newVal?'✓':'';
+  card.classList.toggle('done',newVal);
+
+  // Update progress
+  const date2=viewingDate;
+  const meds=getMedsForDate(date2);
+  let tc=0,tm=meds.length;
+  meds.forEach(m=>{ if(checks[date2]?.[m.id]) tc++; });
+  const fillId=date===todayStr()?'prog-fill':'otherday-prog-fill';
+  const countId=date===todayStr()?'prog-count':'otherday-prog-count';
+  document.getElementById(fillId).style.width=(tm?Math.round(tc/tm*100):0)+'%';
+  document.getElementById(countId).textContent=`${tc} / ${tm}`;
+
+  setSyncStatus('loading','Saving…');
+  try {
+    await sb.from('checks').upsert({
+      user_id:currentUser.id, date, med_id:medId, slot, checked:newVal
+    },{onConflict:'user_id,date,med_id'});
+    setSyncStatus('ok','Saved');
+  } catch(e){ setSyncStatus('err','Save failed'); }
+}
+
+// ─── NOTES ───────────────────────────────────────────────────────────────────
+let noteTimer=null;
+function saveNote(){
+  const val=document.getElementById('notes-input').value;
+  notes[todayStr()]=val;
+  clearTimeout(noteTimer);
+  noteTimer=setTimeout(async()=>{
+    try {
+      await sb.from('notes').upsert({user_id:currentUser.id,date:todayStr(),note:val},{onConflict:'user_id,date'});
+      setSyncStatus('ok','Saved');
+    } catch(e){ setSyncStatus('err','Save failed'); }
+  },800);
+}
+let otherdayNoteTimer=null;
+function saveOtherdayNote(){
+  const val=document.getElementById('otherday-notes-input').value;
+  notes[viewingDate]=val;
+  clearTimeout(otherdayNoteTimer);
+  otherdayNoteTimer=setTimeout(async()=>{
+    try {
+      await sb.from('notes').upsert({user_id:currentUser.id,date:viewingDate,note:val},{onConflict:'user_id,date'});
+      setSyncStatus('ok','Saved');
+    } catch(e){ setSyncStatus('err','Save failed'); }
+  },800);
+}
+
+// ─── MY MEDS ─────────────────────────────────────────────────────────────────
+let medFilterCurrent='all';
+function setMedFilter(f, btn){
+  medFilterCurrent=f;
+  document.querySelectorAll('.mf-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMymeds();
+}
+
+function renderMymeds(){
+  const el=document.getElementById('mymeds-list');
+  if(!el) return;
+  const trim=currentTrimester();
+  let filtered=medicines;
+  if(medFilterCurrent==='trim1') filtered=medicines.filter(m=>m.category_type==='trimester'&&(m.trimesters||[]).includes('1'));
+  else if(medFilterCurrent==='trim2') filtered=medicines.filter(m=>m.category_type==='trimester'&&(m.trimesters||[]).includes('2'));
+  else if(medFilterCurrent==='trim3') filtered=medicines.filter(m=>m.category_type==='trimester'&&(m.trimesters||[]).includes('3'));
+  else if(medFilterCurrent==='alltrimes') filtered=medicines.filter(m=>m.category_type==='trimester');
+  else if(medFilterCurrent==='symptom') filtered=medicines.filter(m=>m.category_type==='symptom');
+
+  if(!filtered.length){
+    el.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No medicines here yet.</p></div>';
+    return;
+  }
+  el.innerHTML=filtered.map(m=>`
+    <div class="med-list-item">
+      <div class="med-list-icon">${m.icon||'💊'}</div>
+      <div class="med-list-info">
+        <div class="med-list-brand">${m.brand||''}${m.generic_name?` <span style="font-size:11px;color:var(--light)">(${m.generic_name})</span>`:''}</div>
+        <div class="med-list-meta">${m.dose||''} · ${m.time_of_day||''} ${m.notes?'· '+m.notes:''}</div>
+        <div class="med-list-tags">${buildMedTags(m)}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="openEditMedModal('${m.id}')">Edit</button>
+    </div>`).join('');
+}
+
+// ─── ADD/EDIT MED MODAL ──────────────────────────────────────────────────────
+function openAddMedModal(){
+  editMedId=null;
+  document.getElementById('addmed-title').textContent='Add Medicine';
+  document.getElementById('del-med-btn').style.display='none';
+  ['med-brand-in','med-name-in','med-dose-in','med-icon-in','med-notes-in','med-symptom-in'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('med-time-in').value='morning';
+  document.getElementById('med-cat-type').value='always';
+  ['trim-chk-1','trim-chk-2','trim-chk-3'].forEach(id=>document.getElementById(id).checked=false);
+  onCatTypeChange();
+  openModal('modal-addmed');
+}
+
+function openEditMedModal(id){
+  const m=medicines.find(x=>x.id===id);
+  if(!m) return;
+  editMedId=id;
+  document.getElementById('addmed-title').textContent='Edit Medicine';
+  document.getElementById('del-med-btn').style.display='inline-block';
+  document.getElementById('med-brand-in').value=m.brand||'';
+  document.getElementById('med-name-in').value=m.generic_name||'';
+  document.getElementById('med-dose-in').value=m.dose||'';
+  document.getElementById('med-icon-in').value=m.icon||'';
+  document.getElementById('med-time-in').value=m.time_of_day||'morning';
+  document.getElementById('med-notes-in').value=m.notes||'';
+  document.getElementById('med-cat-type').value=m.category_type||'always';
+  const trims=m.trimesters||[];
+  ['1','2','3'].forEach(n=>{ document.getElementById('trim-chk-'+n).checked=trims.includes(n); });
+  document.getElementById('med-symptom-in').value=m.symptom||'';
+  onCatTypeChange();
+  openModal('modal-addmed');
+}
+
+function onCatTypeChange(){
+  const val=document.getElementById('med-cat-type').value;
+  document.getElementById('field-trimesters').classList.toggle('show',val==='trimester');
+  document.getElementById('field-symptom').classList.toggle('show',val==='symptom');
+}
+
+async function saveMed(){
+  const brand=document.getElementById('med-brand-in').value.trim();
+  if(!brand){ alert('Please enter a brand/medicine name.'); return; }
+  const catType=document.getElementById('med-cat-type').value;
+  const trims=['1','2','3'].filter(n=>document.getElementById('trim-chk-'+n).checked);
+  const med={
+    user_id:currentUser.id,
+    brand,
+    generic_name:document.getElementById('med-name-in').value.trim(),
+    dose:document.getElementById('med-dose-in').value.trim(),
+    icon:document.getElementById('med-icon-in').value.trim()||'💊',
+    time_of_day:document.getElementById('med-time-in').value,
+    notes:document.getElementById('med-notes-in').value.trim(),
+    category_type:catType,
+    trimesters:catType==='trimester'?trims:[],
+    symptom:catType==='symptom'?document.getElementById('med-symptom-in').value.trim():''
+  };
+  setSyncStatus('loading','Saving…');
+  try {
+    if(editMedId){
+      const {error}=await sb.from('medicines').update(med).eq('id',editMedId).eq('user_id',currentUser.id);
+      if(error) throw error;
+      const idx=medicines.findIndex(m=>m.id===editMedId);
+      if(idx>-1) medicines[idx]={...medicines[idx],...med,id:editMedId};
+    } else {
+      const {data,error}=await sb.from('medicines').insert(med).select().single();
+      if(error) throw error;
+      medicines.push(data);
+    }
+    setSyncStatus('ok','Saved');
+    closeModal('modal-addmed');
+    renderMymeds();
+    renderTodayView();
+    renderWAPreview();
+  } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
+}
+
+async function deleteMed(){
+  if(!editMedId||!confirm('Delete this medicine?')) return;
+  setSyncStatus('loading','Deleting…');
+  try {
+    const {error}=await sb.from('medicines').delete().eq('id',editMedId).eq('user_id',currentUser.id);
+    if(error) throw error;
+    medicines=medicines.filter(m=>m.id!==editMedId);
+    setSyncStatus('ok','Deleted');
+    closeModal('modal-addmed');
+    renderMymeds();
+    renderTodayView();
+  } catch(e){ setSyncStatus('err','Delete failed'); alert(e.message); }
+}
+
+// ─── VISITS ───────────────────────────────────────────────────────────────────
+function openVisitModal(){
+  document.getElementById('visit-date-in').value=todayStr();
+  document.getElementById('visit-doctor-in').value='';
+  document.getElementById('visit-notes-in').value='';
+  document.getElementById('rx-preview-wrap').innerHTML='📎 Tap to upload prescription';
+  openModal('modal-addvisit');
+}
+
+function previewRx(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const wrap=document.getElementById('rx-preview-wrap');
+  if(file.type.startsWith('image/')){
+    const reader=new FileReader();
+    reader.onload=ev=>{ wrap.innerHTML=`<img src="${ev.target.result}" style="max-width:100%;border-radius:10px;margin-top:8px"/>`; };
+    reader.readAsDataURL(file);
+  } else {
+    wrap.innerHTML=`📄 ${file.name}`;
+  }
+}
+
+async function saveVisit(){
+  const date=document.getElementById('visit-date-in').value;
+  const doctor=document.getElementById('visit-doctor-in').value.trim();
+  if(!date){ alert('Please select a date.'); return; }
+  setSyncStatus('loading','Saving…');
+  try {
+    const {data,error}=await sb.from('visits').insert({
+      user_id:currentUser.id,
+      visit_date:date,
+      doctor,
+      notes:document.getElementById('visit-notes-in').value.trim()
+    }).select().single();
+    if(error) throw error;
+    visits.unshift(data);
+    setSyncStatus('ok','Saved');
+    closeModal('modal-addvisit');
+    renderVisitsList();
+    renderTodayView();
+  } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
+}
+
+function renderVisitsList(){
+  const el=document.getElementById('visits-list');
+  if(!el) return;
+  if(!visits.length){
+    el.innerHTML='<div class="empty-state"><div class="icon">🏥</div><p>No visits yet.</p></div>';
+    return;
+  }
+  el.innerHTML=visits.map(v=>`
+    <div class="visit-item">
+      <div class="visit-item-icon">🏥</div>
+      <div class="visit-item-info">
+        <div class="visit-item-date">${fmtDate(v.visit_date)}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-top:2px">${v.doctor||''}</div>
+        <div class="visit-item-note">${v.notes||''}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteVisit('${v.id}')">×</button>
+    </div>`).join('');
+}
+
+async function deleteVisit(id){
+  if(!confirm('Delete this visit?')) return;
+  try {
+    await sb.from('visits').delete().eq('id',id).eq('user_id',currentUser.id);
+    visits=visits.filter(v=>v.id!==id);
+    renderVisitsList();
+    setSyncStatus('ok','Deleted');
+  } catch(e){ setSyncStatus('err','Delete failed'); }
+}
+
+// ─── PREGNANCY ────────────────────────────────────────────────────────────────
+function openPregModal(){
+  if(pregData){
+    if(pregData.lmp) document.getElementById('preg-lmp-in').value=pregData.lmp;
+    if(pregData.edd) document.getElementById('preg-edd-in').value=pregData.edd;
+  }
+  openModal('modal-preg');
+}
+
+async function savePregnancy(){
+  const lmp=document.getElementById('preg-lmp-in').value;
+  const edd=document.getElementById('preg-edd-in').value;
+  if(!lmp&&!edd){ alert('Please enter LMP or EDD.'); return; }
+  const computed_edd = edd || (lmp ? addDays(lmp,280) : '');
+  const computed_lmp = lmp || (edd ? addDays(edd,-280) : '');
+  setSyncStatus('loading','Saving…');
+  try {
+    const {data,error}=await sb.from('pregnancy').upsert({
+      user_id:currentUser.id,
+      lmp:computed_lmp,
+      edd:computed_edd
+    },{onConflict:'user_id'}).select().single();
+    if(error) throw error;
+    pregData=data;
+    setSyncStatus('ok','Saved');
+    closeModal('modal-preg');
+    renderPregCard('preg-card-today');
+    renderBabyPanel();
+    renderMymeds();
+    renderTodayView();
+  } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
+}
+
+// ─── CALENDAR ────────────────────────────────────────────────────────────────
+function initCalendar(){
+  const now=new Date();
+  calYear=now.getFullYear(); calMonth=now.getMonth();
+}
+function changeMonth(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}
+  else if(calMonth>11){calMonth=0;calYear++;}
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-title').textContent=`${months[calMonth]} ${calYear}`;
+  const grid=document.getElementById('cal-grid');
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html=days.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  const first=new Date(calYear,calMonth,1).getDay();
+  for(let i=0;i<first;i++) html+=`<div class="cal-day empty-cell"></div>`;
+
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const today=todayStr();
+  const visitDates=new Set(visits.map(v=>v.visit_date));
+
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isFuture=ds>today;
+    const isToday=ds===today;
+    const isSel=ds===viewingDate;
+    const hasVisit=visitDates.has(ds);
+
+    let cls='none';
+    if(!isFuture){
+      const meds=getMedsForDate(ds);
+      if(meds.length){
+        const checked=meds.filter(m=>checks[ds]?.[m.id]).length;
+        if(checked===meds.length) cls='full';
+        else if(checked>0) cls='partial';
+        else cls='none';
+      }
+    } else cls='future';
+
+    html+=`<button class="cal-day ${cls}${isToday?' today-cell':''}${isSel?' sel':''}${hasVisit?' has-visit':''}"
+      onclick="calDayClick('${ds}')">${d}<div class="cal-dot"></div></button>`;
+  }
+  grid.innerHTML=html;
+
+  // Summary
+  let full=0,partial=0,none=0,total=0;
+  for(let d2=1;d2<=daysInMonth;d2++){
+    const ds2=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
+    if(ds2>today) continue;
+    total++;
+    const meds=getMedsForDate(ds2);
+    if(!meds.length) continue;
+    const chk=meds.filter(m=>checks[ds2]?.[m.id]).length;
+    if(chk===meds.length) full++;
+    else if(chk>0) partial++;
+    else none++;
+  }
+  document.getElementById('month-summary').innerHTML=`
+    <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px">
+      <span>✅ Full days: <strong>${full}</strong></span>
+      <span>⚠️ Partial: <strong>${partial}</strong></span>
+      <span>❌ Missed: <strong>${none}</strong></span>
+      <span style="color:var(--light)">of ${total} days so far</span>
+    </div>`;
+}
+
+function calDayClick(ds){
+  viewingDate=ds;
+  const today=todayStr();
+  if(ds===today){ goToday(); return; }
+
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const [y,m,d]=ds.split('-');
+  const isFuture=ds>today;
+
+  document.getElementById('tab-otherday').style.display='inline-block';
+  document.getElementById('tab-otherday').textContent=`${months[parseInt(m)-1].slice(0,3)} ${parseInt(d)}`;
+  showView('otherday');
+
+  document.getElementById('otherday-date-display').textContent=`${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+  document.getElementById('otherday-future-badge').style.display=isFuture?'block':'none';
+  document.getElementById('otherday-future-notice').style.display=isFuture?'flex':'none';
+
+  renderMedSections('otherday-med-sections','otherday-prog-fill','otherday-prog-count', ds, isFuture);
+  document.getElementById('otherday-notes-input').value=notes[ds]||'';
+  renderCalendar();
+}
+
+// ─── FINANCE ─────────────────────────────────────────────────────────────────
+function selectFinPerson(id, btn){
+  currentFinPerson=id;
+  document.querySelectorAll('.fin-ptab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderFinance();
+}
+
+function openAddPersonModal(){ openModal('modal-addperson'); document.getElementById('fin-person-name-in').value=''; }
+
+function saveFinPerson(){
+  const name=document.getElementById('fin-person-name-in').value.trim();
+  if(!name) return;
+  const id='person_'+Date.now();
+  finPersons.push(id);
+  finPersonNames[id]=name;
+  closeModal('modal-addperson');
+  renderFinanceTabs();
+  saveFinanceToDB();
+}
+
+function renderFinanceTabs(){
+  const wrap=document.getElementById('fin-person-tabs');
+  wrap.innerHTML=finPersons.map(p=>`
+    <button class="fin-ptab${p===currentFinPerson?' active':''}" onclick="selectFinPerson('${p}',this)">👤 ${finPersonNames[p]||p}</button>`).join('')+
+    `<button class="fin-add-p" onclick="openAddPersonModal()">+ Add Person</button>`;
+}
+
+function openAddTxnModal(){
+  document.getElementById('txn-date-in').value=todayStr();
+  ['txn-amt-in','txn-cat-in','txn-note-in'].forEach(id=>document.getElementById(id).value='');
+  openModal('modal-addtxn');
+}
+
+async function saveTxn(){
+  const type=document.getElementById('txn-type-in').value;
+  const amt=parseFloat(document.getElementById('txn-amt-in').value)||0;
+  const cat=document.getElementById('txn-cat-in').value.trim();
+  const note=document.getElementById('txn-note-in').value.trim();
+  const date=document.getElementById('txn-date-in').value;
+  if(!amt||!cat){ alert('Enter amount and category.'); return; }
+  if(!finTxns[currentFinPerson]) finTxns[currentFinPerson]=[];
+  finTxns[currentFinPerson].push({id:Date.now(),type,amount:amt,category:cat,note,date});
+  closeModal('modal-addtxn');
+  renderFinance();
+  saveFinanceToDB();
+}
+
+async function saveFinanceToDB(){
+  try {
+    await sb.from('finance').upsert({
+      user_id:currentUser.id,
+      persons:finPersons,
+      person_names:finPersonNames,
+      transactions:finTxns
+    },{onConflict:'user_id'});
+    setSyncStatus('ok','Saved');
+  } catch(e){ setSyncStatus('err','Save failed'); }
+}
+
+function renderFinance(){
+  renderFinanceTabs();
+  const txns=(finTxns[currentFinPerson]||[]).sort((a,b)=>b.date.localeCompare(a.date));
+  const income=txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const saved=income-expense;
+
+  document.getElementById('fin-summary').innerHTML=`
+    <div class="fin-stat inc"><div class="fin-stat-num">₹${income.toLocaleString('en-IN')}</div><div class="fin-stat-lbl">Income</div></div>
+    <div class="fin-stat exp"><div class="fin-stat-num">₹${expense.toLocaleString('en-IN')}</div><div class="fin-stat-lbl">Expense</div></div>
+    <div class="fin-stat sav${saved<0?' neg':''}"><div class="fin-stat-num">₹${Math.abs(saved).toLocaleString('en-IN')}</div><div class="fin-stat-lbl">${saved<0?'Deficit':'Saved'}</div></div>`;
+
+  const listEl=document.getElementById('fin-txn-list');
+  if(!txns.length){
+    listEl.innerHTML='<div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div>';
+    return;
+  }
+  listEl.innerHTML=txns.map(t=>`
+    <div class="fin-txn">
+      <div class="fin-txn-ic ${t.type==='income'?'i':'e'}">${t.type==='income'?'💰':'💸'}</div>
+      <div class="fin-txn-info">
+        <div class="fin-txn-cat">${t.category}</div>
+        <div class="fin-txn-note">${t.note||'—'}</div>
+      </div>
+      <div class="fin-txn-r">
+        <div class="fin-txn-amt ${t.type==='income'?'i':'e'}">${t.type==='income'?'+':'-'}₹${t.amount.toLocaleString('en-IN')}</div>
+        <div class="fin-txn-date">${fmtDate(t.date)}</div>
+      </div>
+      <button class="fin-del" onclick="deleteTxn('${t.id}')">🗑</button>
+    </div>`).join('');
+}
+
+function deleteTxn(id){
+  finTxns[currentFinPerson]=(finTxns[currentFinPerson]||[]).filter(t=>String(t.id)!==String(id));
+  renderFinance();
+  saveFinanceToDB();
+}
+
+// ─── WA SETTINGS ─────────────────────────────────────────────────────────────
+function toggleWA(){ saveWASettings(); }
+
+async function saveWASettings(){
+  waSettings.phone=document.getElementById('wa-phone').value.trim();
+  waSettings.enabled=document.getElementById('wa-toggle-chk').checked;
+  const statusEl=document.getElementById('wa-status');
+  statusEl.className='wa-status loading'; statusEl.textContent='Saving…'; statusEl.style.display='block';
+  try {
+    await sb.from('settings').upsert({user_id:currentUser.id,wa_settings:waSettings},{onConflict:'user_id'});
+    statusEl.className='wa-status ok'; statusEl.textContent='Settings saved ✓';
+  } catch(e){ statusEl.className='wa-status err'; statusEl.textContent='Save failed: '+e.message; }
+  setTimeout(()=>statusEl.style.display='none',3000);
+}
+
+function renderWAPreview(){
+  const el=document.getElementById('wa-preview-text');
+  if(!el) return;
+  if(!medicines.length){ el.innerHTML='Configure your medicines to see a preview.'; return; }
+  const meds=getMedsForDate(todayStr());
+  const slots={morning:[],noon:[],evening:[],night:[]};
+  meds.forEach(m=>{ if(slots[m.time_of_day]) slots[m.time_of_day].push(m.brand||m.generic_name||'Med'); });
+  let html=`<strong>🌸 MedMama Reminder — ${fmtDate(todayStr())}</strong><br><br>`;
+  const labels={morning:'🌅 Morning',noon:'🌞 Noon',evening:'🌇 Evening',night:'🌃 Night'};
+  Object.entries(slots).forEach(([slot,ms])=>{
+    if(ms.length) html+=`${labels[slot]}: ${ms.map(n=>`<span style="background:#dcfce7;padding:1px 5px;border-radius:5px;font-weight:600">${n}</span>`).join(', ')}<br>`;
+  });
+  el.innerHTML=html;
+}
+
+// ─── NUTRITION PANEL ─────────────────────────────────────────────────────────
+const NUTRIENTS=[
+  {icon:'🫘',name:'Folic Acid',foods:'Leafy greens, lentils, beans',
+   body:'Essential in early pregnancy to prevent neural tube defects. Aim for 400–600 mcg daily.',foods2:'Spinach, asparagus, lentils, fortified cereals, oranges'},
+  {icon:'🥛',name:'Calcium',foods:'Milk, yogurt, cheese',
+   body:'Builds baby\'s bones and teeth. Supports your heart and muscles too. 1000 mg/day recommended.',foods2:'Dairy, fortified plant milks, broccoli, tofu, almonds'},
+  {icon:'🥩',name:'Iron',foods:'Red meat, spinach, legumes',
+   body:'Prevents anemia during pregnancy. Your blood volume increases 50%, so iron needs rise.',foods2:'Lean beef, lentils, spinach, pumpkin seeds, tofu'},
+  {icon:'🐟',name:'Omega-3',foods:'Salmon, walnuts, flaxseed',
+   body:'Crucial for baby\'s brain and eye development. DHA is especially important in 3rd trimester.',foods2:'Salmon, sardines, walnuts, chia seeds, flaxseed oil'},
+  {icon:'🍊',name:'Vitamin C',foods:'Citrus, bell peppers, kiwi',
+   body:'Helps absorb iron and supports immune function. Also important for tissue repair.',foods2:'Oranges, strawberries, kiwi, bell peppers, broccoli'},
+  {icon:'🥚',name:'Protein',foods:'Eggs, chicken, lentils',
+   body:'Your baby\'s cells, muscles and tissues are built from protein. Aim for 75–100g/day.',foods2:'Eggs, chicken, fish, lentils, Greek yogurt, quinoa'},
+];
+
+function renderNutrition(){
+  const el=document.getElementById('nut-cards');
+  if(!el) return;
+  el.innerHTML=NUTRIENTS.map((n,i)=>`
+    <div class="nut-card" onclick="showNutTooltip(${i})">
+      <div class="nut-icon">${n.icon}</div>
+      <div class="nut-name">${n.name}</div>
+      <div class="nut-foods">${n.foods}</div>
+    </div>`).join('');
+}
+
+function showNutTooltip(i){
+  const n=NUTRIENTS[i];
+  document.getElementById('nt-icon').textContent=n.icon;
+  document.getElementById('nt-title').textContent=n.name;
+  document.getElementById('nt-body').textContent=n.body;
+  document.getElementById('nt-foods').innerHTML='🌿 Rich sources: '+n.foods2;
+  document.getElementById('nut-tooltip').style.display='block';
+  document.getElementById('nut-overlay').style.display='block';
+}
+function closeNutTooltip(){
+  document.getElementById('nut-tooltip').style.display='none';
+  document.getElementById('nut-overlay').style.display='none';
+}
+
+// ─── BABY PANEL ───────────────────────────────────────────────────────────────
+const BABY_DATA=[
+  {w:4,size:'Poppy seed',emoji:'🌱'},{w:5,size:'Apple seed',emoji:'🌱'},
+  {w:6,size:'Sweet pea',emoji:'🫛'},{w:7,size:'Blueberry',emoji:'🫐'},
+  {w:8,size:'Kidney bean',emoji:'🫘'},{w:9,size:'Grape',emoji:'🍇'},
+  {w:10,size:'Kumquat',emoji:'🍊'},{w:11,size:'Fig',emoji:'🍐'},
+  {w:12,size:'Lime',emoji:'🍋'},{w:13,size:'Lemon',emoji:'🍋'},
+  {w:14,size:'Peach',emoji:'🍑'},{w:16,size:'Avocado',emoji:'🥑'},
+  {w:18,size:'Sweet potato',emoji:'🍠'},{w:20,size:'Banana',emoji:'🍌'},
+  {w:24,size:'Corn cob',emoji:'🌽'},{w:28,size:'Eggplant',emoji:'🍆'},
+  {w:32,size:'Squash',emoji:'🎃'},{w:36,size:'Honeydew',emoji:'🍈'},
+  {w:40,size:'Pumpkin',emoji:'🎃'},
+];
+const BABY_TIPS=[
+  'Fingers and toes are forming!','Heart is beating ~150 times/min.',
+  'Baby can hear your voice now.','Movements are getting stronger.',
+  'Brain development is rapid this week.','Baby is storing fat for warmth.',
+  'Lungs are maturing — almost ready!','Baby is in position for birth.',
+];
+
+function renderBabyPanel(){
+  const el=document.getElementById('baby-info-panel');
+  if(!el) return;
+  if(!pregData||(!pregData.lmp&&!pregData.edd)){
+    el.innerHTML='<div class="baby-tip" style="text-align:center">Set up pregnancy tracking to see baby\'s growth! 🌸</div>';
+    return;
+  }
+  const edd=pregData.edd||(pregData.lmp?addDays(pregData.lmp,280):'');
+  const lmp=pregData.lmp||(edd?addDays(edd,-280):'');
+  const weeks=Math.max(0,Math.floor(diffDays(todayStr(),lmp)/7));
+  let babyInfo=BABY_DATA[0];
+  for(const b of BABY_DATA){ if(weeks>=b.w) babyInfo=b; }
+  const tip=BABY_TIPS[weeks%BABY_TIPS.length];
+  el.innerHTML=`
+    <div class="week-badge">Week ${weeks}</div>
+    <div style="font-size:60px;text-align:center;margin:8px 0">${babyInfo.emoji}</div>
+    <div style="font-size:13px;font-weight:600;color:var(--deep);text-align:center">Size of a ${babyInfo.size}</div>
+    <div class="baby-tip">${tip}</div>`;
+}
+
+// ─── MODAL HELPERS ────────────────────────────────────────────────────────────
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
