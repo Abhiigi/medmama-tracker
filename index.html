@@ -885,60 +885,61 @@ sb.auth.onAuthStateChange(async (event, session)=>{
 
 // ─── LOAD ────────────────────────────────────────────────────────────────────
 async function loadAll(){
-  setSyncStatus('loading','Syncing…');
-  try {
-    await Promise.all([loadMedicines(), loadVisits(), loadChecks(), loadNotes(), loadPreg(), loadFinance(), loadWA()]);
-    setSyncStatus('ok','Synced');
-  } catch(e){
-    setSyncStatus('err','Sync error');
-    console.error(e);
-  }
+  setSyncStatus("loading","Syncingu2026");
+  const errors=[];
+  async function safe(name,fn){ try{await fn();}catch(e){errors.push(name+": "+(e.message||JSON.stringify(e)));console.error(name,e);} }
+  await Promise.all([
+    safe("medicines",loadMedicines),
+    safe("visits",loadVisits),
+    safe("checks",loadChecks),
+    safe("notes",loadNotes),
+    safe("pregnancy",loadPreg),
+    safe("finance",loadFinance),
+    safe("settings",loadWA),
+  ]);
+  if(errors.length){ setSyncStatus("err","u26a0ufe0f "+errors[0]); console.error("All errors:",errors); }
+  else { setSyncStatus("ok","Synced u2713"); }
   initCalendar();
   renderAll();
 }
-
 async function loadMedicines(){
-  const {data,error}=await sb.from('medicines').select('*').eq('user_id',currentUser.id).order('created_at');
+  const {data,error}=await sb.from("medicines").select("*").eq("user_id",currentUser.id).order("created_at");
   if(error) throw error;
   medicines=data||[];
 }
 async function loadVisits(){
-  const {data,error}=await sb.from('visits').select('*').eq('user_id',currentUser.id).order('visit_date',{ascending:false});
+  const {data,error}=await sb.from("visits").select("*").eq("user_id",currentUser.id).order("visit_date",{ascending:false});
   if(error) throw error;
   visits=data||[];
 }
 async function loadChecks(){
-  const {data,error}=await sb.from('checks').select('*').eq('user_id',currentUser.id);
+  const {data,error}=await sb.from("checks").select("*").eq("user_id",currentUser.id);
   if(error) throw error;
   checks={};
   (data||[]).forEach(r=>{ if(!checks[r.date]) checks[r.date]={}; checks[r.date][r.med_id]=r.checked; });
 }
 async function loadNotes(){
-  const {data,error}=await sb.from('notes').select('*').eq('user_id',currentUser.id);
+  const {data,error}=await sb.from("notes").select("*").eq("user_id",currentUser.id);
   if(error) throw error;
   notes={};
   (data||[]).forEach(r=>{ notes[r.date]=r.note; });
 }
 async function loadPreg(){
-  const {data,error}=await sb.from('pregnancy').select('*').eq('user_id',currentUser.id).maybeSingle();
+  const {data,error}=await sb.from("pregnancy").select("*").eq("user_id",currentUser.id).maybeSingle();
   if(error) throw error;
   pregData=data||null;
 }
 async function loadFinance(){
-  const {data,error}=await sb.from('finance').select('*').eq('user_id',currentUser.id).maybeSingle();
+  const {data,error}=await sb.from("finance").select("*").eq("user_id",currentUser.id).maybeSingle();
   if(error) throw error;
-  if(data){
-    finPersons=data.persons||['main'];
-    finPersonNames=data.person_names||{main:'Me'};
-    finTxns=data.transactions||{};
-  }
+  if(data){ finPersons=data.persons||["main"]; finPersonNames=data.person_names||{main:"Me"}; finTxns=data.transactions||{}; }
 }
 async function loadWA(){
-  const {data,error}=await sb.from('settings').select('*').eq('user_id',currentUser.id).maybeSingle();
+  const {data,error}=await sb.from("settings").select("*").eq("user_id",currentUser.id).maybeSingle();
   if(error) throw error;
   waSettings=data?.wa_settings||{};
-  if(waSettings.phone) document.getElementById('wa-phone').value=waSettings.phone;
-  if(waSettings.enabled) document.getElementById('wa-toggle-chk').checked=true;
+  if(waSettings.phone) document.getElementById("wa-phone").value=waSettings.phone;
+  if(waSettings.enabled) document.getElementById("wa-toggle-chk").checked=true;
 }
 
 // ─── RENDER ALL ──────────────────────────────────────────────────────────────
