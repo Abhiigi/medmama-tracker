@@ -1,240 +1,18 @@
-
-Claude is responding
-1780366442619_image.png
-
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"/> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>MedMama 🌸 Pregnancy Tracker</title> <!-- ✅ Fonts --> <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@
-
-pasted
-
-The login page is not working
-Supbase as DB as we had set up earlyer
-Your clipboard operation is not allowed by company policy
-
-7:45 AM
-Looking at the image, I can see your Supabase API keys. The issue is likely that the Supabase client isn't initialized properly in your HTML file.
-
-Can you share what's currently in the <script> section of your HTML (or the full file if possible)? The document you pasted is cut off before the JavaScript.
-
-That said, from what I can see, the common culprits for login not working are:
-
-Supabase not initialized — the <script src=""> tag for pdf.js looks malformed (has an extra >), which might be breaking script parsing entirely
-Missing Supabase CDN import — I don't see a Supabase client script tag
-handleAuth() function — need to verify it's calling supabase.auth.signInWithPassword correctly
-Could you paste the JavaScript part of the file? Specifically looking for:
-
-Where supabase is initialized (the createClient(URL, KEY) call)
-The handleAuth() function
-Also — do you want me to work from the full file you shared earlier in our previous session, or is this a newer version? Your message says "not signing in now" so I want to make sure I'm looking at the right code before touching anything.
-
-fix and give full Ui
-
-7:45 AM
-Let me read the skill file first, then build the complete fixed MedMama app.
-
-
-Reading frontend design skill
-Reading frontend design skill
-Now let me build the complete, fixed MedMama app with full UI and working Supabase auth.
-
-
-Created a file, read a file
-Created a file, read a file
-Here's the fully fixed and complete MedMama app. Here's what was fixed and added:
-
-Auth fixes:
-
-Supabase client now properly initialized with supabase.createClient(URL, KEY) — the old code had a broken <script src=""> tag and no createClient call
-Session is checked on page load (so if you're already logged in it won't re-ask)
-Enter key on password field triggers login
-onAuthStateChange listener handles login/logout cleanly
-New features completed:
-
-Pregnancy Tracker card — LMP input, auto-calculates EDD, shows week/day count, trimester progress bar with color coding, days to due date
-Trimester-aware meds — medicines can be tagged as T1/T2/T3 or "By Symptom", and the daily view filters by current trimester automatically
-My Meds filter tabs — All / T1 / T2 / T3 / All Trimesters / By Symptom
-Baby panel — shows baby's size by week (right sidebar on desktop)
-Full finance, visits, calendar, WA alerts — all wired up properly
-One thing to verify: Open the file and check the Supabase URL/Key at the top of the <script> block — the publishable key visible in your screenshot was partially masked, so update SUPABASE_KEY with your full key if login still doesn't work.
-
-
-Medmama
-Code · HTML 
-public key: sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT
-Secret Key: sb_secret_Qi3uWmNceNpP_R72Ow751A_x7k3RIqt
-API URL
-
-8:01 AM
-I can see the keys but I need the API URL too (it looks like https://xxxx.supabase.co). It should be on the same Supabase settings page — can you scroll up a
-
-Claude's response was interrupted.
-public key: sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT Secret Key: sb_secret_Qi3uWmNceNpP_R72Ow751A_x7k3RIqt 
-API URL:https://pwzppkcdhzcidkpygklk.supabase.co/rest/v1/
-
-8:01 AM
-⚠️ Quick note before I proceed — your Secret Key should never be shared publicly or embedded in a frontend HTML file. It gives full admin access to your database, bypassing all Row Level Security. I'll use only the publishable key in the frontend code (that's correct and safe).
-
-Let me update the config now:
-
-
-Viewed a file, edited a file, read a file
-Viewed a file, edited a file, read a file
-Done! The config is now:
-
-URL: https://pwzppkcdhzcidkpygklk.supabase.co
-Key: Your publishable key (safe for frontend use)
-The secret key is not in the file — keep it only in server-side code (Edge Functions, backend APIs, etc.), never in HTML/JS that runs in the browser.
-
-Before login will work, make sure these tables exist in your Supabase project (SQL Editor → run this):
-
-sql
-create table if not exists medicines (id uuid primary key default gen_random_uuid(), user_id uuid references auth.users, brand text, generic_name text, dose text, icon text, time_of_day text, notes text, category_type text default 'always', trimesters text[], symptom text, created_at timestamptz default now());
-
-create table if not exists visits (id uuid primary key default gen_random_uuid(), user_id uuid references auth.users, visit_date date, doctor text, notes text, created_at timestamptz default now());
-
-create table if not exists checks (user_id uuid references auth.users, date date, med_id uuid, slot text, checked boolean, primary key (user_id, date, med_id));
-
-create table if not exists notes (user_id uuid references auth.users, date date, note text, primary key (user_id, date));
-
-create table if not exists pregnancy (user_id uuid references auth.users primary key, lmp date, edd date);
-
-create table if not exists finance (user_id uuid references auth.users primary key, persons jsonb, person_names jsonb, transactions jsonb);
-
-create table if not exists settings (user_id uuid references auth.users primary key, wa_settings jsonb);
-Then enable Row Level Security and add policies so users can only see their own data. Want me to generate those RLS policies too?
-
-
-Medmama
-Code · HTML 
-new row violates row-level security policy for table "pregnancy"
-
-8:06 AM
-You need RLS policies on all tables. Run this in your Supabase SQL Editor:
-
-
-Created a file, read a file
-Created a file, read a file
-Copy the whole SQL file and paste it into Supabase → SQL Editor → New Query → Run.
-
-What it does — for every table (medicines, visits, checks, notes, pregnancy, finance, settings) it:
-
-Enables RLS so no one can access data by default
-Adds 4 policies (select / insert / update / delete) that each check auth.uid() = user_id, meaning users can only ever touch their own rows
-After running it, the pregnancy save error will be gone and all other tables will be properly locked down too.
-
-
-Medmama rls
-Code · SQL 
-1780368054013_image.png
-8:10 AM
-The app is loading but stuck on "Syncing…" — this means the RLS policies are blocking the initial data reads. The most common cause is that auth.uid() returns null when using the publishable key format (which is a newer Supabase key format, not the standard anon key).
-
-Let me fix this — I need to check your actual anon key format. In Supabase go to:
-
-Project Settings → API → Project API keys → anon public
-
-It should look like a long JWT starting with eyJ... — that's the key the JS client actually needs. The sb_publishable_t_... key you have is from the newer Supabase dashboard but the JS SDK still expects the JWT anon key.
-
-Can you share that eyJ... key? It's the one labeled anon / public under Project API Keys.
-
-Alternatively, also check: Authentication → Policies in your Supabase dashboard — do you see the policies we just created listed under each table? If the SQL ran with errors on some tables, those tables will block all reads.
-
-remove RLS
-
-8:11 AM
-
-Find the Supabase config line
-Find the Supabase config line
-Run this SQL in Supabase SQL Editor to disable RLS on all tables:
-
-
-Created a file, read a file
-Created a file, read a file
-Paste that into Supabase → SQL Editor → Run. That's all — RLS off on every table, the sync should go green immediately after.
-
-⚠️ Just so you know: with RLS off, any authenticated user with your anon key can technically read/write all rows. Fine for personal/dev use, but when you go to production you'll want to re-enable it with the correct JWT anon key. I can set that up properly whenever you're ready.
-
-
-Disable rls
-Code · SQL 
-still syncing
-
-8:12 AM
-Let me add proper error logging so we can see exactly what's failing.
-
-
-Viewed 3 files
-Viewed 3 files
-Now I can see the issue. The loadAll silently shows "Syncing…" forever if any single load function throws — and the error only goes to console. Let me fix it to show the actual error, and also make each load fail gracefully instead of blocking everything:
-
-
-Ran 2 commands, edited a file, viewed a file
-Ran 2 commands, edited a file, viewed a file
-Download and open this. Now instead of "Syncing…" forever, the sync bar will show the actual error message (e.g. ⚠️ medicines: relation "medicines" does not exist).
-
-This will tell us exactly which table is failing and why. Share what the error message says and I'll fix it immediately.
-
-Also — open browser DevTools → Console (F12) for even more detail on the errors.
-
-
-Medmama
-Code · HTML 
-still not able to connect to supbasre, syncing2026
-
-8:18 AM
-The issue is the publishable key format (sb_publishable_t_...) — this is Supabase's newer key format but the JS SDK needs the classic anon JWT key that starts with eyJ....
-
-Go to your Supabase dashboard: Project Settings → API → Project API keys
-
-You should see a key labeled anon public that looks like:
-
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI...
-Share that key and I'll update the file instantly. The sb_publishable_t_... key you gave me earlier is not the anon JWT key the SDK uses for auth — that's why it can never connect.
-
-1780368601912_image.png
-this one?
-
-8:20 AM
-No — click the "Legacy anon, service_role API keys" tab right next to "Publishable and secret API keys". That's where the eyJ... JWT key lives which the JS SDK needs.
-
-1780368653480_image.png
-this one?
-
-8:20 AM
-Yes! The anon public one. I can see it in the screenshot — let me read it carefully:
-
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3enBwa2NkaHpjaWRrcHlna2xrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3...
-
-The key is partially visible. Please click Copy next to the anon key and paste it here — I can only see part of it in the image.
-
-ficex full ui
-
-2:15 PM
-Taking longer than usual. Trying again shortly (attempt 4)
-
-
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-
-
-raw
-Medmama · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MedMama 🌸 Pregnancy Tracker</title>
- 
+
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
- 
+
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
- 
+
   <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.js"></script>
- 
+
   <style>
     :root{
       --blush:#f7e8e8;--rose:#e8a0a0;--deep:#c0627a;--deeper:#a04060;
@@ -246,7 +24,7 @@ Medmama · HTML
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px}
- 
+
     /* ── Auth ─────────────────────────────── */
     .auth-screen{
       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
@@ -271,7 +49,7 @@ Medmama · HTML
     .auth-err,.auth-ok{border-radius:10px;padding:10px 14px;font-size:12px;margin-top:12px;display:none}
     .auth-err{background:#fff0f0;border:1px solid #f5c0c0;color:#c04040}
     .auth-ok{background:#f0fff4;border:1px solid #a0d4b0;color:#2a7040}
- 
+
     /* ── App Shell ───────────────────────── */
     #app{display:none}
     .topbar{
@@ -291,7 +69,7 @@ Medmama · HTML
     .sync-dot.ok{background:#7aaa80}.sync-dot.err{background:#e07070}
     .sync-dot.loading{background:#f5c842;animation:pulse 1s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
- 
+
     /* ── Layout ──────────────────────────── */
     .page-layout{display:flex;align-items:flex-start;justify-content:center;position:relative}
     .side-panel{width:190px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow-y:auto}
@@ -299,7 +77,7 @@ Medmama · HTML
     @media(min-width:980px){.side-panel-left,.side-panel-right{display:block}}
     .main-col{flex:1;max-width:640px;min-width:0}
     .body{max-width:640px;margin:0 auto;padding:20px 16px}
- 
+
     /* ── Side Panels ─────────────────────── */
     .nutrition-panel{padding:16px 10px;display:flex;flex-direction:column;gap:10px}
     .nutrition-title,.baby-title{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px}
@@ -311,7 +89,7 @@ Medmama · HTML
     .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px}
     .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep)}
     .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center}
- 
+
     /* ── Cards / Common ──────────────────── */
     .card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px}
     .view{display:none}.view.active{display:block}
@@ -326,7 +104,7 @@ Medmama · HTML
     .empty-state .icon{font-size:36px;margin-bottom:10px}
     textarea{width:100%;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:transparent;line-height:1.7;min-height:60px}
     textarea::placeholder{color:#c4b4b4}
- 
+
     /* ── Progress ────────────────────────── */
     .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
     .prog-lbl{font-size:10px;color:var(--light);text-transform:uppercase;letter-spacing:1px}
@@ -334,7 +112,7 @@ Medmama · HTML
     .prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden}
     .prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease}
     .prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light)}
- 
+
     /* ── Pregnancy Card ──────────────────── */
     .preg-card{background:linear-gradient(135deg,#fff5f7 0%,#f9f0ff 100%);border:1.5px solid var(--rose);border-radius:20px;padding:18px 20px;margin-bottom:14px}
     .preg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -358,7 +136,7 @@ Medmama · HTML
     .preg-setup{text-align:center;padding:20px}
     .preg-setup p{font-size:13px;color:var(--light);margin-bottom:12px}
     .preg-setup-btn{background:var(--deep);color:#fff;border:none;border-radius:14px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
- 
+
     /* ── Med Cards ───────────────────────── */
     .med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8}
     .med-card.done{opacity:.8}
@@ -387,7 +165,7 @@ Medmama · HTML
     .noon .chk.checked{background:#f5944a;border-color:#f5944a}
     .evening .chk.checked{background:#7b8fdb;border-color:#7b8fdb}
     .night .chk.checked{background:#9b7fe8;border-color:#9b7fe8}
- 
+
     /* ── My Meds View ────────────────────── */
     .mymeds-filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
     .mf-tab{padding:6px 14px;border-radius:20px;border:1.5px solid var(--blush);cursor:pointer;font-size:11px;font-weight:600;background:#fff;color:var(--light);transition:all .2s;font-family:'DM Sans',sans-serif}
@@ -398,7 +176,7 @@ Medmama · HTML
     .med-list-brand{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--deep);font-style:italic}
     .med-list-meta{font-size:11px;color:var(--light);margin-top:1px}
     .med-list-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
- 
+
     /* ── Visits ──────────────────────────── */
     .visit-banner{background:var(--visit-light);border:1.5px solid #c9b8e8;border-radius:16px;padding:14px 18px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
     .visit-banner-icon{font-size:22px;flex-shrink:0}
@@ -411,7 +189,7 @@ Medmama · HTML
     .visit-item-date{font-size:13px;font-weight:600;color:var(--visit)}
     .visit-item-note{font-size:11px;color:var(--light);margin-top:1px}
     .rx-img{max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--blush)}
- 
+
     /* ── Calendar ────────────────────────── */
     .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
     .cal-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:600}
@@ -432,7 +210,7 @@ Medmama · HTML
     .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--light)}
     .leg-dot{width:10px;height:10px;border-radius:3px}
- 
+
     /* ── Modals ──────────────────────────── */
     .modal-overlay{position:fixed;inset:0;background:rgba(30,10,20,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
     .modal-overlay.open{display:flex}
@@ -455,7 +233,7 @@ Medmama · HTML
     .upload-area input[type=file]{display:none}
     .conditional-field{display:none}
     .conditional-field.show{display:block}
- 
+
     /* ── Alerts / WA ─────────────────────── */
     .wa-card{background:linear-gradient(135deg,#dcfce7 0%,#f0fdf4 100%);border:1.5px solid #86efac;border-radius:18px;padding:18px 20px;margin-bottom:14px}
     .wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -478,7 +256,7 @@ Medmama · HTML
     .wa-status.ok{display:block;background:#dcfce7;color:#166534;border:1px solid #86efac}
     .wa-status.err{display:block;background:#fff0f0;color:#c04040;border:1px solid #f5c0c0}
     .wa-status.loading{display:block;background:#fef9c3;color:#854d0e;border:1px solid #fde047}
- 
+
     /* ── Finance ─────────────────────────── */
     .fin-person-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
     .fin-ptab{padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;background:#fff;color:var(--light);display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
@@ -507,7 +285,7 @@ Medmama · HTML
     .pill.ok{background:#dcfce7;color:#166534}
     .pill.warn{background:#fff3cd;color:#8a6500}
     .pill.bad{background:#fff0f0;color:#c04040}
- 
+
     /* ── Nutrition tooltip ───────────────── */
     .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200}
     .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199}
@@ -519,7 +297,7 @@ Medmama · HTML
   </style>
 </head>
 <body>
- 
+
 <!-- ══════════════════════════════════════════
      AUTH SCREEN
 ══════════════════════════════════════════ -->
@@ -545,7 +323,7 @@ Medmama · HTML
     <div class="auth-ok"  id="auth-ok"></div>
   </div>
 </div>
- 
+
 <!-- ══════════════════════════════════════════
      APP
 ══════════════════════════════════════════ -->
@@ -566,15 +344,15 @@ Medmama · HTML
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
- 
+
   <div class="sync-bar">
     <div class="sync-dot" id="sync-dot"></div>
     <span id="sync-text">Loading…</span>
   </div>
- 
+
   <!-- Page Layout -->
   <div class="page-layout">
- 
+
     <!-- LEFT: Nutrition -->
     <div class="side-panel side-panel-left">
       <div class="nutrition-panel">
@@ -582,18 +360,18 @@ Medmama · HTML
         <div id="nut-cards"></div>
       </div>
     </div>
- 
+
     <!-- MAIN COLUMN -->
     <div class="main-col">
       <div class="body">
- 
+
         <!-- ── TODAY ────────────────────────── -->
         <div id="view-today" class="view active">
           <div id="visit-today-banner"></div>
- 
+
           <!-- Pregnancy card -->
           <div id="preg-card-today"></div>
- 
+
           <div class="card">
             <div class="date-row">
               <div>
@@ -603,7 +381,7 @@ Medmama · HTML
               <div id="today-badge" class="today-badge" style="display:none">Today</div>
             </div>
           </div>
- 
+
           <div class="card">
             <div class="prog-top">
               <span class="prog-lbl">Doses taken</span>
@@ -612,20 +390,20 @@ Medmama · HTML
             <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
             <div class="prog-times"><span>🌅</span><span>🌞</span><span>🌇</span><span>🌃</span></div>
           </div>
- 
+
           <div id="med-sections"></div>
- 
+
           <div id="no-meds-msg" class="empty-state" style="display:none">
             <div class="icon">💊</div>
             <p>No medicines yet. Go to <strong>My Meds</strong>.</p>
           </div>
- 
+
           <div class="sec-label">📝 Notes <div class="sec-line"></div></div>
           <div class="card">
             <textarea id="notes-input" placeholder="How are you feeling today?" oninput="saveNote()"></textarea>
           </div>
         </div>
- 
+
         <!-- ── OTHER DAY ─────────────────────── -->
         <div id="view-otherday" class="view">
           <div id="otherday-visit-banner"></div>
@@ -660,7 +438,7 @@ Medmama · HTML
             </div>
           </div>
         </div>
- 
+
         <!-- ── CALENDAR ──────────────────────── -->
         <div id="view-calendar" class="view">
           <div class="card">
@@ -681,7 +459,7 @@ Medmama · HTML
             <div id="month-summary">Loading…</div>
           </div>
         </div>
- 
+
         <!-- ── VISITS ────────────────────────── -->
         <div id="view-visits" class="view">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -690,7 +468,7 @@ Medmama · HTML
           </div>
           <div id="visits-list"></div>
         </div>
- 
+
         <!-- ── MY MEDS ───────────────────────── -->
         <div id="view-mymeds" class="view">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -707,7 +485,7 @@ Medmama · HTML
           </div>
           <div id="mymeds-list"></div>
         </div>
- 
+
         <!-- ── ALERTS ────────────────────────── -->
         <div id="view-alerts" class="view">
           <div class="wa-card">
@@ -742,7 +520,7 @@ Medmama · HTML
             </div>
           </div>
         </div>
- 
+
         <!-- ── FINANCE ───────────────────────── -->
         <div id="view-finance" class="view">
           <div class="fin-person-tabs" id="fin-person-tabs">
@@ -756,10 +534,10 @@ Medmama · HTML
           </div>
           <div class="card" id="fin-txn-list"><div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div></div>
         </div>
- 
+
       </div><!-- /body -->
     </div><!-- /main-col -->
- 
+
     <!-- RIGHT: Baby size -->
     <div class="side-panel side-panel-right">
       <div class="baby-panel">
@@ -767,14 +545,14 @@ Medmama · HTML
         <div id="baby-info-panel"></div>
       </div>
     </div>
- 
+
   </div><!-- /page-layout -->
 </div><!-- /app -->
- 
+
 <!-- ══════════════════════════════════════════
      MODALS
 ══════════════════════════════════════════ -->
- 
+
 <!-- Add/Edit Med -->
 <div class="modal-overlay" id="modal-addmed">
   <div class="modal">
@@ -815,7 +593,7 @@ Medmama · HTML
       <label>Notes / Instructions</label>
       <input id="med-notes-in" placeholder="e.g. After food"/>
     </div>
- 
+
     <!-- Category type -->
     <div class="field">
       <label>Category Type</label>
@@ -825,7 +603,7 @@ Medmama · HTML
         <option value="symptom">By Symptom</option>
       </select>
     </div>
- 
+
     <!-- Trimester selector -->
     <div class="field conditional-field" id="field-trimesters">
       <label>Trimester(s)</label>
@@ -841,13 +619,13 @@ Medmama · HTML
         </label>
       </div>
     </div>
- 
+
     <!-- Symptom input -->
     <div class="field conditional-field" id="field-symptom">
       <label>Symptom / Condition</label>
       <input id="med-symptom-in" placeholder="e.g. Nausea, Heartburn, Leg cramps…"/>
     </div>
- 
+
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveMed()">Save Medicine</button>
       <button class="btn btn-danger" id="del-med-btn" onclick="deleteMed()" style="display:none">Delete</button>
@@ -855,7 +633,7 @@ Medmama · HTML
     </div>
   </div>
 </div>
- 
+
 <!-- Add Visit -->
 <div class="modal-overlay" id="modal-addvisit">
   <div class="modal">
@@ -888,7 +666,7 @@ Medmama · HTML
     </div>
   </div>
 </div>
- 
+
 <!-- Pregnancy Setup -->
 <div class="modal-overlay" id="modal-preg">
   <div class="modal">
@@ -911,7 +689,7 @@ Medmama · HTML
     </div>
   </div>
 </div>
- 
+
 <!-- Add Finance Person -->
 <div class="modal-overlay" id="modal-addperson">
   <div class="modal">
@@ -929,7 +707,7 @@ Medmama · HTML
     </div>
   </div>
 </div>
- 
+
 <!-- Add Transaction -->
 <div class="modal-overlay" id="modal-addtxn">
   <div class="modal">
@@ -968,7 +746,7 @@ Medmama · HTML
     </div>
   </div>
 </div>
- 
+
 <!-- Nutrition tooltip -->
 <div class="nut-tooltip-overlay" id="nut-overlay" style="display:none" onclick="closeNutTooltip()"></div>
 <div class="nut-tooltip" id="nut-tooltip" style="display:none">
@@ -978,7 +756,7 @@ Medmama · HTML
   <div class="nt-body" id="nt-body"></div>
   <div class="nt-foods" id="nt-foods"></div>
 </div>
- 
+
 <!-- ══════════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════════ -->
@@ -986,9 +764,9 @@ Medmama · HTML
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://pwzppkcdhzcidkpygklk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_t_dpnS302dfHmv3Y9ms1Qg_wpBvOrAT';
- 
+
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
- 
+
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let currentUser = null;
 let medicines = [];
@@ -1005,7 +783,7 @@ let medFilter = 'all';
 let editMedId = null;
 let calYear, calMonth;
 let viewingDate = todayStr();
- 
+
 // ─── HELPERS ────────────────────────────────────────────────────────────────
 function todayStr(){
   const d=new Date();
@@ -1030,7 +808,7 @@ function setSyncStatus(status,text){
   dot.className='sync-dot '+status;
   txt.textContent=text;
 }
- 
+
 // ─── AUTH ────────────────────────────────────────────────────────────────────
 let authMode = 'login';
 function switchAuthTab(mode){
@@ -1042,7 +820,7 @@ function switchAuthTab(mode){
   document.getElementById('auth-err').style.display='none';
   document.getElementById('auth-ok').style.display='none';
 }
- 
+
 async function handleAuth(){
   const email=document.getElementById('auth-email').value.trim();
   const pass =document.getElementById('auth-password').value;
@@ -1075,12 +853,12 @@ function showAuthErr(msg){
   const el=document.getElementById('auth-err');
   el.textContent=msg; el.style.display='block';
 }
- 
+
 async function signOut(){
   await sb.auth.signOut();
   location.reload();
 }
- 
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 sb.auth.onAuthStateChange(async (event, session)=>{
   if(session?.user){
@@ -1093,7 +871,7 @@ sb.auth.onAuthStateChange(async (event, session)=>{
     document.getElementById('app').style.display='none';
   }
 });
- 
+
 // Check existing session on load
 (async ()=>{
   const {data:{session}} = await sb.auth.getSession();
@@ -1104,7 +882,7 @@ sb.auth.onAuthStateChange(async (event, session)=>{
     await loadAll();
   }
 })();
- 
+
 // ─── LOAD ────────────────────────────────────────────────────────────────────
 async function loadAll(){
   setSyncStatus("loading","Syncingu2026");
@@ -1163,7 +941,7 @@ async function loadWA(){
   if(waSettings.phone) document.getElementById("wa-phone").value=waSettings.phone;
   if(waSettings.enabled) document.getElementById("wa-toggle-chk").checked=true;
 }
- 
+
 // ─── RENDER ALL ──────────────────────────────────────────────────────────────
 function renderAll(){
   renderTodayView();
@@ -1175,7 +953,7 @@ function renderAll(){
   renderBabyPanel();
   renderWAPreview();
 }
- 
+
 // ─── VIEW SWITCHING ──────────────────────────────────────────────────────────
 const VIEW_IDS = ['today','otherday','calendar','visits','mymeds','alerts','finance'];
 function showView(id){
@@ -1195,7 +973,7 @@ function goToday(){
   showView('today');
   renderTodayView();
 }
- 
+
 // ─── TODAY VIEW ──────────────────────────────────────────────────────────────
 function renderTodayView(date){
   const d = date||todayStr();
@@ -1206,10 +984,10 @@ function renderTodayView(date){
   const [y,m,day]=d.split('-');
   document.getElementById('date-display').textContent=`${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
   document.getElementById('today-badge').style.display=isToday?'block':'none';
- 
+
   // Pregnancy card
   renderPregCard('preg-card-today');
- 
+
   // Visit banner
   const todayVisit=visits.find(v=>v.visit_date===d);
   const bannerEl=document.getElementById('visit-today-banner');
@@ -1221,12 +999,12 @@ function renderTodayView(date){
         <div class="visit-banner-note">${todayVisit.doctor||''} ${todayVisit.notes?'· '+todayVisit.notes:''}</div>
       </div>
     </div>` : '';
- 
+
   // Meds
   renderMedSections('med-sections','prog-fill','prog-count', d, isFuture);
   document.getElementById('notes-input').value=notes[d]||'';
 }
- 
+
 // ─── PREG CARD ───────────────────────────────────────────────────────────────
 function renderPregCard(containerId){
   const el=document.getElementById(containerId);
@@ -1248,17 +1026,17 @@ function renderPregCard(containerId){
   const weeksPreg = Math.max(0, Math.floor(daysPreg/7));
   const daysIntoWeek = Math.max(0, daysPreg%7);
   const pct = Math.min(100, Math.max(0, Math.round((daysPreg/280)*100)));
- 
+
   let trimester=1, trimLabel='1st Trimester', trimClass='trim1';
   if(weeksPreg>=28){trimester=3;trimLabel='3rd Trimester';trimClass='trim3';}
   else if(weeksPreg>=14){trimester=2;trimLabel='2nd Trimester';trimClass='trim2';}
- 
+
   // trim-specific fill pct
   let trimPct=0;
   if(trimester===1) trimPct=Math.min(100,Math.round((weeksPreg/13)*100));
   else if(trimester===2) trimPct=Math.min(100,Math.round(((weeksPreg-13)/14)*100));
   else trimPct=Math.min(100,Math.round(((weeksPreg-27)/13)*100));
- 
+
   el.innerHTML=`
   <div class="preg-card">
     <div class="preg-header">
@@ -1294,7 +1072,7 @@ function renderPregCard(containerId){
     </div>
   </div>`;
 }
- 
+
 function currentTrimester(){
   if(!pregData) return null;
   const edd = pregData.edd || addDays(pregData.lmp||'',280);
@@ -1304,7 +1082,7 @@ function currentTrimester(){
   if(weeks>=14) return 2;
   return 1;
 }
- 
+
 // ─── MED SECTIONS ────────────────────────────────────────────────────────────
 function getMedsForDate(dateStr){
   const trim = currentTrimester();
@@ -1317,13 +1095,13 @@ function getMedsForDate(dateStr){
     return true;
   });
 }
- 
+
 function renderMedSections(sectionsId, fillId, countId, date, isFuture){
   const el=document.getElementById(sectionsId);
   const slots=['morning','noon','evening','night'];
   const labels={morning:'🌅 Morning',noon:'🌞 Noon',evening:'🌇 Evening',night:'🌃 Night'};
   const meds=getMedsForDate(date);
- 
+
   if(meds.length===0){
     el.innerHTML='';
     document.getElementById('no-meds-msg') && (document.getElementById('no-meds-msg').style.display='block');
@@ -1332,7 +1110,7 @@ function renderMedSections(sectionsId, fillId, countId, date, isFuture){
     return;
   }
   document.getElementById('no-meds-msg') && (document.getElementById('no-meds-msg').style.display='none');
- 
+
   let totalChecked=0, totalMeds=0;
   let html='';
   slots.forEach(slot=>{
@@ -1359,12 +1137,12 @@ function renderMedSections(sectionsId, fillId, countId, date, isFuture){
     });
   });
   el.innerHTML=html;
- 
+
   const pct=totalMeds?Math.round((totalChecked/totalMeds)*100):0;
   document.getElementById(fillId).style.width=pct+'%';
   document.getElementById(countId).textContent=`${totalChecked} / ${totalMeds}`;
 }
- 
+
 function buildMedTags(med){
   let tags='';
   if(med.category_type==='trimester'){
@@ -1375,19 +1153,19 @@ function buildMedTags(med){
   }
   return tags;
 }
- 
+
 async function toggleCheck(medId, date, slot, el){
   const cur = checks[date]?.[medId];
   const newVal = !cur;
   if(!checks[date]) checks[date]={};
   checks[date][medId]=newVal;
- 
+
   // Optimistic UI
   const card=el.closest('.med-card');
   el.classList.toggle('checked',newVal);
   el.textContent=newVal?'✓':'';
   card.classList.toggle('done',newVal);
- 
+
   // Update progress
   const date2=viewingDate;
   const meds=getMedsForDate(date2);
@@ -1397,7 +1175,7 @@ async function toggleCheck(medId, date, slot, el){
   const countId=date===todayStr()?'prog-count':'otherday-prog-count';
   document.getElementById(fillId).style.width=(tm?Math.round(tc/tm*100):0)+'%';
   document.getElementById(countId).textContent=`${tc} / ${tm}`;
- 
+
   setSyncStatus('loading','Saving…');
   try {
     await sb.from('checks').upsert({
@@ -1406,7 +1184,7 @@ async function toggleCheck(medId, date, slot, el){
     setSyncStatus('ok','Saved');
   } catch(e){ setSyncStatus('err','Save failed'); }
 }
- 
+
 // ─── NOTES ───────────────────────────────────────────────────────────────────
 let noteTimer=null;
 function saveNote(){
@@ -1432,7 +1210,7 @@ function saveOtherdayNote(){
     } catch(e){ setSyncStatus('err','Save failed'); }
   },800);
 }
- 
+
 // ─── MY MEDS ─────────────────────────────────────────────────────────────────
 let medFilterCurrent='all';
 function setMedFilter(f, btn){
@@ -1441,7 +1219,7 @@ function setMedFilter(f, btn){
   btn.classList.add('active');
   renderMymeds();
 }
- 
+
 function renderMymeds(){
   const el=document.getElementById('mymeds-list');
   if(!el) return;
@@ -1452,7 +1230,7 @@ function renderMymeds(){
   else if(medFilterCurrent==='trim3') filtered=medicines.filter(m=>m.category_type==='trimester'&&(m.trimesters||[]).includes('3'));
   else if(medFilterCurrent==='alltrimes') filtered=medicines.filter(m=>m.category_type==='trimester');
   else if(medFilterCurrent==='symptom') filtered=medicines.filter(m=>m.category_type==='symptom');
- 
+
   if(!filtered.length){
     el.innerHTML='<div class="empty-state"><div class="icon">💊</div><p>No medicines here yet.</p></div>';
     return;
@@ -1468,7 +1246,7 @@ function renderMymeds(){
       <button class="btn btn-ghost btn-sm" onclick="openEditMedModal('${m.id}')">Edit</button>
     </div>`).join('');
 }
- 
+
 // ─── ADD/EDIT MED MODAL ──────────────────────────────────────────────────────
 function openAddMedModal(){
   editMedId=null;
@@ -1481,7 +1259,7 @@ function openAddMedModal(){
   onCatTypeChange();
   openModal('modal-addmed');
 }
- 
+
 function openEditMedModal(id){
   const m=medicines.find(x=>x.id===id);
   if(!m) return;
@@ -1501,13 +1279,13 @@ function openEditMedModal(id){
   onCatTypeChange();
   openModal('modal-addmed');
 }
- 
+
 function onCatTypeChange(){
   const val=document.getElementById('med-cat-type').value;
   document.getElementById('field-trimesters').classList.toggle('show',val==='trimester');
   document.getElementById('field-symptom').classList.toggle('show',val==='symptom');
 }
- 
+
 async function saveMed(){
   const brand=document.getElementById('med-brand-in').value.trim();
   if(!brand){ alert('Please enter a brand/medicine name.'); return; }
@@ -1544,7 +1322,7 @@ async function saveMed(){
     renderWAPreview();
   } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
 }
- 
+
 async function deleteMed(){
   if(!editMedId||!confirm('Delete this medicine?')) return;
   setSyncStatus('loading','Deleting…');
@@ -1558,7 +1336,7 @@ async function deleteMed(){
     renderTodayView();
   } catch(e){ setSyncStatus('err','Delete failed'); alert(e.message); }
 }
- 
+
 // ─── VISITS ───────────────────────────────────────────────────────────────────
 function openVisitModal(){
   document.getElementById('visit-date-in').value=todayStr();
@@ -1567,7 +1345,7 @@ function openVisitModal(){
   document.getElementById('rx-preview-wrap').innerHTML='📎 Tap to upload prescription';
   openModal('modal-addvisit');
 }
- 
+
 function previewRx(e){
   const file=e.target.files[0];
   if(!file) return;
@@ -1580,7 +1358,7 @@ function previewRx(e){
     wrap.innerHTML=`📄 ${file.name}`;
   }
 }
- 
+
 async function saveVisit(){
   const date=document.getElementById('visit-date-in').value;
   const doctor=document.getElementById('visit-doctor-in').value.trim();
@@ -1601,7 +1379,7 @@ async function saveVisit(){
     renderTodayView();
   } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
 }
- 
+
 function renderVisitsList(){
   const el=document.getElementById('visits-list');
   if(!el) return;
@@ -1620,7 +1398,7 @@ function renderVisitsList(){
       <button class="btn btn-danger btn-sm" onclick="deleteVisit('${v.id}')">×</button>
     </div>`).join('');
 }
- 
+
 async function deleteVisit(id){
   if(!confirm('Delete this visit?')) return;
   try {
@@ -1630,7 +1408,7 @@ async function deleteVisit(id){
     setSyncStatus('ok','Deleted');
   } catch(e){ setSyncStatus('err','Delete failed'); }
 }
- 
+
 // ─── PREGNANCY ────────────────────────────────────────────────────────────────
 function openPregModal(){
   if(pregData){
@@ -1639,7 +1417,7 @@ function openPregModal(){
   }
   openModal('modal-preg');
 }
- 
+
 async function savePregnancy(){
   const lmp=document.getElementById('preg-lmp-in').value;
   const edd=document.getElementById('preg-edd-in').value;
@@ -1663,7 +1441,7 @@ async function savePregnancy(){
     renderTodayView();
   } catch(e){ setSyncStatus('err','Save failed'); alert(e.message); }
 }
- 
+
 // ─── CALENDAR ────────────────────────────────────────────────────────────────
 function initCalendar(){
   const now=new Date();
@@ -1675,28 +1453,28 @@ function changeMonth(dir){
   else if(calMonth>11){calMonth=0;calYear++;}
   renderCalendar();
 }
- 
+
 function renderCalendar(){
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-title').textContent=`${months[calMonth]} ${calYear}`;
   const grid=document.getElementById('cal-grid');
   const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
   let html=days.map(d=>`<div class="cal-dow">${d}</div>`).join('');
- 
+
   const first=new Date(calYear,calMonth,1).getDay();
   for(let i=0;i<first;i++) html+=`<div class="cal-day empty-cell"></div>`;
- 
+
   const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
   const today=todayStr();
   const visitDates=new Set(visits.map(v=>v.visit_date));
- 
+
   for(let d=1;d<=daysInMonth;d++){
     const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isFuture=ds>today;
     const isToday=ds===today;
     const isSel=ds===viewingDate;
     const hasVisit=visitDates.has(ds);
- 
+
     let cls='none';
     if(!isFuture){
       const meds=getMedsForDate(ds);
@@ -1707,12 +1485,12 @@ function renderCalendar(){
         else cls='none';
       }
     } else cls='future';
- 
+
     html+=`<button class="cal-day ${cls}${isToday?' today-cell':''}${isSel?' sel':''}${hasVisit?' has-visit':''}"
       onclick="calDayClick('${ds}')">${d}<div class="cal-dot"></div></button>`;
   }
   grid.innerHTML=html;
- 
+
   // Summary
   let full=0,partial=0,none=0,total=0;
   for(let d2=1;d2<=daysInMonth;d2++){
@@ -1734,29 +1512,29 @@ function renderCalendar(){
       <span style="color:var(--light)">of ${total} days so far</span>
     </div>`;
 }
- 
+
 function calDayClick(ds){
   viewingDate=ds;
   const today=todayStr();
   if(ds===today){ goToday(); return; }
- 
+
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const [y,m,d]=ds.split('-');
   const isFuture=ds>today;
- 
+
   document.getElementById('tab-otherday').style.display='inline-block';
   document.getElementById('tab-otherday').textContent=`${months[parseInt(m)-1].slice(0,3)} ${parseInt(d)}`;
   showView('otherday');
- 
+
   document.getElementById('otherday-date-display').textContent=`${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
   document.getElementById('otherday-future-badge').style.display=isFuture?'block':'none';
   document.getElementById('otherday-future-notice').style.display=isFuture?'flex':'none';
- 
+
   renderMedSections('otherday-med-sections','otherday-prog-fill','otherday-prog-count', ds, isFuture);
   document.getElementById('otherday-notes-input').value=notes[ds]||'';
   renderCalendar();
 }
- 
+
 // ─── FINANCE ─────────────────────────────────────────────────────────────────
 function selectFinPerson(id, btn){
   currentFinPerson=id;
@@ -1764,9 +1542,9 @@ function selectFinPerson(id, btn){
   btn.classList.add('active');
   renderFinance();
 }
- 
+
 function openAddPersonModal(){ openModal('modal-addperson'); document.getElementById('fin-person-name-in').value=''; }
- 
+
 function saveFinPerson(){
   const name=document.getElementById('fin-person-name-in').value.trim();
   if(!name) return;
@@ -1777,20 +1555,20 @@ function saveFinPerson(){
   renderFinanceTabs();
   saveFinanceToDB();
 }
- 
+
 function renderFinanceTabs(){
   const wrap=document.getElementById('fin-person-tabs');
   wrap.innerHTML=finPersons.map(p=>`
     <button class="fin-ptab${p===currentFinPerson?' active':''}" onclick="selectFinPerson('${p}',this)">👤 ${finPersonNames[p]||p}</button>`).join('')+
     `<button class="fin-add-p" onclick="openAddPersonModal()">+ Add Person</button>`;
 }
- 
+
 function openAddTxnModal(){
   document.getElementById('txn-date-in').value=todayStr();
   ['txn-amt-in','txn-cat-in','txn-note-in'].forEach(id=>document.getElementById(id).value='');
   openModal('modal-addtxn');
 }
- 
+
 async function saveTxn(){
   const type=document.getElementById('txn-type-in').value;
   const amt=parseFloat(document.getElementById('txn-amt-in').value)||0;
@@ -1804,7 +1582,7 @@ async function saveTxn(){
   renderFinance();
   saveFinanceToDB();
 }
- 
+
 async function saveFinanceToDB(){
   try {
     await sb.from('finance').upsert({
@@ -1816,19 +1594,19 @@ async function saveFinanceToDB(){
     setSyncStatus('ok','Saved');
   } catch(e){ setSyncStatus('err','Save failed'); }
 }
- 
+
 function renderFinance(){
   renderFinanceTabs();
   const txns=(finTxns[currentFinPerson]||[]).sort((a,b)=>b.date.localeCompare(a.date));
   const income=txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const expense=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const saved=income-expense;
- 
+
   document.getElementById('fin-summary').innerHTML=`
     <div class="fin-stat inc"><div class="fin-stat-num">₹${income.toLocaleString('en-IN')}</div><div class="fin-stat-lbl">Income</div></div>
     <div class="fin-stat exp"><div class="fin-stat-num">₹${expense.toLocaleString('en-IN')}</div><div class="fin-stat-lbl">Expense</div></div>
     <div class="fin-stat sav${saved<0?' neg':''}"><div class="fin-stat-num">₹${Math.abs(saved).toLocaleString('en-IN')}</div><div class="fin-stat-lbl">${saved<0?'Deficit':'Saved'}</div></div>`;
- 
+
   const listEl=document.getElementById('fin-txn-list');
   if(!txns.length){
     listEl.innerHTML='<div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div>';
@@ -1848,16 +1626,16 @@ function renderFinance(){
       <button class="fin-del" onclick="deleteTxn('${t.id}')">🗑</button>
     </div>`).join('');
 }
- 
+
 function deleteTxn(id){
   finTxns[currentFinPerson]=(finTxns[currentFinPerson]||[]).filter(t=>String(t.id)!==String(id));
   renderFinance();
   saveFinanceToDB();
 }
- 
+
 // ─── WA SETTINGS ─────────────────────────────────────────────────────────────
 function toggleWA(){ saveWASettings(); }
- 
+
 async function saveWASettings(){
   waSettings.phone=document.getElementById('wa-phone').value.trim();
   waSettings.enabled=document.getElementById('wa-toggle-chk').checked;
@@ -1869,7 +1647,7 @@ async function saveWASettings(){
   } catch(e){ statusEl.className='wa-status err'; statusEl.textContent='Save failed: '+e.message; }
   setTimeout(()=>statusEl.style.display='none',3000);
 }
- 
+
 function renderWAPreview(){
   const el=document.getElementById('wa-preview-text');
   if(!el) return;
@@ -1884,7 +1662,7 @@ function renderWAPreview(){
   });
   el.innerHTML=html;
 }
- 
+
 // ─── NUTRITION PANEL ─────────────────────────────────────────────────────────
 const NUTRIENTS=[
   {icon:'🫘',name:'Folic Acid',foods:'Leafy greens, lentils, beans',
@@ -1900,7 +1678,7 @@ const NUTRIENTS=[
   {icon:'🥚',name:'Protein',foods:'Eggs, chicken, lentils',
    body:'Your baby\'s cells, muscles and tissues are built from protein. Aim for 75–100g/day.',foods2:'Eggs, chicken, fish, lentils, Greek yogurt, quinoa'},
 ];
- 
+
 function renderNutrition(){
   const el=document.getElementById('nut-cards');
   if(!el) return;
@@ -1911,7 +1689,7 @@ function renderNutrition(){
       <div class="nut-foods">${n.foods}</div>
     </div>`).join('');
 }
- 
+
 function showNutTooltip(i){
   const n=NUTRIENTS[i];
   document.getElementById('nt-icon').textContent=n.icon;
@@ -1925,7 +1703,7 @@ function closeNutTooltip(){
   document.getElementById('nut-tooltip').style.display='none';
   document.getElementById('nut-overlay').style.display='none';
 }
- 
+
 // ─── BABY PANEL ───────────────────────────────────────────────────────────────
 const BABY_DATA=[
   {w:4,size:'Poppy seed',emoji:'🌱'},{w:5,size:'Apple seed',emoji:'🌱'},
@@ -1945,7 +1723,7 @@ const BABY_TIPS=[
   'Brain development is rapid this week.','Baby is storing fat for warmth.',
   'Lungs are maturing — almost ready!','Baby is in position for birth.',
 ];
- 
+
 function renderBabyPanel(){
   const el=document.getElementById('baby-info-panel');
   if(!el) return;
@@ -1965,11 +1743,11 @@ function renderBabyPanel(){
     <div style="font-size:13px;font-weight:600;color:var(--deep);text-align:center">Size of a ${babyInfo.size}</div>
     <div class="baby-tip">${tip}</div>`;
 }
- 
+
 // ─── MODAL HELPERS ────────────────────────────────────────────────────────────
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
- 
+
 // Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{
   overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.classList.remove('open'); });
@@ -1977,6 +1755,3 @@ document.querySelectorAll('.modal-overlay').forEach(overlay=>{
 </script>
 </body>
 </html>
- 
-
-
