@@ -324,6 +324,42 @@
     .nt-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);text-align:center;font-style:italic}
     .nt-body{font-size:12px;color:var(--text);line-height:1.7;margin-top:10px}
     .nt-foods{margin-top:10px;font-size:11px;color:var(--sage);font-weight:600}
+    /* ── FINANCE BOT ── */
+    .finbot-wrap{background:#fff;border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;height:500px}
+    .finbot-header{background:linear-gradient(135deg,#fdf0f3,#f7f0ff);padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--blush)}
+    .finbot-avatar{width:38px;height:38px;border-radius:50%;background:var(--deep);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .finbot-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--deep);font-style:italic}
+    .finbot-sub{font-size:11px;color:var(--light)}
+    .finbot-dot{width:8px;height:8px;border-radius:50%;background:var(--sage);margin-left:auto;flex-shrink:0}
+    .finbot-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+    .finbot-msg{display:flex;gap:8px;align-items:flex-start}
+    .finbot-msg.user{flex-direction:row-reverse}
+    .finbot-bubble{max-width:76%;padding:9px 14px;font-size:13px;line-height:1.6;color:var(--text);border-radius:16px}
+    .finbot-msg.bot .finbot-bubble{background:var(--blush);border-radius:4px 16px 16px 16px}
+    .finbot-msg.user .finbot-bubble{background:var(--deep);color:#fff;border-radius:16px 4px 16px 16px}
+    .finbot-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .finbot-msg.bot .finbot-av{background:var(--deep);color:#fff}
+    .finbot-msg.user .finbot-av{background:var(--blush);color:var(--deep)}
+    .finbot-typing{display:flex;gap:4px;padding:3px 2px;align-items:center}
+    .finbot-typing span{width:6px;height:6px;border-radius:50%;background:var(--rose);animation:fbbounce 1s infinite}
+    .finbot-typing span:nth-child(2){animation-delay:.15s}
+    .finbot-typing span:nth-child(3){animation-delay:.3s}
+    @keyframes fbbounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
+    .finbot-txn-card{margin-top:8px;background:#fff;border:1px solid var(--blush);border-radius:12px;padding:10px 12px;font-size:12px}
+    .finbot-txn-row{display:flex;justify-content:space-between;padding:2px 0}
+    .finbot-txn-lbl{color:var(--light)}
+    .finbot-txn-val{font-weight:600;color:var(--text)}
+    .finbot-txn-amt-i{color:#166534;font-weight:700}
+    .finbot-txn-amt-e{color:#c04040;font-weight:700}
+    .finbot-quick{padding:8px 16px 10px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--blush)}
+    .finbot-qbtn{font-size:11px;padding:5px 11px;border:1.5px solid var(--rose);border-radius:20px;background:#fff;color:var(--deep);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+    .finbot-qbtn:hover{background:var(--blush)}
+    .finbot-input-row{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px solid var(--blush)}
+    .finbot-input-row input{flex:1;padding:9px 14px;border:1.5px solid var(--blush);border-radius:22px;font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;background:#fffaf7}
+    .finbot-input-row input:focus{border-color:var(--rose)}
+    .finbot-send{width:38px;height:38px;border-radius:50%;border:none;background:var(--deep);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background .15s}
+    .finbot-send:hover{background:var(--deeper)}
+    .finbot-send:disabled{background:#ddd;cursor:default}
   </style>
 </head>
 <body>
@@ -510,11 +546,12 @@
           </div>
           <div class="fin-summary" id="fin-summary-bar"></div>
           <div class="fin-ai-tabs">
-            <button class="fin-ai-tab active" onclick="switchFinTab('txns',this)">💳 Transactions</button>
-            <button class="fin-ai-tab" onclick="switchFinTab('statement',this)">📄 Bank Statement</button>
-            <button class="fin-ai-tab" onclick="switchFinTab('plans',this)">📝 Future Plans</button>
+            <button class="fin-ai-tab active" onclick="switchFinTab('txns',this)">💳 Txns</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('bot',this)">🤖 Bot</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('statement',this)">📄 Statement</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('plans',this)">📝 Plans</button>
             <button class="fin-ai-tab" onclick="switchFinTab('chart',this)">📊 Chart</button>
-            <button class="fin-ai-tab" onclick="switchFinTab('aianalysis',this)">🤖 AI Analysis</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('aianalysis',this)">✨ AI</button>
           </div>
 
           <!-- PANEL: TRANSACTIONS -->
@@ -524,6 +561,32 @@
               <button class="btn btn-primary btn-sm" onclick="openAddTxnModal()">+ Add</button>
             </div>
             <div class="card" id="fin-txn-list"><div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div></div>
+          </div>
+
+          <!-- PANEL: FINANCE BOT -->
+          <div id="fin-panel-bot" class="fin-ai-panel">
+            <div class="finbot-wrap">
+              <div class="finbot-header">
+                <div class="finbot-avatar">💰</div>
+                <div>
+                  <div class="finbot-title">Finance Assistant</div>
+                  <div class="finbot-sub">Add transactions or ask anything</div>
+                </div>
+                <div class="finbot-dot"></div>
+              </div>
+              <div class="finbot-msgs" id="finbot-msgs"></div>
+              <div class="finbot-quick">
+                <button class="finbot-qbtn" onclick="finbotQuick('Add expense: groceries ₹800 today')">+ expense</button>
+                <button class="finbot-qbtn" onclick="finbotQuick('Add income: salary ₹50000 this month')">+ income</button>
+                <button class="finbot-qbtn" onclick="finbotQuick('How much did I spend this month?')">this month</button>
+                <button class="finbot-qbtn" onclick="finbotQuick('Show spending by category')">by category</button>
+                <button class="finbot-qbtn" onclick="finbotQuick('Credit card dues this week?')">CC dues</button>
+              </div>
+              <div class="finbot-input-row">
+                <input id="finbot-inp" type="text" placeholder="Add a transaction or ask anything…"/>
+                <button class="finbot-send" id="finbot-send" onclick="finbotSend()">➤</button>
+              </div>
+            </div>
           </div>
 
           <!-- PANEL: BANK STATEMENT PDF -->
@@ -1017,13 +1080,15 @@ function renderFinance(){
 
 // ─── FINANCE AI TABS ───
 function switchFinTab(name,btn){
-  ['txns','statement','plans','chart','aianalysis'].forEach(t=>{document.getElementById('fin-panel-'+t).classList.toggle('active',t===name);});
+  ['txns','bot','statement','plans','chart','aianalysis'].forEach(t=>{document.getElementById('fin-panel-'+t).classList.toggle('active',t===name);});
   document.querySelectorAll('.fin-ai-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(name==='plans')renderFinPlanHistory();
   if(name==='aianalysis')updateAIReadinessBadges();
   if(name==='chart')renderFinCharts();
+  if(name==='bot')finbotInit();
 }
+document.getElementById('finbot-inp')?.addEventListener('keydown',e=>{if(e.key==='Enter')finbotSend();});
 
 // ─── BANK STATEMENT PARSING ───
 function onStmtDrop(e){e.preventDefault();document.getElementById('upload-zone-fin').style.background='';const files=[...e.dataTransfer.files].filter(f=>f.type==='application/pdf');files.forEach(f=>processStmtPdf(f));}
@@ -1631,6 +1696,131 @@ function sendManualAlert(){
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});});
+
+// ─── FINANCE BOT ───
+const FINBOT_SYSTEM=`You are MedMama's Finance Assistant — a warm, helpful bot embedded in a pregnancy tracker app. You help users log and understand their personal finances.
+
+When a user wants to ADD a transaction, parse it and respond with:
+1. A short friendly confirmation (1-2 sentences)
+2. A JSON block wrapped in triple backticks labeled txn_data:
+\`\`\`txn_data
+{"action":"add_transaction","txn_type":"expense|income|credit_card","amount":number,"category":"string","note":"string","txn_date":"YYYY-MM-DD"}
+\`\`\`
+
+Categories for expense/credit_card: groceries, food, transport, medicine, bills, shopping, EMI, entertainment, baby, other
+Categories for income: salary, freelance, investment, gift, other
+
+When a user ASKS about finances (totals, trends, tips), answer helpfully and concisely. If they ask about credit card dues or EMIs, acknowledge and encourage them to check the relevant section.
+
+Keep responses short, warm, conversational. Today is ${new Date().toISOString().split('T')[0]}.`;
+
+let finbotHistory=[];
+let finbotBusy=false;
+
+function finbotAddMsg(role,text,txnData){
+  const msgs=document.getElementById('finbot-msgs');
+  if(!msgs)return;
+  const div=document.createElement('div');
+  div.className='finbot-msg '+(role==='user'?'user':'bot');
+  const av=document.createElement('div');
+  av.className='finbot-av';
+  av.textContent=role==='user'?'U':'M';
+  const bub=document.createElement('div');
+  bub.className='finbot-bubble';
+  bub.textContent=text;
+  if(txnData){
+    const card=document.createElement('div');
+    card.className='finbot-txn-card';
+    const amtCls=txnData.txn_type==='income'?'finbot-txn-amt-i':'finbot-txn-amt-e';
+    const sym=txnData.txn_type==='income'?'+':'-';
+    card.innerHTML=`<div class="finbot-txn-row"><span class="finbot-txn-lbl">Type</span><span class="finbot-txn-val">${txnData.txn_type}</span></div><div class="finbot-txn-row"><span class="finbot-txn-lbl">Amount</span><span class="${amtCls}">${sym}₹${Number(txnData.amount).toLocaleString('en-IN')}</span></div><div class="finbot-txn-row"><span class="finbot-txn-lbl">Category</span><span class="finbot-txn-val">${txnData.category}</span></div>${txnData.note?`<div class="finbot-txn-row"><span class="finbot-txn-lbl">Note</span><span class="finbot-txn-val">${txnData.note}</span></div>`:''}<div class="finbot-txn-row"><span class="finbot-txn-lbl">Date</span><span class="finbot-txn-val">${txnData.txn_date}</span></div>`;
+    const addBtn=document.createElement('button');
+    addBtn.className='btn btn-primary btn-sm';
+    addBtn.style.cssText='margin-top:10px;width:100%';
+    addBtn.textContent='✓ Add to transactions';
+    addBtn.onclick=()=>finbotSaveTxn(txnData,addBtn);
+    card.appendChild(addBtn);
+    bub.appendChild(card);
+  }
+  div.appendChild(av);
+  div.appendChild(bub);
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function finbotSaveTxn(txnData,btn){
+  const p=currentFinPerson;
+  if(!finTxns[p])finTxns[p]=[];
+  finTxns[p].push({id:Date.now().toString(),type:txnData.txn_type,amount:Number(txnData.amount),category:txnData.category,note:txnData.note||'',date:txnData.txn_date,card:''});
+  saveFinance();
+  renderFinance();
+  btn.textContent='✅ Added!';
+  btn.disabled=true;
+  btn.style.background='#7aaa80';
+}
+
+function finbotShowTyping(){
+  const msgs=document.getElementById('finbot-msgs');
+  if(!msgs)return;
+  const div=document.createElement('div');
+  div.className='finbot-msg bot';
+  div.id='finbot-typing';
+  div.innerHTML=`<div class="finbot-av" style="background:var(--deep);color:#fff">M</div><div class="finbot-bubble"><div class="finbot-typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function finbotRemoveTyping(){
+  const t=document.getElementById('finbot-typing');
+  if(t)t.remove();
+}
+
+function finbotParseTxn(text){
+  const m=text.match(/```txn_data\s*([\s\S]*?)```/);
+  if(!m)return null;
+  try{return JSON.parse(m[1].trim());}catch{return null;}
+}
+
+async function finbotSend(){
+  const inp=document.getElementById('finbot-inp');
+  const val=inp.value.trim();
+  if(!val||finbotBusy)return;
+  inp.value='';
+  finbotAddMsg('user',val);
+  finbotHistory.push({role:'user',content:val});
+  finbotBusy=true;
+  document.getElementById('finbot-send').disabled=true;
+  finbotShowTyping();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:FINBOT_SYSTEM,messages:finbotHistory})});
+    const data=await res.json();
+    const raw=data.content?.map(b=>b.text||'').join('')||'Sorry, something went wrong.';
+    const txnData=finbotParseTxn(raw);
+    const display=raw.replace(/```txn_data[\s\S]*?```/g,'').trim();
+    finbotHistory.push({role:'assistant',content:raw});
+    finbotRemoveTyping();
+    finbotAddMsg('bot',display,txnData);
+  }catch(e){
+    finbotRemoveTyping();
+    finbotAddMsg('bot','Connection error — please try again.');
+  }
+  finbotBusy=false;
+  document.getElementById('finbot-send').disabled=false;
+}
+
+function finbotQuick(text){
+  const inp=document.getElementById('finbot-inp');
+  if(inp)inp.value=text;
+  finbotSend();
+}
+
+function finbotInit(){
+  const msgs=document.getElementById('finbot-msgs');
+  if(!msgs||msgs.children.length>0)return;
+  finbotAddMsg('bot','Hi! I\'m your MedMama finance assistant 💰 Tell me about an expense or income — like "spent ₹500 on medicine today" — and I\'ll add it for you. Or ask me anything about your finances!');
+}
+
+// init bot when bot tab is opened
 </script>
 </body>
 </html>
