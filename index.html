@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root{
       --blush:#f7e8e8;--rose:#e8a0a0;--deep:#c0627a;--deeper:#a04060;
@@ -290,6 +291,33 @@
     .prog-fill-ai.warn{background:linear-gradient(90deg,#fde68a,#f59e0b)}
     .prog-fill-ai.bad{background:linear-gradient(90deg,#fca5a5,#ef4444)}
     .nut-tooltip{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:20px;padding:20px 24px;max-width:320px;width:90%;box-shadow:0 8px 40px rgba(192,98,122,.2);z-index:200}
+    /* ── DELETE PDF ── */
+    .pdf-uploaded-bar{background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-top:12px}
+    .pdf-uploaded-name{flex:1;font-size:12px;font-weight:600;color:#3730a3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pdf-delete-btn{background:#fff0f0;border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#c04040;cursor:pointer;flex-shrink:0}
+    .pdf-delete-btn:hover{background:#ffd6d6}
+    /* ── EDITABLE SUMMARY ── */
+    .fin-stat-edit{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
+    .fin-stat-edit-btn{background:none;border:none;cursor:pointer;font-size:11px;opacity:.5;padding:0}
+    .fin-stat-edit-btn:hover{opacity:1}
+    .fin-stat-input{font-size:15px;font-weight:700;font-family:'Cormorant Garamond',serif;border:none;border-bottom:2px solid #86efac;background:transparent;outline:none;width:100px;text-align:center;color:inherit}
+    /* ── CREDIT CARD ── */
+    .fin-txn-ic.cc{background:#fff3cd}
+    .fin-txn-amt.cc{color:#7a5c00}
+    .cc-badge{display:inline-flex;align-items:center;gap:3px;background:#fff3cd;color:#7a5c00;border-radius:8px;padding:1px 7px;font-size:9px;font-weight:700}
+    /* ── CHART ── */
+    .fin-chart-wrap{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
+    .fin-chart-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--deep);font-style:italic;margin-bottom:14px}
+    .fin-chart-canvas-wrap{position:relative;display:flex;justify-content:center;align-items:center}
+    .fin-chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center}
+    .fin-chart-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text)}
+    .fin-chart-leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    /* ── ALERT SEND BUTTON ── */
+    .alert-send-btn{width:100%;padding:16px;background:linear-gradient(135deg,#7b5ea7,#a04060);color:#fff;border:none;border-radius:16px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(160,64,96,.3);transition:all .2s;margin-top:14px}
+    .alert-send-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(160,64,96,.4)}
+    .alert-send-btn:active{transform:translateY(0)}
+    .alert-sent-toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#166534;color:#fff;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+    .alert-sent-toast.show{opacity:1}
     .nut-tooltip-overlay{position:fixed;inset:0;background:rgba(58,42,48,.3);z-index:199}
     .nt-close{float:right;background:var(--blush);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--deep)}
     .nt-icon{font-size:36px;text-align:center;margin:8px 0 4px}
@@ -468,6 +496,10 @@
             <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Reminder Preview</div>
             <div style="font-size:12px;color:var(--light);line-height:1.8" id="wa-preview-text">Configure your medicines to see a preview.</div>
           </div>
+          <!-- SEND ALERT BUTTON -->
+          <button class="alert-send-btn" onclick="sendManualAlert()">
+            🔔 Send Reminder Now
+          </button>
         </div>
 
         <!-- FINANCE -->
@@ -481,6 +513,7 @@
             <button class="fin-ai-tab active" onclick="switchFinTab('txns',this)">💳 Transactions</button>
             <button class="fin-ai-tab" onclick="switchFinTab('statement',this)">📄 Bank Statement</button>
             <button class="fin-ai-tab" onclick="switchFinTab('plans',this)">📝 Future Plans</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('chart',this)">📊 Chart</button>
             <button class="fin-ai-tab" onclick="switchFinTab('aianalysis',this)">🤖 AI Analysis</button>
           </div>
 
@@ -510,6 +543,11 @@
                 <div style="font-size:13px;font-weight:600;color:var(--deep)" id="upload-title-fin">Drag & drop or tap to upload PDF</div>
                 <div style="font-size:11px;color:var(--light);margin-top:4px">Bank statement · PDF only</div>
                 <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="event.stopPropagation()">Choose File</button>
+              </div>
+              <div id="pdf-uploaded-bar" class="pdf-uploaded-bar" style="display:none">
+                <span style="font-size:18px">📄</span>
+                <span class="pdf-uploaded-name" id="pdf-uploaded-name">statement.pdf</span>
+                <button class="pdf-delete-btn" onclick="deleteUploadedPdf()">🗑 Delete PDF</button>
               </div>
               <div id="stmt-progress" style="display:none;margin-top:14px">
                 <div class="prog-bar-wrap">
@@ -548,6 +586,34 @@
                 <button class="btn btn-ghost btn-sm" onclick="clearFinPlans()">Clear all</button>
               </div>
               <div id="fin-plan-history"></div>
+            </div>
+          </div>
+
+          <!-- PANEL: CHART -->
+          <div id="fin-panel-chart" class="fin-ai-panel">
+            <div class="fin-chart-wrap">
+              <div class="fin-chart-title">📊 Financial Overview</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+                <div style="flex:1;min-width:240px">
+                  <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:8px;text-align:center">Breakdown</div>
+                  <div class="fin-chart-canvas-wrap" style="height:220px">
+                    <canvas id="fin-donut-chart"></canvas>
+                  </div>
+                  <div class="fin-chart-legend" id="fin-donut-legend"></div>
+                </div>
+                <div style="flex:1;min-width:240px">
+                  <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--light);margin-bottom:8px;text-align:center">Monthly Trend</div>
+                  <div class="fin-chart-canvas-wrap" style="height:220px">
+                    <canvas id="fin-bar-chart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="fin-chart-wrap">
+              <div class="fin-chart-title">💳 Credit Card vs Cash Expenses</div>
+              <div class="fin-chart-canvas-wrap" style="height:180px">
+                <canvas id="fin-cc-chart"></canvas>
+              </div>
             </div>
           </div>
 
@@ -682,15 +748,24 @@
 <!-- Add Transaction -->
 <div class="modal-overlay" id="modal-addtxn">
   <div class="modal">
-    <div class="modal-title">Add Transaction<button class="modal-close" onclick="closeModal('modal-addtxn')">×</button></div>
-    <div class="field"><label>Type</label><select id="txn-type-in"><option value="income">Income</option><option value="expense">Expense</option></select></div>
+    <div class="modal-title"><span id="addtxn-modal-title">Add Transaction</span><button class="modal-close" onclick="closeModal('modal-addtxn')">×</button></div>
+    <div class="field"><label>Type</label><select id="txn-type-in" onchange="onTxnTypeChange()">
+      <option value="income">💰 Income</option>
+      <option value="expense">💸 Expense (Cash/UPI)</option>
+      <option value="credit_card">💳 Credit Card Expense</option>
+    </select></div>
     <div class="field-row">
       <div class="field"><label>Amount (₹)</label><input id="txn-amt-in" type="number" placeholder="0"/></div>
       <div class="field"><label>Category</label><input id="txn-cat-in" placeholder="e.g. Salary, Medicine"/></div>
     </div>
+    <div class="field" id="txn-card-field" style="display:none"><label>Card Name</label><input id="txn-card-in" placeholder="e.g. HDFC Regalia, SBI SimplyCLICK"/></div>
     <div class="field"><label>Note</label><input id="txn-note-in" placeholder="Optional note"/></div>
     <div class="field"><label>Date</label><input id="txn-date-in" type="date"/></div>
-    <div class="btn-row"><button class="btn btn-primary" onclick="saveTxn()">Save</button><button class="btn btn-ghost" onclick="closeModal('modal-addtxn')">Cancel</button></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveTxn()">Save</button>
+      <button class="btn btn-danger" id="edit-txn-del-btn" style="display:none" onclick="deleteEditTxn()">Delete</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-addtxn')">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -704,8 +779,10 @@
   <div class="nt-foods" id="nt-foods"></div>
 </div>
 
+<!-- Alert Toast -->
+<div class="alert-sent-toast" id="alert-sent-toast">✅ Reminder sent successfully!</div>
+
 <script>
-// ─── PDF.js ───
 if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ─── SUPABASE ───
@@ -887,8 +964,12 @@ function selectFinPerson(id,btn){currentFinPerson=id;document.querySelectorAll('
 function openAddPersonModal(){openModal('modal-addperson');document.getElementById('fin-person-name-in').value='';}
 function saveFinPerson(){const name=document.getElementById('fin-person-name-in').value.trim();if(!name)return;const id='person_'+Date.now();finPersons.push(id);finPersonNames[id]=name;closeModal('modal-addperson');renderFinanceTabs();saveFinanceToDB();}
 function renderFinanceTabs(){const wrap=document.getElementById('fin-person-tabs');wrap.innerHTML=finPersons.map(p=>`<button class="fin-ptab${p===currentFinPerson?' active':''}" onclick="selectFinPerson('${p}',this)">👤 ${finPersonNames[p]||p}</button>`).join('')+`<button class="fin-add-p" onclick="openAddPersonModal()">+ Add Person</button>`;}
-function openAddTxnModal(){document.getElementById('txn-date-in').value=todayStr();['txn-amt-in','txn-cat-in','txn-note-in'].forEach(id=>document.getElementById(id).value='');openModal('modal-addtxn');}
-async function saveTxn(){const type=document.getElementById('txn-type-in').value,amt=parseFloat(document.getElementById('txn-amt-in').value)||0,cat=document.getElementById('txn-cat-in').value.trim(),note=document.getElementById('txn-note-in').value.trim(),date=document.getElementById('txn-date-in').value;if(!amt||!cat){alert('Enter amount and category.');return;}if(!finTxns[currentFinPerson])finTxns[currentFinPerson]=[];finTxns[currentFinPerson].push({id:Date.now(),type,amount:amt,category:cat,note,date});closeModal('modal-addtxn');renderFinance();saveFinanceToDB();}
+let editingTxnId=null;
+function onTxnTypeChange(){const v=document.getElementById('txn-type-in').value;document.getElementById('txn-card-field').style.display=v==='credit_card'?'block':'none';}
+function openAddTxnModal(){editingTxnId=null;document.getElementById('addtxn-modal-title').textContent='Add Transaction';document.getElementById('edit-txn-del-btn').style.display='none';document.getElementById('txn-date-in').value=todayStr();['txn-amt-in','txn-cat-in','txn-note-in','txn-card-in'].forEach(id=>document.getElementById(id).value='');document.getElementById('txn-type-in').value='income';document.getElementById('txn-card-field').style.display='none';openModal('modal-addtxn');}
+function openEditTxn(id){const txn=(finTxns[currentFinPerson]||[]).find(t=>String(t.id)===String(id));if(!txn)return;editingTxnId=id;document.getElementById('addtxn-modal-title').textContent='Edit Transaction';document.getElementById('edit-txn-del-btn').style.display='inline-block';document.getElementById('txn-type-in').value=txn.type;document.getElementById('txn-amt-in').value=txn.amount;document.getElementById('txn-cat-in').value=txn.category||'';document.getElementById('txn-note-in').value=txn.note||'';document.getElementById('txn-date-in').value=txn.date||todayStr();document.getElementById('txn-card-in').value=txn.card_name||'';document.getElementById('txn-card-field').style.display=txn.type==='credit_card'?'block':'none';openModal('modal-addtxn');}
+function deleteEditTxn(){if(editingTxnId){deleteTxn(editingTxnId);closeModal('modal-addtxn');}}
+async function saveTxn(){const type=document.getElementById('txn-type-in').value,amt=parseFloat(document.getElementById('txn-amt-in').value)||0,cat=document.getElementById('txn-cat-in').value.trim(),note=document.getElementById('txn-note-in').value.trim(),date=document.getElementById('txn-date-in').value,card=document.getElementById('txn-card-in').value.trim();if(!amt||!cat){alert('Enter amount and category.');return;}if(!finTxns[currentFinPerson])finTxns[currentFinPerson]=[];if(editingTxnId){const idx=finTxns[currentFinPerson].findIndex(t=>String(t.id)===String(editingTxnId));if(idx>-1)finTxns[currentFinPerson][idx]={...finTxns[currentFinPerson][idx],type,amount:amt,category:cat,note,date,card_name:card};}else{finTxns[currentFinPerson].push({id:Date.now(),type,amount:amt,category:cat,note,date,card_name:card});}closeModal('modal-addtxn');renderFinance();saveFinanceToDB();}
 async function saveFinanceToDB(){try{await sb.from('finance').upsert({user_id:currentUser.id,persons:finPersons,person_names:finPersonNames,transactions:finTxns},{onConflict:'user_id'});setSyncStatus('ok','Saved');}catch(e){setSyncStatus('err','Save failed');}}
 function deleteTxn(id){finTxns[currentFinPerson]=(finTxns[currentFinPerson]||[]).filter(t=>String(t.id)!==String(id));renderFinance();saveFinanceToDB();}
 
@@ -898,22 +979,48 @@ function renderFinance(){
   const stmtIncome=parsedStmtTxns.filter(t=>t.type==='credit').reduce((s,t)=>s+t.amount,0);
   const stmtExpense=parsedStmtTxns.filter(t=>t.type==='debit').reduce((s,t)=>s+t.amount,0);
   const manualIncome=txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const manualExpense=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const manualExpense=txns.filter(t=>t.type==='expense'||t.type==='credit_card').reduce((s,t)=>s+t.amount,0);
   const income=stmtIncome+manualIncome,expense=stmtExpense+manualExpense,saved=income-expense;
-  document.getElementById('fin-summary-bar').innerHTML=`<div class="fin-stat inc"><div class="fin-stat-num">₹${fmtNum(income)}</div><div class="fin-stat-lbl">Income</div></div><div class="fin-stat exp"><div class="fin-stat-num">₹${fmtNum(expense)}</div><div class="fin-stat-lbl">Expense</div></div><div class="fin-stat sav"><div class="fin-stat-num">₹${fmtNum(Math.abs(saved))}</div><div class="fin-stat-lbl">${saved<0?'Deficit':'Saved'}</div></div>`;
+  const savedAmt=Math.abs(saved);
+  document.getElementById('fin-summary-bar').innerHTML=`
+    <div class="fin-stat inc">
+      <div class="fin-stat-num" id="fin-disp-income">₹${fmtNum(income)}</div>
+      <div class="fin-stat-lbl">Income</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('income',${income})" title="Edit">✏️</button></div>
+    </div>
+    <div class="fin-stat exp">
+      <div class="fin-stat-num" id="fin-disp-expense">₹${fmtNum(expense)}</div>
+      <div class="fin-stat-lbl">Expense</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('expense',${expense})" title="Edit">✏️</button></div>
+    </div>
+    <div class="fin-stat sav">
+      <div class="fin-stat-num" id="fin-disp-saved">₹${fmtNum(savedAmt)}</div>
+      <div class="fin-stat-lbl">${saved<0?'Deficit':'Saved'}</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('savings',${savedAmt})" title="Edit">✏️</button></div>
+    </div>`;
   const listEl=document.getElementById('fin-txn-list');
-  if(!txns.length){listEl.innerHTML='<div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div>';return;}
-  listEl.innerHTML=txns.map(t=>`<div class="fin-txn"><div class="fin-txn-ic ${t.type==='income'?'i':'e'}">${t.type==='income'?'💰':'💸'}</div><div class="fin-txn-info"><div class="fin-txn-cat">${t.category}</div><div class="fin-txn-note">${t.note||'—'}</div></div><div class="fin-txn-r"><div class="fin-txn-amt ${t.type==='income'?'i':'e'}">${t.type==='income'?'+':'-'}₹${fmtNum(t.amount)}</div><div class="fin-txn-date">${fmtDate(t.date)}</div></div><button class="fin-del" onclick="deleteTxn('${t.id}')">🗑</button></div>`).join('');
+  if(!txns.length){listEl.innerHTML='<div style="padding:16px;color:var(--light);text-align:center;font-size:13px">No transactions yet.</div>';updateAIReadinessBadges();return;}
+  listEl.innerHTML=txns.map(t=>{
+    const isCC=t.type==='credit_card';
+    const isInc=t.type==='income';
+    const icClass=isInc?'i':isCC?'cc':'e';
+    const amtClass=isInc?'i':isCC?'cc':'e';
+    const icon=isInc?'💰':isCC?'💳':'💸';
+    const sign=isInc?'+':'-';
+    const ccBadge=isCC?`<span class="cc-badge">💳 ${t.card_name||'Credit Card'}</span> `:'';
+    return`<div class="fin-txn"><div class="fin-txn-ic ${icClass}">${icon}</div><div class="fin-txn-info"><div class="fin-txn-cat">${ccBadge}${t.category}</div><div class="fin-txn-note">${t.note||'—'}</div></div><div class="fin-txn-r"><div class="fin-txn-amt ${amtClass}">${sign}₹${fmtNum(t.amount)}</div><div class="fin-txn-date">${fmtDate(t.date)}</div></div><button class="fin-del" title="Edit" onclick="openEditTxn('${t.id}')">✏️</button><button class="fin-del" onclick="deleteTxn('${t.id}')">🗑</button></div>`;
+  }).join('');
   updateAIReadinessBadges();
 }
 
 // ─── FINANCE AI TABS ───
 function switchFinTab(name,btn){
-  ['txns','statement','plans','aianalysis'].forEach(t=>{document.getElementById('fin-panel-'+t).classList.toggle('active',t===name);});
+  ['txns','statement','plans','chart','aianalysis'].forEach(t=>{document.getElementById('fin-panel-'+t).classList.toggle('active',t===name);});
   document.querySelectorAll('.fin-ai-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(name==='plans')renderFinPlanHistory();
   if(name==='aianalysis')updateAIReadinessBadges();
+  if(name==='chart')renderFinCharts();
 }
 
 // ─── BANK STATEMENT PARSING ───
@@ -941,6 +1048,9 @@ async function processStmtPdf(file){
     setStmtProgress(100,'Done!');
     document.getElementById('upload-icon-fin').textContent='✅';
     document.getElementById('pdf-parse-badge').innerHTML=`<span class="status-tag ok">✓ ${txns.length} txns</span>`;
+    uploadedPdfName=file.name;
+    document.getElementById('pdf-uploaded-name').textContent=file.name;
+    document.getElementById('pdf-uploaded-bar').style.display='flex';
     setTimeout(()=>document.getElementById('stmt-progress').style.display='none',1500);
     updateAIReadinessBadges();
   }catch(err){
@@ -1104,7 +1214,107 @@ const BABY_DATA=[{w:4,size:'Poppy seed',emoji:'🌱'},{w:5,size:'Apple seed',emo
 const BABY_TIPS=['Fingers and toes are forming!','Heart is beating ~150 times/min.','Baby can hear your voice now.','Movements are getting stronger.','Brain development is rapid this week.','Baby is storing fat for warmth.','Lungs are maturing — almost ready!','Baby is in position for birth.'];
 function renderBabyPanel(){const el=document.getElementById('baby-info-panel');if(!el)return;if(!pregData||(!pregData.lmp&&!pregData.edd)){el.innerHTML="<div class='baby-tip' style='text-align:center'>Set up pregnancy tracking to see baby's growth! 🌸</div>";return;}const edd=pregData.edd||(pregData.lmp?addDays(pregData.lmp,280):'');const lmp=pregData.lmp||(edd?addDays(edd,-280):'');const weeks=Math.max(0,Math.floor(diffDays(todayStr(),lmp)/7));let bi=BABY_DATA[0];for(const b of BABY_DATA){if(weeks>=b.w)bi=b;}const tip=BABY_TIPS[weeks%BABY_TIPS.length];el.innerHTML=`<div class="week-badge">Week ${weeks}</div><div style="font-size:60px;text-align:center;margin:8px 0">${bi.emoji}</div><div style="font-size:13px;font-weight:600;color:var(--deep);text-align:center">Size of a ${bi.size}</div><div class="baby-tip">${tip}</div>`;}
 
-// ─── MODAL HELPERS ───
+// ─── DELETE PDF ───
+let uploadedPdfName='';
+function deleteUploadedPdf(){
+  if(!confirm('Delete the uploaded bank statement? All parsed transactions will be cleared.'))return;
+  parsedStmtTxns=[];uploadedPdfName='';
+  document.getElementById('upload-icon-fin').textContent='📂';
+  document.getElementById('upload-title-fin').textContent='Drag & drop or tap to upload PDF';
+  document.getElementById('pdf-parse-badge').innerHTML='';
+  document.getElementById('stmt-progress').style.display='none';
+  document.getElementById('pdf-uploaded-bar').style.display='none';
+  document.getElementById('fin-cat-card').style.display='none';
+  document.getElementById('fin-parsed-card').style.display='none';
+  document.getElementById('stmt-pdf-file').value='';
+  renderFinance();updateAIReadinessBadges();
+}
+
+// ─── EDIT SUMMARY (INCOME / EXPENSE / SAVINGS OVERRIDE) ───
+let finOverrides={income:null,expense:null,savings:null};
+function openEditSummary(field,current){
+  const label={income:'Income',expense:'Expense',savings:'Savings'}[field];
+  const val=prompt(`Edit ${label} (₹):`,current);
+  if(val===null)return;
+  const num=parseFloat(val);
+  if(isNaN(num)||num<0){alert('Enter a valid positive number.');return;}
+  finOverrides[field]=num;
+  // Re-render summary with override
+  const txns=(finTxns[currentFinPerson]||[]);
+  const stmtIncome=parsedStmtTxns.filter(t=>t.type==='credit').reduce((s,t)=>s+t.amount,0);
+  const stmtExpense=parsedStmtTxns.filter(t=>t.type==='debit').reduce((s,t)=>s+t.amount,0);
+  const manualIncome=txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const manualExpense=txns.filter(t=>t.type==='expense'||t.type==='credit_card').reduce((s,t)=>s+t.amount,0);
+  const income=finOverrides.income??stmtIncome+manualIncome;
+  const expense=finOverrides.expense??stmtExpense+manualExpense;
+  const saved=finOverrides.savings??(income-expense);
+  document.getElementById('fin-summary-bar').innerHTML=`
+    <div class="fin-stat inc">
+      <div class="fin-stat-num">₹${fmtNum(income)}</div>
+      <div class="fin-stat-lbl">Income ${finOverrides.income!==null?'✏️':''}</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('income',${income})" title="Edit">✏️</button></div>
+    </div>
+    <div class="fin-stat exp">
+      <div class="fin-stat-num">₹${fmtNum(expense)}</div>
+      <div class="fin-stat-lbl">Expense ${finOverrides.expense!==null?'✏️':''}</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('expense',${expense})" title="Edit">✏️</button></div>
+    </div>
+    <div class="fin-stat sav">
+      <div class="fin-stat-num">₹${fmtNum(Math.abs(saved))}</div>
+      <div class="fin-stat-lbl">${saved<0?'Deficit':'Saved'} ${finOverrides.savings!==null?'✏️':''}</div>
+      <div class="fin-stat-edit"><button class="fin-stat-edit-btn" onclick="openEditSummary('savings',${Math.abs(saved)})" title="Edit">✏️</button></div>
+    </div>`;
+}
+
+// ─── FINANCIAL CHARTS ───
+let donutChartInst=null,barChartInst=null,ccChartInst=null;
+function renderFinCharts(){
+  const txns=(finTxns[currentFinPerson]||[]);
+  const stmtIncome=parsedStmtTxns.filter(t=>t.type==='credit').reduce((s,t)=>s+t.amount,0);
+  const stmtExpense=parsedStmtTxns.filter(t=>t.type==='debit').reduce((s,t)=>s+t.amount,0);
+  const income=txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0)+stmtIncome;
+  const cashExp=txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0)+stmtExpense;
+  const ccExp=txns.filter(t=>t.type==='credit_card').reduce((s,t)=>s+t.amount,0);
+  const saved=Math.max(0,income-cashExp-ccExp);
+  // Donut
+  const donutCanvas=document.getElementById('fin-donut-chart');
+  if(donutChartInst)donutChartInst.destroy();
+  donutChartInst=new Chart(donutCanvas,{type:'doughnut',data:{labels:['Income','Cash Expense','CC Expense','Savings'],datasets:[{data:[income,cashExp,ccExp,saved],backgroundColor:['#22c55e','#ef4444','#f59e0b','#3b82f6'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`₹${fmtNum(ctx.raw)}`}}}}});
+  document.getElementById('fin-donut-legend').innerHTML=[['#22c55e','Income'],['#ef4444','Cash Exp'],['#f59e0b','CC Exp'],['#3b82f6','Saved']].map(([c,l])=>`<div class="fin-chart-leg-item"><div class="fin-chart-leg-dot" style="background:${c}"></div>${l}</div>`).join('');
+  // Bar — monthly
+  const monthMap={};
+  [...txns,...parsedStmtTxns.map(t=>({...t,type:t.type==='credit'?'income':'expense',date:t.date,amount:t.amount}))].forEach(t=>{if(!t.date)return;const m=t.date.slice(0,7);if(!monthMap[m])monthMap[m]={income:0,expense:0};if(t.type==='income')monthMap[m].income+=t.amount;else monthMap[m].expense+=t.amount;});
+  const months=Object.keys(monthMap).sort().slice(-6);
+  const barCanvas=document.getElementById('fin-bar-chart');
+  if(barChartInst)barChartInst.destroy();
+  barChartInst=new Chart(barCanvas,{type:'bar',data:{labels:months.map(m=>{const[y,mo]=m.split('-');return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo)-1];}),datasets:[{label:'Income',data:months.map(m=>monthMap[m].income),backgroundColor:'#86efac',borderRadius:6},{label:'Expense',data:months.map(m=>monthMap[m].expense),backgroundColor:'#fca5a5',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:10}}}},scales:{y:{ticks:{callback:v=>'₹'+fmtNum(v),font:{size:9}},grid:{color:'#f0f0f0'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  // CC vs Cash doughnut
+  const ccCanvas=document.getElementById('fin-cc-chart');
+  if(ccChartInst)ccChartInst.destroy();
+  ccChartInst=new Chart(ccCanvas,{type:'bar',data:{labels:['Cash/UPI Expenses','Credit Card Expenses'],datasets:[{data:[cashExp,ccExp],backgroundColor:['#fca5a5','#fde68a'],borderRadius:8,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`₹${fmtNum(ctx.raw)}`}}},scales:{x:{ticks:{callback:v=>'₹'+fmtNum(v),font:{size:9}},grid:{color:'#f0f0f0'}},y:{grid:{display:false}}}}});
+}
+
+// ─── SEND ALERT ───
+function sendManualAlert(){
+  const phone=waSettings.phone;
+  const meds=getMedsForDate();
+  if(!meds.length){alert('No medicines configured. Add medicines in My Meds first.');return;}
+  const slots={morning:[],noon:[],evening:[],night:[]};
+  meds.forEach(m=>{if(slots[m.time_of_day])slots[m.time_of_day].push(m.brand||m.generic_name||'Med');});
+  let msg=`🌸 MedMama Reminder — ${fmtDate(todayStr())}\n\n`;
+  const labels={morning:'🌅 Morning',noon:'🌞 Noon',evening:'🌇 Evening',night:'🌃 Night'};
+  Object.entries(slots).forEach(([slot,ms])=>{if(ms.length)msg+=`${labels[slot]}: ${ms.join(', ')}\n`;});
+  if(phone&&waSettings.enabled){
+    const waUrl=`https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl,'_blank');
+  }
+  const toast=document.getElementById('alert-sent-toast');
+  toast.textContent=phone&&waSettings.enabled?'✅ Opening WhatsApp…':'✅ Reminder ready! Enable WhatsApp to send.';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});});
