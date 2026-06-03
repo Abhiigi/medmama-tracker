@@ -1859,10 +1859,47 @@ function finbotParseTxn(text){
   try{return JSON.parse(m[1].trim());}catch{return null;}
 }
 
+function finbotGetKey(){return localStorage.getItem('mm_anthropic_key')||'';}
+function finbotSetKey(k){localStorage.setItem('mm_anthropic_key',k.trim());}
+
+function finbotShowKeyPrompt(){
+  const msgs=document.getElementById('finbot-msgs');
+  if(!msgs)return;
+  // remove old key prompt if present
+  const old=document.getElementById('finbot-key-prompt');if(old)old.remove();
+  const div=document.createElement('div');
+  div.id='finbot-key-prompt';
+  div.style.cssText='background:#fff8e1;border:1.5px solid #fde68a;border-radius:14px;padding:14px 16px;margin:8px 0;font-size:12px;color:#7a5c00';
+  div.innerHTML=`<div style="font-weight:700;margin-bottom:6px">🔑 Anthropic API Key needed</div>
+<div style="margin-bottom:10px;line-height:1.6">The bot needs your Anthropic API key to work. It's stored only in your browser (localStorage) and sent only to Anthropic.<br><a href="https://console.anthropic.com/keys" target="_blank" style="color:var(--deep)">Get your key →</a></div>
+<div style="display:flex;gap:8px">
+  <input id="finbot-key-in" type="password" placeholder="sk-ant-..." style="flex:1;padding:8px 12px;border:1.5px solid #fde68a;border-radius:10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;background:#fffde7"/>
+  <button onclick="finbotSaveKey()" style="padding:8px 14px;background:var(--deep);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Save</button>
+</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function finbotSaveKey(){
+  const inp=document.getElementById('finbot-key-in');
+  const key=inp?.value?.trim();
+  if(!key||!key.startsWith('sk-')){alert('Please enter a valid Anthropic API key (starts with sk-)');return;}
+  finbotSetKey(key);
+  const prompt=document.getElementById('finbot-key-prompt');if(prompt)prompt.remove();
+  finbotAddMsg('bot','✅ API key saved! Now try your message again.');
+}
+
 async function finbotSend(){
   const inp=document.getElementById('finbot-inp');
   const val=inp.value.trim();
   if(!val||finbotBusy)return;
+  const apiKey=finbotGetKey();
+  if(!apiKey){
+    inp.value='';
+    finbotAddMsg('user',val);
+    finbotShowKeyPrompt();
+    return;
+  }
   inp.value='';
   finbotAddMsg('user',val);
   finbotHistory.push({role:'user',content:val});
@@ -1870,8 +1907,28 @@ async function finbotSend(){
   document.getElementById('finbot-send').disabled=true;
   finbotShowTyping();
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:FINBOT_SYSTEM,messages:finbotHistory})});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:FINBOT_SYSTEM,messages:finbotHistory})
+    });
     const data=await res.json();
+    if(data.error){
+      finbotRemoveTyping();
+      if(data.error.type==='authentication_error'){
+        localStorage.removeItem('mm_anthropic_key');
+        finbotAddMsg('bot','❌ API key invalid or expired. Please enter a valid key.');
+        finbotShowKeyPrompt();
+      } else {
+        finbotAddMsg('bot','Error: '+data.error.message);
+      }
+      finbotBusy=false;document.getElementById('finbot-send').disabled=false;return;
+    }
     const raw=data.content?.map(b=>b.text||'').join('')||'Sorry, something went wrong.';
     const txnData=finbotParseTxn(raw);
     const display=raw.replace(/```txn_data[\s\S]*?```/g,'').trim();
@@ -1880,7 +1937,7 @@ async function finbotSend(){
     finbotAddMsg('bot',display,txnData);
   }catch(e){
     finbotRemoveTyping();
-    finbotAddMsg('bot','Connection error — please try again.');
+    finbotAddMsg('bot','Network error: '+e.message+'. Check your connection and try again.');
   }
   finbotBusy=false;
   document.getElementById('finbot-send').disabled=false;
