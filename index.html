@@ -530,7 +530,7 @@
           <div id="fin-panel-statement" class="fin-ai-panel">
             <div class="card" style="border-left:4px solid var(--rose)">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic">📄 Upload Bank Statement</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic">📄 Upload Financial Documents</div>
                 <span id="pdf-parse-badge"></span>
               </div>
               <div class="upload-zone-fin" id="upload-zone-fin"
@@ -538,16 +538,16 @@
                 ondragleave="this.style.background=''" 
                 ondrop="onStmtDrop(event)"
                 onclick="document.getElementById('stmt-pdf-file').click()">
-                <input type="file" id="stmt-pdf-file" accept="application/pdf" multiple onchange="handleStmtPdf(event)"/>
+                <input type="file" id="stmt-pdf-file" accept="application/pdf,image/*" multiple onchange="handleStmtPdf(event)"/>
                 <div id="upload-icon-fin" style="font-size:32px;margin-bottom:8px">📂</div>
-                <div style="font-size:13px;font-weight:600;color:var(--deep)" id="upload-title-fin">Drag & drop or tap to upload PDF</div>
-                <div style="font-size:11px;color:var(--light);margin-top:4px">Axis Bank statement · Multiple PDFs supported</div>
-                <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="event.stopPropagation()">Choose File</button>
+                <div style="font-size:13px;font-weight:600;color:var(--deep)" id="upload-title-fin">Drag & drop or tap to upload</div>
+                <div style="font-size:11px;color:var(--light);margin-top:4px">Bank statements · Salary slips · Bills · PhonePe/GPay screenshots · Credit card statements</div>
+                <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="event.stopPropagation()">Choose Files</button>
               </div>
               <div id="pdf-uploaded-bar" class="pdf-uploaded-bar" style="display:none">
                 <span style="font-size:18px">📄</span>
                 <span class="pdf-uploaded-name" id="pdf-uploaded-name">statement.pdf</span>
-                <button class="pdf-delete-btn" onclick="deleteUploadedPdf()">🗑 Delete PDF</button>
+                <button class="pdf-delete-btn" onclick="deleteUploadedPdf()">🗑 Clear All</button>
               </div>
               <div id="stmt-progress" style="display:none;margin-top:14px">
                 <div class="prog-bar-wrap">
@@ -620,12 +620,14 @@
           <!-- PANEL: AI ANALYSIS -->
           <div id="fin-panel-aianalysis" class="fin-ai-panel">
             <div class="card" style="background:linear-gradient(135deg,#fff5f7,#f4f0ff);border:1.5px solid #e8c8d8">
-              <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic;margin-bottom:8px">🤖 Financial Readiness Analysis</div>
-              <div style="font-size:12px;color:var(--light);line-height:1.6;margin-bottom:12px">AI analyses your bank statement + plans + manual transactions to assess financial readiness for your pregnancy.</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic;margin-bottom:8px">🤖 AI Financial Readiness Analysis</div>
+              <div style="font-size:12px;color:var(--light);line-height:1.6;margin-bottom:10px">Claude analyses your bank statements, future plans, and all transactions — including EMIs, bills, and goals you've written — to assess financial readiness.</div>
+              <div id="ai-data-snapshot" style="background:#fff;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:var(--text);line-height:1.8;display:none"></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
                 <span id="ai-badge-stmt" class="status-tag warn">⚠️ No statement</span>
                 <span id="ai-badge-plan" class="status-tag warn">⚠️ No plan</span>
                 <span id="ai-badge-txns" class="status-tag warn">⚠️ No transactions</span>
+                <span id="ai-badge-auto" class="status-tag warn" style="display:none">🔄 Auto-updating</span>
               </div>
               <button class="btn btn-primary" id="fin-analyze-btn" onclick="runFinAnalysis()">✨ Analyse Financial Readiness</button>
             </div>
@@ -1262,75 +1264,218 @@ function updateAIReadinessBadges(){
   tb.className=manualTxns?'status-tag ok':'status-tag warn';tb.textContent=manualTxns?`✓ ${manualTxns} txns`:'⚠️ No transactions';
 }
 
-// ─── AI ANALYSIS (local fallback — no external API) ───
-async function runFinAnalysis(){
-  const btn=document.getElementById('fin-analyze-btn'),output=document.getElementById('fin-analysis-output');
-  btn.disabled=true;btn.innerHTML='<span class="ai-spinner"></span>Analysing…';
-  output.innerHTML='';document.getElementById('fin-spendable-section').style.display='none';
+// ─── AUTO-ANALYSIS TRIGGER ───
+let autoAnalysisTimer=null;
+function scheduleAutoAnalysis(){
+  const badge=document.getElementById('ai-badge-auto');
+  if(badge){badge.style.display='inline-flex';badge.textContent='🔄 Data updated — re-analysing…';}
+  clearTimeout(autoAnalysisTimer);
+  autoAnalysisTimer=setTimeout(()=>{
+    // only auto-run if already have output or analysis panel is active
+    const panel=document.getElementById('fin-panel-aianalysis');
+    const hasOutput=document.getElementById('fin-analysis-output')?.innerHTML?.trim().length>0;
+    if(hasOutput) runFinAnalysis(true);
+    if(badge) badge.style.display='none';
+  },2000);
+}
+
+// ─── PARSE FUTURE PLANS FOR FINANCIAL FIGURES ───
+function extractPlanFinancials(planEntries){
+  const planText=planEntries.map(e=>e.text).join('\n');
+  const extraExpenses=[], savingsGoals=[], notes=[];
+  // Extract monthly amounts: "EMI of 28000", "bill of 10000 per month"
+  const monthlyRe=/(?:emi|loan|bill|rent|insurance|subscription|pay|expense|spend)\s+(?:of\s+)?(?:rs\.?|₹)?\s*(\d[\d,]*)/gi;
+  let m;
+  while((m=monthlyRe.exec(planText))!==null){
+    const amt=parseFloat(m[1].replace(/,/g,''));
+    if(amt>0&&amt<500000) extraExpenses.push({desc:m[0].slice(0,40),amount:amt});
+  }
+  // Extract savings goals: "save 4lakh", "save 1,50,000"
+  const saveRe=/save\s+(?:rs\.?|₹)?\s*(\d[\d,.]*)\s*(?:lakh|lac|l\b)?/gi;
+  while((m=saveRe.exec(planText))!==null){
+    let amt=parseFloat(m[1].replace(/,/g,''));
+    if(/lakh|lac|\bl\b/i.test(m[0])) amt*=100000;
+    if(amt>0) savingsGoals.push(amt);
+  }
+  notes.push(planText);
+  return{extraExpenses,savingsGoals,totalExtraMonthly:extraExpenses.reduce((s,e)=>s+e.amount,0),notes:planText};
+}
+
+// ─── BUILD FINANCIAL SNAPSHOT FOR AI ───
+function buildFinSnapshot(){
   const manualTxns=(finTxns[currentFinPerson]||[]);
-  const stmtIncome=parsedStmtTxns.filter(t=>t.type==='credit').reduce((s,t)=>s+t.amount,0);
-  const stmtExpense=parsedStmtTxns.filter(t=>t.type==='debit').reduce((s,t)=>s+t.amount,0);
+  const stmtCredits=parsedStmtTxns.filter(t=>t.type==='credit');
+  const stmtDebits=parsedStmtTxns.filter(t=>t.type==='debit');
+  const stmtIncome=stmtCredits.reduce((s,t)=>s+t.amount,0);
+  const stmtExpense=stmtDebits.reduce((s,t)=>s+t.amount,0);
   const manualIncome=manualTxns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const manualExpense=manualTxns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  const totalIncome=stmtIncome+manualIncome,totalExpense=stmtExpense+manualExpense;
+  const manualExpense=manualTxns.filter(t=>t.type==='expense'||t.type==='credit_card').reduce((s,t)=>s+t.amount,0);
+  const planData=extractPlanFinancials(finPlanEntries);
+
+  // Category breakdown from statement
+  const cats={};
+  stmtDebits.forEach(t=>{const c=categorizeTxn(t.desc);cats[c]=(cats[c]||0)+t.amount;});
+  manualTxns.filter(t=>t.type!=='income').forEach(t=>{const c=categorizeTxn(t.category||t.desc||'');cats[c]=(cats[c]||0)+t.amount;});
+  const catBreakdown=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,10)
+    .map(([cat,amt])=>`${cat}: ₹${fmtNum(amt)}`).join(', ');
+
+  // Notable transactions
+  const bigTxns=[...stmtDebits,...stmtCredits]
+    .sort((a,b)=>b.amount-a.amount).slice(0,8)
+    .map(t=>`${t.type==='credit'?'CR':'DR'} ₹${fmtNum(t.amount)} – ${t.desc} (${t.date})`).join('\n');
+
+  // EMI detection from statement
+  const emiTxns=stmtDebits.filter(t=>/emi|ach-dr|loan/i.test(t.desc));
+  const emiTotal=emiTxns.reduce((s,t)=>s+t.amount,0);
+
+  const totalIncome=stmtIncome+manualIncome;
+  const totalExpense=stmtExpense+manualExpense+planData.totalExtraMonthly;
   const net=totalIncome-totalExpense;
-  const savingsRate=totalIncome>0?Math.round((net/totalIncome)*100):0;
 
-  // Local analysis — no external API needed
-  await new Promise(r=>setTimeout(r,800));
+  return{
+    totalIncome,totalExpense,net,stmtIncome,stmtExpense,manualIncome,manualExpense,
+    planData,catBreakdown,bigTxns,emiTotal,
+    numStmtTxns:parsedStmtTxns.length,numManualTxns:manualTxns.length,
+    numPdfFiles:uploadedPdfFiles.length
+  };
+}
 
-  let score=50,label='Moderate',color='warn';
-  const strengths=[],concerns=[],recommendations=[];
+// ─── AI ANALYSIS — Claude API ───
+async function runFinAnalysis(silent=false){
+  const btn=document.getElementById('fin-analyze-btn');
+  const output=document.getElementById('fin-analysis-output');
+  if(!silent){btn.disabled=true;btn.innerHTML='<span class="ai-spinner"></span>Analysing…';}
+  if(!silent) output.innerHTML='<div style="padding:20px;text-align:center;color:var(--light);font-size:13px"><span class="ai-spinner" style="display:inline-block"></span> Claude is analysing your finances…</div>';
 
-  if(totalIncome>0){
-    if(savingsRate>=30){score+=25;strengths.push('Strong savings rate ('+savingsRate+'%)');color='good';}
-    else if(savingsRate>=15){score+=15;strengths.push('Decent savings rate ('+savingsRate+'%)');}
-    else if(savingsRate>=0){score+=5;concerns.push('Low savings rate ('+savingsRate+'%)');}
-    else{score-=15;concerns.push('Spending exceeds income');color='bad';}
+  const snap=buildFinSnapshot();
+
+  // Update snapshot display
+  const snapEl=document.getElementById('ai-data-snapshot');
+  if(snapEl){
+    snapEl.style.display='block';
+    snapEl.innerHTML=`
+      <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
+        <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:20px;font-weight:600">📥 ${snap.numPdfFiles} PDF${snap.numPdfFiles!==1?'s':''} · ${snap.numStmtTxns} stmt txns</span>
+        <span style="background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:20px;font-weight:600">✍️ ${snap.numManualTxns} manual txns</span>
+        <span style="background:#fff3cd;color:#854d0e;padding:2px 8px;border-radius:20px;font-weight:600">📝 ${finPlanEntries.length} plan entr${finPlanEntries.length!==1?'ies':'y'}</span>
+        ${snap.planData.totalExtraMonthly>0?`<span style="background:#ffe4e4;color:#991b1b;padding:2px 8px;border-radius:20px;font-weight:600">➕ ₹${fmtNum(snap.planData.totalExtraMonthly)}/mo from plans</span>`:''}
+      </div>`;
   }
 
-  if(totalIncome>=50000){score+=10;strengths.push('Healthy income level');}
-  else if(totalIncome>0){concerns.push('Income may need supplementing');recommendations.push('Explore maternity benefits from employer or government schemes like PMMVY');}
+  const planText=finPlanEntries.map(e=>`- ${e.text}`).join('\n')||'None';
+  const prompt=`You are a sharp personal finance advisor for India. Analyse this person's complete financial data and give a detailed, personalised assessment.
 
-  if(parsedStmtTxns.length){score+=5;strengths.push('Bank statement uploaded for tracking');}
-  else{recommendations.push('Upload your bank statement for a more accurate analysis');}
+## DATA
 
-  if(finPlanEntries.length){score+=5;strengths.push('Future plans documented');}
-  else{recommendations.push('Add your future plans — baby prep costs, maternity leave impact, savings goals');}
+**Income (from bank statements + manual):** ₹${fmtNum(snap.totalIncome)}
+**Expenses (from bank statements + manual):** ₹${fmtNum(snap.stmtExpense+snap.manualExpense)}
+**Extra monthly commitments from future plans:** ₹${fmtNum(snap.planData.totalExtraMonthly)}
+**Total effective expense (including plan commitments):** ₹${fmtNum(snap.totalExpense)}
+**Net surplus/deficit:** ₹${fmtNum(snap.net)} ${snap.net<0?'(DEFICIT)':'(SURPLUS)'}
+**EMIs detected in statement:** ₹${fmtNum(snap.emiTotal)}
+**Statement transactions:** ${snap.numStmtTxns} transactions across ${snap.numPdfFiles} PDF(s)
+**Manual transactions:** ${snap.numManualTxns}
 
-  if(manualTxns.length){score+=5;strengths.push('Manual transactions tracked');}
-  else{recommendations.push('Add manual transactions to track daily spending');}
+**Spending breakdown by category:**
+${snap.catBreakdown||'No data'}
 
-  const babyCost=totalIncome>80000?'₹15,000–25,000/month':'₹8,000–15,000/month';
-  recommendations.push('Build an emergency fund of 3–6 months expenses before delivery');
-  recommendations.push('Check your health insurance covers maternity — hospital delivery costs ₹30,000–2,00,000+');
-  if(net>0)recommendations.push('Automate monthly SIP of ₹'+fmtNum(Math.round(net*0.3))+' into a liquid fund for baby expenses');
+**Top transactions:**
+${snap.bigTxns||'No data'}
 
-  score=Math.max(10,Math.min(95,score));
-  if(score>=70){label='Good';color='good';}
-  else if(score>=40){label='Moderate';color='warn';}
-  else{label='Needs Attention';color='bad';}
+**User's future plans / goals (treat these as real financial commitments):**
+${planText}
 
-  const spendable=Math.max(0,Math.round(net*0.5));
-  const savingsGoal=totalIncome>0?`Save ₹${fmtNum(Math.round(totalIncome*3))} (3 months income) before delivery`:'Set a savings target once you add income data';
+**Extracted from plans — extra monthly expenses:** ${snap.planData.extraExpenses.map(e=>`${e.desc} ₹${fmtNum(e.amount)}`).join(', ')||'None'}
+**Savings goals mentioned:** ${snap.planData.savingsGoals.map(g=>`₹${fmtNum(g)}`).join(', ')||'None'}
 
-  const result={
-    readiness_score:score,readiness_label:label,readiness_color:color,
-    summary:totalIncome>0?`Based on ₹${fmtNum(totalIncome)} income and ₹${fmtNum(totalExpense)} expenses, your financial readiness is ${label.toLowerCase()}. ${net>0?'You are saving ₹'+fmtNum(net)+' which is a good sign.':'Your expenses exceed income — this needs attention.'}`:
-    'Add your income and expense data for a personalised analysis. General guidance: aim to save 3–6 months of expenses before baby arrives.',
-    strengths,concerns,baby_cost_estimate:babyCost,
-    recommendations:recommendations.slice(0,5),savings_goal:savingsGoal,
-    spendable_amount:spendable,spendable_rationale:`50% of your net surplus (₹${fmtNum(net)}) as safe spending money`
-  };
+## INSTRUCTIONS
 
-  renderFinAnalysis(result);
+Give a thorough financial readiness report. Include ALL of the following in your JSON:
+- readiness_score: 0-100 integer
+- readiness_label: "Excellent" | "Good" | "Moderate" | "Needs Attention" | "Critical"
+- readiness_color: "good" | "warn" | "bad"
+- summary: 2-3 sentence plain-language summary referencing the actual numbers
+- income_analysis: 1-2 sentences about income sources and stability
+- expense_analysis: 1-2 sentences about spending patterns, noting biggest categories
+- plan_impact: sentence about how the future plan commitments (EMI ₹28000, bills etc) affect the picture — MUST reference the specific amounts from future plans
+- strengths: array of 3-5 specific bullet strings (mention actual ₹ amounts where possible)
+- concerns: array of 3-5 specific bullet strings with actual amounts
+- recommendations: array of 5-7 specific actionable items with ₹ amounts
+- savings_goal: specific goal string with amount and timeline
+- baby_cost_estimate: realistic monthly estimate for Indian context
+- spendable_amount: safe monthly discretionary spend as integer
+- spendable_rationale: 1 sentence explanation
+- monthly_budget: object with keys: income, fixed_expenses, variable_expenses, emi, savings, discretionary — all as integers
+
+Respond ONLY with a single valid JSON object. No markdown, no explanation outside the JSON.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1500,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const raw=data.content?.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const result=JSON.parse(raw);
+    renderFinAnalysis(result,snap);
+  }catch(e){
+    console.error('AI analysis error:',e);
+    // Fallback to local analysis
+    renderFinAnalysisLocal(snap);
+  }
   btn.disabled=false;btn.innerHTML='✨ Re-Analyse';
 }
 
-function renderFinAnalysis(r){
+// ─── LOCAL FALLBACK ANALYSIS ───
+function renderFinAnalysisLocal(snap){
+  const{totalIncome,totalExpense,net,planData}=snap;
+  const savingsRate=totalIncome>0?Math.round((net/totalIncome)*100):0;
+  let score=50,label='Moderate',color='warn';
+  const strengths=[],concerns=[],recs=[];
+  if(savingsRate>=30){score+=25;strengths.push(`Strong savings rate of ${savingsRate}%`);color='good';}
+  else if(savingsRate>=15){score+=15;strengths.push(`Decent savings rate of ${savingsRate}%`);}
+  else if(savingsRate<0){score-=20;concerns.push(`Spending exceeds income by ₹${fmtNum(Math.abs(net))}`);color='bad';}
+  else concerns.push(`Low savings rate (${savingsRate}%)`);
+  if(snap.emiTotal>0){concerns.push(`EMIs of ₹${fmtNum(snap.emiTotal)} detected`);if(snap.emiTotal/totalIncome>0.4)concerns.push('EMI burden exceeds 40% of income');}
+  if(planData.totalExtraMonthly>0){concerns.push(`Future plan adds ₹${fmtNum(planData.totalExtraMonthly)}/month in commitments`);}
+  if(totalIncome>80000)strengths.push('Healthy income level');
+  if(snap.numPdfFiles>0)strengths.push(`${snap.numStmtTxns} transactions analysed from ${snap.numPdfFiles} statement(s)`);
+  recs.push('Build emergency fund of 3–6 months expenses');
+  recs.push('Check health insurance covers maternity delivery costs');
+  if(net>0)recs.push(`Start SIP of ₹${fmtNum(Math.round(net*0.3))}/month into liquid fund`);
+  score=Math.max(10,Math.min(95,score));
+  if(score>=70){label='Good';color='good';}else if(score<40){label='Needs Attention';color='bad';}
+  renderFinAnalysis({
+    readiness_score:score,readiness_label:label,readiness_color:color,
+    summary:`Based on ₹${fmtNum(totalIncome)} income and ₹${fmtNum(totalExpense)} total expenses (including plan commitments), your net is ₹${fmtNum(net)}.`,
+    strengths,concerns,recommendations:recs,
+    baby_cost_estimate:'₹10,000–20,000/month',
+    savings_goal:planData.savingsGoals.length?`Target: ₹${fmtNum(planData.savingsGoals[0])}`:`Save ₹${fmtNum(Math.round(totalIncome*3))} before delivery`,
+    spendable_amount:Math.max(0,Math.round(net*0.4)),
+    spendable_rationale:'40% of net surplus as safe discretionary spend'
+  },snap);
+}
+
+function renderFinAnalysis(r,snap){
   const output=document.getElementById('fin-analysis-output');
   const scoreColor=r.readiness_color==='good'?'#22c55e':r.readiness_color==='warn'?'#f59e0b':'#ef4444';
   const sc=r.readiness_color||'warn';
+
+  // Budget breakdown table
+  const bud=r.monthly_budget||{};
+  const budHTML=Object.keys(bud).length?`
+    <div style="margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:10px">📊 Monthly Budget Breakdown</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${Object.entries(bud).map(([k,v])=>`<div style="background:#f9f5f5;border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--light);text-transform:capitalize">${k.replace(/_/g,' ')}</span><span style="font-size:13px;font-weight:700;color:var(--text)">₹${fmtNum(v)}</span></div>`).join('')}
+      </div>
+    </div>`:''
+
   output.innerHTML=`
   <div class="analysis-box card" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap">
@@ -1338,15 +1483,19 @@ function renderFinAnalysis(r){
         <div style="font-size:20px;font-weight:700;color:${scoreColor};font-family:'Cormorant Garamond',serif">${r.readiness_score}</div>
         <div style="font-size:8px;color:${scoreColor};font-weight:600">/100</div>
       </div>
-      <div><div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--deep);font-style:italic">${r.readiness_label||'Readiness'}</div><div style="font-size:12px;color:var(--light);margin-top:3px;line-height:1.5">${r.summary||''}</div></div>
+      <div style="flex:1"><div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--deep);font-style:italic">${r.readiness_label||'Readiness'}</div><div style="font-size:12px;color:var(--light);margin-top:3px;line-height:1.5">${r.summary||''}</div></div>
     </div>
     <div class="prog-bar-wrap" style="margin-bottom:16px">
       <div class="prog-bar-lbl"><span>Financial Readiness</span><span>${r.readiness_score}/100</span></div>
       <div class="prog-track-ai"><div class="prog-fill-ai ${sc}" style="width:${r.readiness_score}%"></div></div>
     </div>
+    ${r.income_analysis?`<div style="background:#f0fdf4;border-radius:10px;padding:10px 14px;font-size:12px;color:#166534;margin-bottom:10px">💼 <strong>Income:</strong> ${r.income_analysis}</div>`:''}
+    ${r.expense_analysis?`<div style="background:#fff0f0;border-radius:10px;padding:10px 14px;font-size:12px;color:#991b1b;margin-bottom:10px">💸 <strong>Expenses:</strong> ${r.expense_analysis}</div>`:''}
+    ${r.plan_impact?`<div style="background:#fffbeb;border-radius:10px;padding:10px 14px;font-size:12px;color:#854d0e;margin-bottom:10px;border:1px solid #fde68a">📝 <strong>Your Plans Impact:</strong> ${r.plan_impact}</div>`:''}
     ${r.strengths?.length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:8px">💪 Strengths</div><div>${r.strengths.map(s=>`<span class="insight-pill good">✓ ${s}</span>`).join('')}</div></div>`:''}
     ${r.concerns?.length?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:8px">⚠️ Watch Out</div><div>${r.concerns.map(c=>`<span class="insight-pill warn">⚠ ${c}</span>`).join('')}</div></div>`:''}
-    ${r.baby_cost_estimate?`<div style="background:#fff3cd;border-radius:10px;padding:10px 14px;font-size:13px;color:#854d0e;margin-bottom:12px">🍼 Baby costs: ${r.baby_cost_estimate}</div>`:''}
+    ${budHTML}
+    ${r.baby_cost_estimate?`<div style="background:#fff3cd;border-radius:10px;padding:10px 14px;font-size:13px;color:#854d0e;margin-bottom:12px">🍼 Estimated baby costs: ${r.baby_cost_estimate}</div>`:''}
     ${r.savings_goal?`<div style="background:#eef2ff;border-radius:10px;padding:10px 14px;font-size:13px;color:#3730a3;font-weight:500;margin-bottom:12px">🎯 ${r.savings_goal}</div>`:''}
     ${r.recommendations?.length?`<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--light);margin-bottom:8px">📌 Recommendations</div>${r.recommendations.map((rec,i)=>`<div style="display:flex;gap:8px;margin-bottom:8px"><div style="width:20px;height:20px;border-radius:50%;background:var(--blush);color:var(--deep);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${i+1}</div><div style="font-size:12px;color:var(--text);line-height:1.6">${rec}</div></div>`).join('')}</div>`:''}
   </div>`;
@@ -1354,7 +1503,6 @@ function renderFinAnalysis(r){
   document.getElementById('fin-spendable-input').value=r.spendable_amount||0;
   document.getElementById('fin-spendable-note').textContent=r.spendable_rationale||'Edit freely · Your personal budget ceiling';
 }
-function onFinSpendableEdit(){const val=parseFloat(document.getElementById('fin-spendable-input').value)||0;document.getElementById('fin-spendable-note').textContent=`You've set ₹${fmtNum(val)}/month as your spending limit`;}
 
 // ─── WA ───
 function toggleWA(){saveWASettings();}
