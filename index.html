@@ -21,7 +21,7 @@
     body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding-bottom:80px}
     .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#fdf0f3 0%,#f7f0ff 100%)}
     .auth-box{background:#fff;border-radius:28px;padding:36px 28px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(192,98,122,.13)}
-    .auth-logo{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:4px}
+    .auth-logo{font-family:'Cormorant Garamond',serif;font-size:38px;color:var(--deep);font-style:italic;text-align:center;margin-bottom:6px;letter-spacing:-.5px}
     .auth-sub{text-align:center;font-size:13px;color:var(--light);margin-bottom:28px}
     .auth-tabs{display:flex;background:var(--blush);border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
     .auth-tab{flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:transparent;color:var(--light);transition:all .2s}
@@ -37,16 +37,26 @@
     .auth-err{background:#fff0f0;border:1px solid #f5c0c0;color:#c04040}
     .auth-ok{background:#f0fff4;border:1px solid #a0d4b0;color:#2a7040}
     #app{display:none}
-    .topbar{background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px;flex-wrap:wrap}
-    .logo{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--deep);font-style:italic}
-    .topbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-    .tabs{display:flex;gap:4px;flex-wrap:wrap}
+    .topbar{background:#fff;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--blush);position:sticky;top:0;z-index:20;gap:8px}
+    .logo{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--deep);font-style:italic;display:flex;align-items:center;gap:6px}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);display:inline-block}
+    .topbar-right{display:flex;align-items:center;gap:8px}
+    .tabs{display:none}
     .tab{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
     .tab.active{background:var(--deep);color:#fff}
     .tab:not(.active){background:var(--blush);color:var(--light)}
-    .signout-btn{padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:500;background:#f5f0f0;color:var(--light);font-family:'DM Sans',sans-serif}
+    .signout-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--blush);cursor:pointer;font-size:11px;font-weight:600;background:#fff;color:var(--light);font-family:'DM Sans',sans-serif;transition:all .2s}
     .signout-btn:hover{background:var(--blush);color:var(--deep)}
-    .sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;padding:4px 12px;background:var(--blush);color:var(--deep);border-bottom:1px solid #f0dada}
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#fff;border-top:1px solid var(--blush);display:flex;align-items:stretch;padding:0;safe-area-inset-bottom:env(safe-area-inset-bottom)}
+    .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 10px;cursor:pointer;border:none;background:transparent;gap:3px;font-family:'DM Sans',sans-serif;transition:all .15s;position:relative}
+    .bnav-item .bnav-icon{font-size:20px;line-height:1;transition:transform .15s}
+    .bnav-item .bnav-lbl{font-size:9px;font-weight:600;color:var(--light);letter-spacing:.3px;text-transform:uppercase;transition:color .15s}
+    .bnav-item.active .bnav-lbl{color:var(--deep)}
+    .bnav-item.active .bnav-icon{transform:scale(1.15)}
+    .bnav-item.active::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2.5px;background:var(--deep);border-radius:0 0 4px 4px}
+    body{padding-bottom:68px}
+    .sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;padding:3px 12px;background:#fff;color:var(--light);border-bottom:1px solid var(--blush);letter-spacing:.3px}
     .sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0}
     .sync-dot.ok{background:#7aaa80}.sync-dot.err{background:#e07070}
     .sync-dot.loading{background:#f5c842;animation:pulse 1s infinite}
@@ -67,7 +77,7 @@
     .baby-panel{padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:12px}
     .week-badge{background:var(--blush);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--deep)}
     .baby-tip{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;color:var(--light);line-height:1.6;text-align:center}
-    .card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+    .card{background:#fff;border-radius:20px;padding:16px 20px;box-shadow:0 2px 16px rgba(192,98,122,.07);margin-bottom:14px;border:1px solid rgba(232,160,160,.12)}
     .view{display:none}.view.active{display:block}
     .date-row{display:flex;justify-content:space-between;align-items:center}
     .date-lbl{font-size:10px;color:var(--light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
@@ -86,7 +96,7 @@
     .prog-track{height:8px;background:var(--blush);border-radius:10px;overflow:hidden}
     .prog-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:10px;transition:width .5s ease}
     .prog-times{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--light)}
-    .preg-card{background:linear-gradient(135deg,#fff5f7 0%,#f9f0ff 100%);border:1.5px solid var(--rose);border-radius:20px;padding:18px 20px;margin-bottom:14px}
+    .preg-card{background:linear-gradient(135deg,#fff5f7 0%,#f5f0ff 100%);border:1px solid rgba(232,160,160,.3);border-radius:22px;padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 16px rgba(192,98,122,.08)}
     .preg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
     .preg-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--deep);font-style:italic}
     .preg-edit-btn{background:var(--blush);border:none;border-radius:10px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--deep);cursor:pointer}
@@ -108,7 +118,7 @@
     .preg-setup{text-align:center;padding:20px}
     .preg-setup p{font-size:13px;color:var(--light);margin-bottom:12px}
     .preg-setup-btn{background:var(--deep);color:#fff;border:none;border-radius:14px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
-    .med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8}
+    .med-card{background:#fff;border-radius:18px;padding:13px 15px;margin-bottom:9px;box-shadow:0 2px 12px rgba(192,98,122,.07);display:flex;align-items:center;gap:13px;border-left:4px solid #e8d8d8;border:1px solid rgba(232,160,160,.1);border-left:4px solid #e8d8d8}
     .med-card.done{opacity:.8}
     .med-card.morning{border-left-color:#f5c842}.med-card.morning.done{background:#fffef0}
     .med-card.noon{border-left-color:#f5944a}.med-card.noon.done{background:#fff6f0}
@@ -220,13 +230,14 @@
     .fin-ptab{padding:7px 16px;border-radius:20px;border:2px solid var(--blush);cursor:pointer;font-size:12px;font-weight:600;background:#fff;color:var(--light);display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif}
     .fin-ptab.active{border-color:var(--deep);background:var(--deep);color:#fff}
     .fin-add-p{padding:7px 14px;border-radius:20px;border:2px dashed var(--rose);cursor:pointer;font-size:12px;font-weight:500;background:transparent;color:var(--rose);font-family:'DM Sans',sans-serif}
-    .fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-    .fin-stat{border-radius:16px;padding:14px 10px;text-align:center}
-    .fin-stat-num{font-size:20px;font-weight:700;font-family:'Cormorant Garamond',serif}
-    .fin-stat-lbl{font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-    .fin-stat.inc{background:#dcfce7}.fin-stat.inc .fin-stat-num{color:#166534}
-    .fin-stat.exp{background:#fff0f0}.fin-stat.exp .fin-stat-num{color:#c04040}
-    .fin-stat.sav{background:#eef2ff}.fin-stat.sav .fin-stat-num{color:#3757c8}
+    .fin-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+    .fin-stat{border-radius:18px;padding:16px 12px;text-align:center;position:relative;overflow:hidden}
+    .fin-stat::before{content:'';position:absolute;top:-18px;right:-18px;width:60px;height:60px;border-radius:50%;opacity:.15}
+    .fin-stat-num{font-size:18px;font-weight:700;font-family:'Cormorant Garamond',serif;line-height:1.2}
+    .fin-stat-lbl{font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+    .fin-stat.inc{background:linear-gradient(135deg,#dcfce7,#f0fdf4)}.fin-stat.inc .fin-stat-num{color:#166534}.fin-stat.inc::before{background:#22c55e}
+    .fin-stat.exp{background:linear-gradient(135deg,#fff0f0,#fff5f5)}.fin-stat.exp .fin-stat-num{color:#c04040}.fin-stat.exp::before{background:#ef4444}
+    .fin-stat.sav{background:linear-gradient(135deg,#eef2ff,#f5f3ff)}.fin-stat.sav .fin-stat-num{color:#3757c8}.fin-stat.sav::before{background:#6366f1}
     .fin-txn{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f0f0}
     .fin-txn:last-child{border-bottom:none}
     .fin-txn-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -239,9 +250,10 @@
     .fin-txn-amt.i{color:#166534}.fin-txn-amt.e{color:#c04040}
     .fin-txn-date{font-size:9px;color:var(--light);margin-top:1px}
     .fin-del{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 6px;opacity:.4}
-    .fin-ai-tabs{display:flex;gap:4px;background:var(--blush);padding:4px;border-radius:14px;margin-bottom:18px}
-    .fin-ai-tab{flex:1;padding:8px;border:none;border-radius:10px;cursor:pointer;font-size:11px;font-weight:600;background:transparent;color:var(--light);transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
-    .fin-ai-tab.active{background:#fff;color:var(--deep);box-shadow:0 2px 8px rgba(192,98,122,.12)}
+    .fin-ai-tabs{display:flex;gap:6px;background:transparent;padding:0;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+    .fin-ai-tabs::-webkit-scrollbar{display:none}
+    .fin-ai-tab{flex-shrink:0;padding:8px 14px;border:1.5px solid var(--blush);border-radius:22px;cursor:pointer;font-size:11px;font-weight:600;background:#fff;color:var(--light);transition:all .2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+    .fin-ai-tab.active{background:var(--deep);color:#fff;border-color:var(--deep);box-shadow:0 2px 10px rgba(192,98,122,.25)}
     .fin-ai-panel{display:none}.fin-ai-panel.active{display:block}
     .upload-zone-fin{border:2.5px dashed var(--rose);border-radius:16px;padding:24px 20px;text-align:center;cursor:pointer;transition:all .25s;background:var(--blush)}
     .upload-zone-fin:hover{background:#f5dede;border-color:var(--deeper)}
@@ -305,6 +317,11 @@
     .fin-txn-ic.cc{background:#fff3cd}
     .fin-txn-amt.cc{color:#7a5c00}
     .cc-badge{display:inline-flex;align-items:center;gap:3px;background:#fff3cd;color:#7a5c00;border-radius:8px;padding:1px 7px;font-size:9px;font-weight:700}
+    /* ── CC/EMI PANEL ── */
+    .cc-card-item{background:linear-gradient(135deg,#fff8e1,#fffde7);border:1px solid #fde68a;border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+    .cc-chip{width:40px;height:28px;background:linear-gradient(135deg,#f5c842,#e8a030);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .emi-progress-bar{height:5px;background:#e0d0d8;border-radius:5px;overflow:hidden;margin-top:6px}
+    .emi-progress-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:5px;transition:width .5s ease}
     /* ── CHART ── */
     .fin-chart-wrap{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
     .fin-chart-title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--deep);font-style:italic;margin-bottom:14px}
@@ -383,21 +400,43 @@
 
 <!-- APP -->
 <div id="app">
+  <!-- hidden tab state holders (keep for JS compat) -->
+  <div style="display:none">
+    <button id="tab-today"></button>
+    <button id="tab-otherday"></button>
+    <button id="tab-calendar"></button>
+    <button id="tab-visits"></button>
+    <button id="tab-mymeds"></button>
+    <button id="tab-alerts"></button>
+    <button id="tab-finance"></button>
+  </div>
   <div class="topbar">
-    <div class="logo">🌸 MedMama</div>
+    <div class="logo">🌸 <span>MedMama</span></div>
     <div class="topbar-right">
-      <div class="tabs">
-        <button class="tab active" id="tab-today" onclick="goToday()">Today</button>
-        <button class="tab" id="tab-otherday" onclick="showView('otherday')" style="display:none"></button>
-        <button class="tab" id="tab-calendar" onclick="showView('calendar')">Calendar</button>
-        <button class="tab" id="tab-visits" onclick="showView('visits')">Visits</button>
-        <button class="tab" id="tab-mymeds" onclick="showView('mymeds')">My Meds</button>
-        <button class="tab" id="tab-alerts" onclick="showView('alerts')">🔔</button>
-        <button class="tab" id="tab-finance" onclick="showView('finance')">💰</button>
-      </div>
       <button class="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="bnav-item active" id="bnav-today" onclick="goToday()">
+      <span class="bnav-icon">🏠</span><span class="bnav-lbl">Today</span>
+    </button>
+    <button class="bnav-item" id="bnav-calendar" onclick="showView('calendar')">
+      <span class="bnav-icon">📅</span><span class="bnav-lbl">Calendar</span>
+    </button>
+    <button class="bnav-item" id="bnav-mymeds" onclick="showView('mymeds')">
+      <span class="bnav-icon">💊</span><span class="bnav-lbl">Meds</span>
+    </button>
+    <button class="bnav-item" id="bnav-visits" onclick="showView('visits')">
+      <span class="bnav-icon">🏥</span><span class="bnav-lbl">Visits</span>
+    </button>
+    <button class="bnav-item" id="bnav-finance" onclick="showView('finance')">
+      <span class="bnav-icon">💰</span><span class="bnav-lbl">Finance</span>
+    </button>
+    <button class="bnav-item" id="bnav-alerts" onclick="showView('alerts')">
+      <span class="bnav-icon">🔔</span><span class="bnav-lbl">Alerts</span>
+    </button>
+  </nav>
   <div class="sync-bar">
     <div class="sync-dot" id="sync-dot"></div>
     <span id="sync-text">Loading…</span>
@@ -546,8 +585,9 @@
           </div>
           <div class="fin-summary" id="fin-summary-bar"></div>
           <div class="fin-ai-tabs">
-            <button class="fin-ai-tab active" onclick="switchFinTab('txns',this)">💳 Txns</button>
+            <button class="fin-ai-tab active" onclick="switchFinTab('txns',this)">💳 Transactions</button>
             <button class="fin-ai-tab" onclick="switchFinTab('bot',this)">🤖 Bot</button>
+            <button class="fin-ai-tab" onclick="switchFinTab('cc',this)">🏦 CC / EMI</button>
             <button class="fin-ai-tab" onclick="switchFinTab('statement',this)">📄 Statement</button>
             <button class="fin-ai-tab" onclick="switchFinTab('plans',this)">📝 Plans</button>
             <button class="fin-ai-tab" onclick="switchFinTab('chart',this)">📊 Chart</button>
@@ -712,6 +752,27 @@
           </div>
 
         </div><!-- /view-finance -->
+
+          <!-- PANEL: CC / EMI -->
+          <div id="fin-panel-cc" class="fin-ai-panel" style="display:none">
+            <div class="card" style="border-left:4px solid #f59e0b">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic">🏦 Credit Cards</div>
+                <button class="btn btn-primary btn-sm" onclick="openAddCCModal()">+ Add Card</button>
+              </div>
+              <div id="cc-cards-list2"><div style="text-align:center;padding:20px;color:var(--light);font-size:13px">No credit cards added yet.</div></div>
+            </div>
+            <div class="card" style="border-left:4px solid #7b8fdb">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--deep);font-style:italic">📋 EMIs &amp; Loans</div>
+                <button class="btn btn-primary btn-sm" onclick="openAddEMIModal()">+ Add EMI</button>
+              </div>
+              <div id="emi-list2"><div style="text-align:center;padding:20px;color:var(--light);font-size:13px">No EMIs tracked yet.</div></div>
+            </div>
+            <div class="card" style="background:linear-gradient(135deg,#fff8f0,#fff3cd);border:1.5px solid #fde68a">
+              <div style="font-size:12px;color:#7a5c00;line-height:1.7"><strong>💡 Setup needed:</strong> Run the CC/EMI SQL in your Supabase SQL Editor to enable full credit card and EMI tracking.</div>
+            </div>
+          </div>
 
       </div><!-- /body -->
     </div><!-- /main-col -->
@@ -904,8 +965,11 @@ function renderAll(){renderTodayView();renderMymeds();renderVisitsList();renderC
 
 // ─── VIEWS ───
 const VIEW_IDS=['today','otherday','calendar','visits','mymeds','alerts','finance'];
-function showView(id){VIEW_IDS.forEach(v=>{document.getElementById('view-'+v)?.classList.toggle('active',v===id);const tab=document.getElementById('tab-'+v);if(tab)tab.classList.toggle('active',v===id);});if(id==='calendar')renderCalendar();if(id==='mymeds')renderMymeds();if(id==='visits')renderVisitsList();if(id==='finance')renderFinance();}
-function goToday(){viewingDate=todayStr();document.getElementById('tab-otherday').style.display='none';showView('today');renderTodayView();}
+function showView(id){VIEW_IDS.forEach(v=>{document.getElementById('view-'+v)?.classList.toggle('active',v===id);const tab=document.getElementById('tab-'+v);if(tab)tab.classList.toggle('active',v===id);});// update bottom nav
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+  const bn=document.getElementById('bnav-'+id);if(bn)bn.classList.add('active');
+  if(id==='calendar')renderCalendar();if(id==='mymeds')renderMymeds();if(id==='visits')renderVisitsList();if(id==='finance')renderFinance();}
+function goToday(){viewingDate=todayStr();document.getElementById('tab-otherday').style.display='none';showView('today');renderTodayView();document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));const bnh=document.getElementById('bnav-today');if(bnh)bnh.classList.add('active');}
 
 // ─── TODAY ───
 function renderTodayView(date){
@@ -1080,7 +1144,7 @@ function renderFinance(){
 
 // ─── FINANCE AI TABS ───
 function switchFinTab(name,btn){
-  ['txns','bot','statement','plans','chart','aianalysis'].forEach(t=>{document.getElementById('fin-panel-'+t).classList.toggle('active',t===name);});
+  ['txns','bot','cc','statement','plans','chart','aianalysis'].forEach(t=>{const el=document.getElementById('fin-panel-'+t);if(el){el.classList.toggle('active',t===name);if(t==='cc'){el.style.display=(t===name?'block':'none');}}});
   document.querySelectorAll('.fin-ai-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(name==='plans')renderFinPlanHistory();
@@ -1695,6 +1759,12 @@ function sendManualAlert(){
 
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
+// CC/EMI stubs — full implementation after Supabase tables are created
+let ccCards=[], emiList=[];
+function openAddCCModal(){alert('Add the Supabase CC tables first (SQL provided in chat), then this will open a form!');}
+function openAddEMIModal(){alert('Add the Supabase EMI tables first (SQL provided in chat), then this will open a form!');}
+function renderCCList(){const el=document.getElementById('cc-cards-list');if(!el)return;if(!ccCards.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--light);font-size:13px">No credit cards added yet.</div>';return;}el.innerHTML=ccCards.map(c=>`<div style="background:linear-gradient(135deg,#fff3cd,#fef9c3);border:1px solid #fde68a;border-radius:14px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">${c.icon||'💳'}</span><div style="flex:1"><div style="font-weight:600;font-size:13px">${c.card_name}</div><div style="font-size:11px;color:var(--light)">${c.bank||''} •••• ${c.last4||'????'} · Due: ${c.due_day||'?'}th</div></div><div style="font-size:12px;font-weight:700;color:#7a5c00">₹${fmtNum(c.credit_limit||0)}</div></div>`).join('');}
+function renderEMIList(){const el=document.getElementById('emi-list');if(!el)return;if(!emiList.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--light);font-size:13px">No EMIs tracked yet.</div>';return;}const today=new Date();el.innerHTML=emiList.map(e=>{const paid=e.paid_count||0,total=e.tenure_months||1,pct=Math.round((paid/total)*100);const remaining=total-paid;return`<div style="background:var(--blush);border-radius:14px;padding:12px 16px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-weight:600;font-size:13px">${e.icon||'🏦'} ${e.emi_name}</div><div style="font-size:10px;color:var(--light)">${e.lender||''} · Due ${e.due_day||'?'}th each month</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--deep)">₹${fmtNum(e.emi_amount)}/mo</div><div style="font-size:10px;color:var(--light)">${remaining} months left</div></div></div><div style="height:6px;background:#e0d0d8;border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--rose),var(--deep));border-radius:6px"></div></div></div>`;}).join('');}
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});});
 
 // ─── FINANCE BOT ───
@@ -1748,15 +1818,23 @@ function finbotAddMsg(role,text,txnData){
   msgs.scrollTop=msgs.scrollHeight;
 }
 
-function finbotSaveTxn(txnData,btn){
+async function finbotSaveTxn(txnData,btn){
+  btn.textContent='Saving…';btn.disabled=true;
   const p=currentFinPerson;
   if(!finTxns[p])finTxns[p]=[];
   finTxns[p].push({id:Date.now().toString(),type:txnData.txn_type,amount:Number(txnData.amount),category:txnData.category,note:txnData.note||'',date:txnData.txn_date,card:''});
-  saveFinance();
-  renderFinance();
-  btn.textContent='✅ Added!';
-  btn.disabled=true;
-  btn.style.background='#7aaa80';
+  await saveFinanceToDB();renderFinance();
+  // dual-write to normalized table
+  try{
+    const{data:pid,error:pe}=await sb.rpc('get_or_create_default_person',{p_user_id:currentUser.id});
+    if(pe)throw pe;
+    const{error:te}=await sb.from('medmama_finance_txns').insert({user_id:currentUser.id,person_id:pid,txn_date:txnData.txn_date,txn_type:txnData.txn_type,amount:Number(txnData.amount),category:txnData.category,note:txnData.note||'',source:'bot'});
+    if(te)throw te;
+    btn.textContent='✅ Saved!';btn.style.background='#7aaa80';
+  }catch(e){
+    btn.textContent='⚠️ Saved (old table only)';btn.style.background='#f5c842';btn.style.color='#3a2a00';
+    console.warn('medmama_finance_txns insert failed:',e.message);
+  }
 }
 
 function finbotShowTyping(){
