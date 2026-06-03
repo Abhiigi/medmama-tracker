@@ -538,10 +538,10 @@
                 ondragleave="this.style.background=''" 
                 ondrop="onStmtDrop(event)"
                 onclick="document.getElementById('stmt-pdf-file').click()">
-                <input type="file" id="stmt-pdf-file" accept="application/pdf" onchange="handleStmtPdf(event)"/>
+                <input type="file" id="stmt-pdf-file" accept="application/pdf" multiple onchange="handleStmtPdf(event)"/>
                 <div id="upload-icon-fin" style="font-size:32px;margin-bottom:8px">📂</div>
                 <div style="font-size:13px;font-weight:600;color:var(--deep)" id="upload-title-fin">Drag & drop or tap to upload PDF</div>
-                <div style="font-size:11px;color:var(--light);margin-top:4px">Bank statement · PDF only</div>
+                <div style="font-size:11px;color:var(--light);margin-top:4px">Axis Bank statement · Multiple PDFs supported</div>
                 <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="event.stopPropagation()">Choose File</button>
               </div>
               <div id="pdf-uploaded-bar" class="pdf-uploaded-bar" style="display:none">
@@ -1024,8 +1024,11 @@ function switchFinTab(name,btn){
 }
 
 // ─── BANK STATEMENT PARSING ───
-function onStmtDrop(e){e.preventDefault();document.getElementById('upload-zone-fin').style.background='';const file=e.dataTransfer.files[0];if(file&&file.type==='application/pdf')processStmtPdf(file);}
-function handleStmtPdf(e){const file=e.target.files[0];if(file)processStmtPdf(file);}
+function onStmtDrop(e){e.preventDefault();document.getElementById('upload-zone-fin').style.background='';const files=[...e.dataTransfer.files].filter(f=>f.type==='application/pdf');files.forEach(f=>processStmtPdf(f));}
+async function handleStmtPdf(e){const files=[...e.target.files];for(const f of files){await processStmtPdf(f);}}
+
+// ─── MULTI-PDF STATE ───
+let uploadedPdfFiles=[]; // {name, txns}
 
 async function processStmtPdf(file){
   if(typeof pdfjsLib==='undefined'){alert('PDF library failed to load. Check your internet and refresh.');return;}
@@ -1036,41 +1039,203 @@ async function processStmtPdf(file){
   setStmtProgress(10,'Reading PDF…');
   try{
     const ab=await file.arrayBuffer();
-    setStmtProgress(25,'Extracting pages…');
+    setStmtProgress(20,'Extracting pages…');
     const pdf=await pdfjsLib.getDocument({data:ab}).promise;
-    let fullText='';const total=pdf.numPages;
-    for(let i=1;i<=total;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();fullText+=content.items.map(s=>s.str).join(' ')+'\n';setStmtProgress(25+Math.round((i/total)*40),`Page ${i}/${total}…`);}
-    setStmtProgress(70,'Parsing transactions…');
-    const txns=fallbackStmtParse(fullText);
+    const total=pdf.numPages;
+    // collect all items with positions across all pages
+    let allItems=[];
+    for(let i=1;i<=total;i++){
+      const page=await pdf.getPage(i);
+      const vp=page.getViewport({scale:1});
+      const content=await page.getTextContent();
+      // normalise Y so top of page = small number
+      content.items.forEach(item=>{
+        allItems.push({
+          str:item.str.trim(),
+          x:Math.round(item.transform[4]),
+          y:Math.round(vp.height - item.transform[5]), // flip so top=0
+          page:i
+        });
+      });
+      setStmtProgress(20+Math.round((i/total)*50),`Page ${i}/${total}…`);
+    }
+    setStmtProgress(75,'Parsing transactions…');
+    const txns=parseAxisBankStatement(allItems);
     setStmtProgress(95,'Rendering…');
-    parsedStmtTxns=txns;
-    renderStmtTxns(txns);renderStmtBreakdown(txns);renderFinance();
+
+    // Merge into multi-PDF store (deduplicate by date+amount+desc)
+    const existing=uploadedPdfFiles.find(f=>f.name===file.name);
+    if(existing) existing.txns=txns;
+    else uploadedPdfFiles.push({name:file.name,txns});
+
+    // Combine all PDFs' transactions
+    const allTxns=[];
+    const seen=new Set();
+    uploadedPdfFiles.forEach(f=>f.txns.forEach(t=>{
+      const key=`${t.date}|${t.amount}|${t.desc.slice(0,20)}`;
+      if(!seen.has(key)){seen.add(key);allTxns.push(t);}
+    }));
+    allTxns.sort((a,b)=>a.rawDate.localeCompare(b.rawDate));
+    parsedStmtTxns=allTxns;
+
+    renderStmtTxns(allTxns);renderStmtBreakdown(allTxns);renderFinance();
     setStmtProgress(100,'Done!');
     document.getElementById('upload-icon-fin').textContent='✅';
-    document.getElementById('pdf-parse-badge').innerHTML=`<span class="status-tag ok">✓ ${txns.length} txns</span>`;
-    uploadedPdfName=file.name;
-    document.getElementById('pdf-uploaded-name').textContent=file.name;
+    document.getElementById('pdf-parse-badge').innerHTML=`<span class="status-tag ok">✓ ${allTxns.length} txns from ${uploadedPdfFiles.length} PDF${uploadedPdfFiles.length>1?'s':''}</span>`;
+
+    // show uploaded files bar
+    uploadedPdfName=uploadedPdfFiles.map(f=>f.name).join(', ');
+    document.getElementById('pdf-uploaded-name').textContent=uploadedPdfFiles.length===1
+      ? uploadedPdfFiles[0].name
+      : `${uploadedPdfFiles.length} PDFs: ${uploadedPdfFiles.map(f=>f.name).join(' · ')}`;
     document.getElementById('pdf-uploaded-bar').style.display='flex';
     setTimeout(()=>document.getElementById('stmt-progress').style.display='none',1500);
     updateAIReadinessBadges();
   }catch(err){
+    console.error(err);
     document.getElementById('upload-icon-fin').textContent='❌';
-    document.getElementById('pdf-parse-badge').innerHTML=`<span class="status-tag err">Error</span>`;
+    document.getElementById('pdf-parse-badge').innerHTML=`<span class="status-tag err">Error: ${err.message}</span>`;
     document.getElementById('stmt-progress').style.display='none';
-    alert('PDF parse failed: '+err.message);
   }
 }
 function setStmtProgress(pct,label){document.getElementById('stmt-prog-bar').style.width=pct+'%';document.getElementById('stmt-pct').textContent=pct+'%';document.getElementById('stmt-step').textContent=label;}
 
-function fallbackStmtParse(text){const lines=text.split('\n'),txns=[],amtRe=/(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g,dateRe=/(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|\d{4}-\d{2}-\d{2})/;for(const line of lines){const tr=line.trim();if(tr.length<10)continue;const dm=tr.match(dateRe);const amounts=[...tr.matchAll(amtRe)].map(m=>parseFloat(m[0].replace(/,/g,'')));if(!dm||!amounts.length)continue;const amount=amounts[amounts.length-1];if(amount<1||amount>10000000)continue;const desc=tr.replace(dateRe,'').replace(amtRe,'').replace(/\s+/g,' ').trim().slice(0,60);const type=/cr|credit|deposit|salary|received/i.test(tr)?'credit':'debit';txns.push({date:dm[0],desc:desc||'Transaction',amount,type});}return txns;}
+// ─── AXIS BANK POSITIONAL PARSER ───
+// The statement columns (approximate X positions on the PDF):
+//   Tran Date ~0-70  |  Chq No ~70-130  |  Particulars ~130-370
+//   Debit ~370-440   |  Credit ~440-510  |  Balance ~510-580  |  Init.Br ~580+
+function parseAxisBankStatement(items){
+  const DD_RE=/^\d{2}-\d{2}-\d{4}$/;
+  const AMT_RE=/^\d{1,3}(?:,\d{3})*(?:\.\d{2})?$/;
 
-function categorizeTxn(desc){const d=desc.toLowerCase();if(/salary|payroll/i.test(d))return'💼 Salary';if(/food|swiggy|zomato|restaurant|cafe/i.test(d))return'🍔 Food';if(/grocery|bigbasket|blinkit|kirana/i.test(d))return'🛒 Groceries';if(/amazon|flipkart|myntra|shopping/i.test(d))return'🛍 Shopping';if(/fuel|petrol|uber|ola|cab/i.test(d))return'🚗 Transport';if(/hospital|pharmacy|medicine|clinic|doctor/i.test(d))return'🏥 Health';if(/rent|housing|maintenance/i.test(d))return'🏠 Housing';if(/emi|loan|insurance|premium/i.test(d))return'📋 EMI/Insurance';if(/electricity|gas|water|broadband|airtel|jio|bill/i.test(d))return'💡 Utilities';if(/entertainment|netflix|prime|hotstar|movie/i.test(d))return'🎬 Entertainment';if(/transfer|upi|neft|imps|rtgs/i.test(d))return'↔️ Transfer';return'📦 Other';}
+  // Group items into rows by (page, approximate Y band within ±4px)
+  const rowMap=new Map();
+  items.forEach(item=>{
+    if(!item.str) return;
+    const key=`${item.page}_${Math.round(item.y/5)*5}`; // bucket by 5px bands
+    if(!rowMap.has(key)) rowMap.set(key,[]);
+    rowMap.get(key).push(item);
+  });
+
+  // Sort rows top-to-bottom, left-to-right within row
+  const rows=[...rowMap.values()]
+    .map(r=>r.sort((a,b)=>a.x-b.x))
+    .sort((a,b)=>{
+      const ay=a[0].page*10000+a[0].y;
+      const by=b[0].page*10000+b[0].y;
+      return ay-by;
+    });
+
+  // Detect column boundaries from header row
+  // Look for the row containing "Tran Date" and "Debit" and "Credit"
+  let debitX=370, creditX=445, balanceX=510;
+  for(const row of rows){
+    const texts=row.map(i=>i.str.toLowerCase());
+    if(texts.some(t=>t.includes('debit'))&&texts.some(t=>t.includes('credit'))){
+      const debitItem=row.find(i=>i.str.toLowerCase().includes('debit'));
+      const creditItem=row.find(i=>i.str.toLowerCase().includes('credit'));
+      const balItem=row.find(i=>i.str.toLowerCase().includes('balance'));
+      if(debitItem) debitX=debitItem.x;
+      if(creditItem) creditX=creditItem.x;
+      if(balItem) balanceX=balItem.x;
+      break;
+    }
+  }
+
+  const txns=[];
+  let pendingDate=null, pendingDesc='';
+
+  for(const row of rows){
+    // Classify each cell by X position
+    const dateItems=row.filter(i=>i.x < debitX-50 && DD_RE.test(i.str));
+    const descItems=row.filter(i=>i.x > 50 && i.x < debitX-5 && !DD_RE.test(i.str) && i.str.length>1);
+    const debitItems=row.filter(i=>i.x>=debitX-15 && i.x<creditX-5 && AMT_RE.test(i.str));
+    const creditItems=row.filter(i=>i.x>=creditX-15 && i.x<balanceX-5 && AMT_RE.test(i.str));
+
+    const hasDate=dateItems.length>0;
+    const hasDebit=debitItems.length>0;
+    const hasCredit=creditItems.length>0;
+    const descStr=descItems.map(i=>i.str).join(' ').trim();
+
+    if(hasDate){
+      // flush pending
+      if(pendingDate && pendingDesc){
+        // no amount row yet, keep pending
+      }
+      pendingDate=dateItems[0].str; // dd-mm-yyyy
+      pendingDesc=descStr||pendingDesc;
+    } else if(descStr && !hasDebit && !hasCredit){
+      // continuation of description
+      pendingDesc=(pendingDesc?pendingDesc+' ':'')+descStr;
+    }
+
+    if(hasDebit||hasCredit){
+      const rawAmt=(hasDebit?debitItems:creditItems)[0].str;
+      const amount=parseFloat(rawAmt.replace(/,/g,''));
+      if(amount>0 && pendingDate){
+        const type=hasCredit?'credit':'debit';
+        const desc=(pendingDesc||descStr||'Transaction').slice(0,80);
+        // Convert dd-mm-yyyy → yyyy-mm-dd for sorting
+        const parts=pendingDate.split('-');
+        const isoDate=parts.length===3?`${parts[2]}-${parts[1]}-${parts[0]}`:pendingDate;
+        txns.push({date:pendingDate, rawDate:isoDate, desc:cleanDesc(desc), amount, type});
+        pendingDesc='';
+        // keep pendingDate in case same date has more txns
+      }
+    }
+  }
+  return txns;
+}
+
+function cleanDesc(d){
+  // Remove UPI prefixes for readability but keep the merchant name
+  return d
+    .replace(/^UPI\/P2[MA]\/\d+\//i,'')
+    .replace(/^IMPS\/P2[MA]\/\d+\//i,'')
+    .replace(/^NEFT\//i,'NEFT: ')
+    .replace(/^ACH-DR-/i,'EMI: ')
+    .replace(/^CRD-PMNT-/i,'Credit Card Pmt: ')
+    .replace(/^CreditCard Payment /i,'CC Payment: ')
+    .replace(/\/Paymen\/.*$/i,'')
+    .replace(/\/Pay to\/.*$/i,'')
+    .replace(/\/Pay fo\/.*$/i,'')
+    .replace(/\/Airtel\/.*$/i,'')
+    .replace(/\/Zomato\/.*$/i,'')
+    .replace(/\/UPI\/.*$/i,'')
+    .replace(/\/UPIInt\/.*$/i,'')
+    .replace(/\s+/g,' ')
+    .trim()
+    .slice(0,60);
+}
+
+function categorizeTxn(desc){
+  const d=desc.toLowerCase();
+  if(/accenture|salary|neft.*bank of america|payroll/i.test(d)) return'💼 Salary';
+  if(/swiggy|zomato|burger king|restaurant|cafe|hotel|keventers|dahibara|lassi|ganguram|snacks|dessert|bocca|refresho|lite bite|frozen dessert/i.test(d)) return'🍔 Food';
+  if(/grocery|bigbasket|blinkit|kirana|supermart|sp supermart|rameswaram|fruits|omfed|my daily shop|instamart/i.test(d)) return'🛒 Groceries';
+  if(/amazon|flipkart|myntra|shopping|fashion|biba|nykaa|aditya birla|shoppers stop|aaditya|rajani|his and her|kazo|wow|velvet loft|padmalaya|m & w fashion/i.test(d)) return'🛍 Shopping';
+  if(/fuel|petrol|diesel|jena fuels|baba sai fuel|ramchandi fuel|highway diesel|arrow solutions/i.test(d)) return'⛽ Fuel';
+  if(/uber|ola|cab|arjun car care|gofast|highway service/i.test(d)) return'🚗 Transport';
+  if(/apollo pharmacy|pharmacy|medicine|clinic|doctor|veenapanda|ankura|health|apollo healthco/i.test(d)) return'🏥 Health';
+  if(/rent|housing|awfis|utkal builders|kalinga vihar|maintenance/i.test(d)) return'🏠 Housing';
+  if(/emi|boi emi|loan|insurance|premium|ach-dr/i.test(d)) return'📋 EMI/Loan';
+  if(/cc payment|creditcard|crd-pmnt|credit card pmt/i.test(d)) return'💳 CC Payment';
+  if(/electricity|tpcodl|power|gas|water|broadband|airtel|jio|bill|spotify|netflix|google|hotstar/i.test(d)) return'💡 Bills & Utils';
+  if(/entertainment|bigtree|bookmyshow|cinepolis|movie|anandabana/i.test(d)) return'🎬 Entertainment';
+  if(/self cash dep|cash dep/i.test(d)) return'💵 Cash Deposit';
+  if(/neft:|imps:|transfer/i.test(d)) return'↔️ Transfer';
+  if(/interest|int\.pd/i.test(d)) return'🏦 Interest';
+  return'📦 Other';
+}
 
 function renderStmtTxns(txns){
   const card=document.getElementById('fin-parsed-card'),list=document.getElementById('fin-parsed-list'),count=document.getElementById('fin-txn-count');
   if(!txns.length){card.style.display='none';return;}
   card.style.display='block';count.textContent=txns.length+' transactions';
-  list.innerHTML=txns.map(t=>`<div class="parsed-txn"><div class="ptxn-ic ${t.type==='credit'?'i':'e'}">${t.type==='credit'?'💰':'💸'}</div><div><div class="ptxn-desc">${t.desc}</div><div class="ptxn-date">${t.date}</div></div><div class="ptxn-amt ${t.type==='credit'?'i':'e'}" style="margin-left:auto">${t.type==='credit'?'+':'-'}₹${fmtNum(t.amount)}</div></div>`).join('');
+  list.innerHTML=txns.map(t=>{
+    const cat=categorizeTxn(t.desc);
+    return`<div class="parsed-txn"><div class="ptxn-ic ${t.type==='credit'?'i':'e'}">${t.type==='credit'?'💰':'💸'}</div><div style="flex:1;min-width:0"><div class="ptxn-desc" title="${t.desc}">${t.desc}</div><div class="ptxn-date">${t.date} · <span style="color:var(--text)">${cat}</span></div></div><div class="ptxn-amt ${t.type==='credit'?'i':'e'}" style="margin-left:8px;flex-shrink:0">${t.type==='credit'?'+':'-'}₹${fmtNum(t.amount)}</div></div>`;
+  }).join('');
 }
 function renderStmtBreakdown(txns){
   const debits=txns.filter(t=>t.type==='debit');if(!debits.length){document.getElementById('fin-cat-card').style.display='none';return;}
@@ -1218,7 +1383,7 @@ function renderBabyPanel(){const el=document.getElementById('baby-info-panel');i
 let uploadedPdfName='';
 function deleteUploadedPdf(){
   if(!confirm('Delete the uploaded bank statement? All parsed transactions will be cleared.'))return;
-  parsedStmtTxns=[];uploadedPdfName='';
+  parsedStmtTxns=[];uploadedPdfName='';uploadedPdfFiles=[];
   document.getElementById('upload-icon-fin').textContent='📂';
   document.getElementById('upload-title-fin').textContent='Drag & drop or tap to upload PDF';
   document.getElementById('pdf-parse-badge').innerHTML='';
