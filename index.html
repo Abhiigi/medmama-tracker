@@ -1377,7 +1377,7 @@ function renderStmtBreakdown(txns){
 }
 
 // ─── FUTURE PLANS ───
-document.getElementById('fin-plan-input').addEventListener('input',function(){document.getElementById('fin-plan-char').textContent=this.value.length+' chars';});
+document.getElementById('fin-plan-input')?.addEventListener('input',function(){const el=document.getElementById('fin-plan-char');if(el)el.textContent=this.value.length+' chars';});
 function saveFinPlan(){const text=document.getElementById('fin-plan-input').value.trim();if(!text){alert('Write something first.');return;}finPlanEntries.unshift({id:Date.now(),text,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})});localStorage.setItem('mm_fin_plans',JSON.stringify(finPlanEntries));document.getElementById('fin-plan-input').value='';document.getElementById('fin-plan-char').textContent='0 chars';renderFinPlanHistory();updateAIReadinessBadges();}
 function renderFinPlanHistory(){const wrap=document.getElementById('fin-plan-history-wrap'),container=document.getElementById('fin-plan-history');if(!finPlanEntries.length){wrap.style.display='none';return;}wrap.style.display='block';container.innerHTML=finPlanEntries.map(e=>`<div class="plan-entry"><div class="plan-entry-date">${e.date}</div><div class="plan-entry-text">${e.text.replace(/\n/g,'<br>')}</div><button class="plan-del-btn" onclick="deleteFinPlan(${e.id})">🗑</button></div>`).join('');}
 function deleteFinPlan(id){finPlanEntries=finPlanEntries.filter(e=>e.id!==id);localStorage.setItem('mm_fin_plans',JSON.stringify(finPlanEntries));renderFinPlanHistory();updateAIReadinessBadges();}
