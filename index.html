@@ -1757,7 +1757,7 @@ function finbotShowKeyPrompt(){
     +'2. Click <b>Create API Key</b> and copy it<br>'
     +'3. Paste below and tap Save</div>'
     +'<div style="display:flex;gap:8px">'
-    +'<input id="finbot-key-in" type="password" placeholder="AIzaSy..." style="flex:1;padding:8px 12px;border:1.5px solid #a5d6a7;border-radius:10px;font-size:12px;outline:none"/>'
+    +'<input id="finbot-key-in" type="password" placeholder="Paste your key here..." style="flex:1;padding:8px 12px;border:1.5px solid #a5d6a7;border-radius:10px;font-size:12px;outline:none"/>'
     +'<button onclick="finbotSaveKey()" style="padding:8px 14px;background:var(--deep);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer">Save</button>'
     +'</div>';
   msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
@@ -1765,7 +1765,7 @@ function finbotShowKeyPrompt(){
 
 function finbotSaveKey(){
   const k=document.getElementById('finbot-key-in')?.value?.trim();
-  if(!k||!k.startsWith('AIza')){alert('Please enter a valid Gemini API key (starts with AIza)');return;}
+  if(!k||k.length<10){alert('Please enter your API key');return;}
   geminiSetKey(k);
   document.getElementById('finbot-key-prompt')?.remove();
   finbotAddMsg('bot','\u2705 Key saved! You are all set \u2014 completely free \uD83C\uDF89 Try your message now!');
@@ -1815,7 +1815,7 @@ async function finbotSend(){
     for(const m of finbotHistory){
       contents.push({role:m.role==='user'?'user':'model',parts:[{text:m.content}]});
     }
-    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent?key='+key,
+    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent?key='+encodeURIComponent(key),
       {method:'POST',headers:{'Content-Type':'application/json'},
        body:JSON.stringify({contents,generationConfig:{maxOutputTokens:800,temperature:0.7}})});
     const data=await res.json();
