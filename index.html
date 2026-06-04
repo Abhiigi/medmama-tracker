@@ -1539,17 +1539,15 @@ Give a thorough financial readiness report. Include ALL of the following in your
 Respond ONLY with a single valid JSON object. No markdown, no explanation outside the JSON.`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1500,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
+    const gemKey=geminiGetKey();
+    if(!gemKey){renderFinAnalysisLocal(snap);btn.disabled=false;btn.innerHTML='✨ Re-Analyse';return;}
+    const resp=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent?key='+gemKey,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1500,temperature:0.4}})}
+    );
     const data=await resp.json();
-    const raw=data.content?.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const raw=(data.candidates?.[0]?.content?.parts?.[0]?.text||'').replace(/```json|```/g,'').trim();
     const result=JSON.parse(raw);
     renderFinAnalysis(result,snap);
   }catch(e){
@@ -1768,7 +1766,13 @@ function renderEMIList(){const el=document.getElementById('emi-list');if(!el)ret
 document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});});
 
 // ─── FINANCE BOT ───
-const FINBOT_SYSTEM=`You are MedMama's Finance Assistant — a warm, helpful bot embedded in a pregnancy tracker app. You help users log and understand their personal finances.
+// ── GEMINI CONFIG (free, no card needed) ──
+// Get free key at: aistudio.google.com → Get API Key
+const GEMINI_MODEL='gemini-1.5-flash';
+function geminiGetKey(){return localStorage.getItem('mm_gemini_key')||'';}
+function geminiSetKey(k){localStorage.setItem('mm_gemini_key',k.trim());}
+
+const FINBOT_SYSTEM=`You are MedMama's Finance Assistant — a warm, helpful bot for a pregnancy tracker app. Help users log and understand their personal finances.
 
 When a user wants to ADD a transaction, parse it and respond with:
 1. A short friendly confirmation (1-2 sentences)
@@ -1780,8 +1784,7 @@ When a user wants to ADD a transaction, parse it and respond with:
 Categories for expense/credit_card: groceries, food, transport, medicine, bills, shopping, EMI, entertainment, baby, other
 Categories for income: salary, freelance, investment, gift, other
 
-When a user ASKS about finances (totals, trends, tips), answer helpfully and concisely. If they ask about credit card dues or EMIs, acknowledge and encourage them to check the relevant section.
-
+When a user ASKS about finances (totals, trends, tips), answer helpfully and concisely.
 Keep responses short, warm, conversational. Today is ${new Date().toISOString().split('T')[0]}.`;
 
 let finbotHistory=[];
@@ -1859,23 +1862,22 @@ function finbotParseTxn(text){
   try{return JSON.parse(m[1].trim());}catch{return null;}
 }
 
-function finbotGetKey(){return localStorage.getItem('mm_anthropic_key')||'';}
-function finbotSetKey(k){localStorage.setItem('mm_anthropic_key',k.trim());}
-
 function finbotShowKeyPrompt(){
   const msgs=document.getElementById('finbot-msgs');
   if(!msgs)return;
-  // remove old key prompt if present
   const old=document.getElementById('finbot-key-prompt');if(old)old.remove();
   const div=document.createElement('div');
   div.id='finbot-key-prompt';
-  div.style.cssText='background:#fff8e1;border:1.5px solid #fde68a;border-radius:14px;padding:14px 16px;margin:8px 0;font-size:12px;color:#7a5c00';
-  div.innerHTML=`<div style="font-weight:700;margin-bottom:6px">🔑 Anthropic API Key needed</div>
-<div style="margin-bottom:10px;line-height:1.6">The bot needs your Anthropic API key to work. It's stored only in your browser (localStorage) and sent only to Anthropic.<br><a href="https://console.anthropic.com/keys" target="_blank" style="color:var(--deep)">Get your key →</a></div>
-<div style="display:flex;gap:8px">
-  <input id="finbot-key-in" type="password" placeholder="sk-ant-..." style="flex:1;padding:8px 12px;border:1.5px solid #fde68a;border-radius:10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;background:#fffde7"/>
-  <button onclick="finbotSaveKey()" style="padding:8px 14px;background:var(--deep);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Save</button>
-</div>`;
+  div.style.cssText='background:#e8f5e9;border:1.5px solid #a5d6a7;border-radius:14px;padding:14px 16px;margin:8px 0;font-size:12px;color:#1b5e20';
+  div.innerHTML='<div style="font-weight:700;margin-bottom:6px">🔑 Free Google Gemini API Key needed</div>'
+    +'<div style="margin-bottom:10px;line-height:1.6">Completely free — no credit card needed!<br>'
+    +'1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--deep);font-weight:600">aistudio.google.com → Get API Key</a><br>'
+    +'2. Click <strong>Create API Key</strong> → copy it<br>'
+    +'3. Paste it below and tap Save</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<input id="finbot-key-in" type="password" placeholder="AIzaSy..." style="flex:1;padding:8px 12px;border:1.5px solid #a5d6a7;border-radius:10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;background:#f1f8f1"/>'
+    +'<button onclick="finbotSaveKey()" style="padding:8px 14px;background:var(--deep);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Save</button>'
+    +'</div>';
   msgs.appendChild(div);
   msgs.scrollTop=msgs.scrollHeight;
 }
@@ -1883,17 +1885,17 @@ function finbotShowKeyPrompt(){
 function finbotSaveKey(){
   const inp=document.getElementById('finbot-key-in');
   const key=inp?.value?.trim();
-  if(!key||!key.startsWith('sk-')){alert('Please enter a valid Anthropic API key (starts with sk-)');return;}
-  finbotSetKey(key);
+  if(!key||!key.startsWith('AIza')){alert('Please enter a valid Google Gemini API key (starts with AIza)');return;}
+  geminiSetKey(key);
   const prompt=document.getElementById('finbot-key-prompt');if(prompt)prompt.remove();
-  finbotAddMsg('bot','✅ API key saved! Now try your message again.');
+  finbotAddMsg('bot','✅ Gemini key saved! You are all set — completely free 🎉 Try your message now!');
 }
 
 async function finbotSend(){
   const inp=document.getElementById('finbot-inp');
   const val=inp.value.trim();
   if(!val||finbotBusy)return;
-  const apiKey=finbotGetKey();
+  const apiKey=geminiGetKey();
   if(!apiKey){
     inp.value='';
     finbotAddMsg('user',val);
@@ -1907,29 +1909,40 @@ async function finbotSend(){
   document.getElementById('finbot-send').disabled=true;
   finbotShowTyping();
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:FINBOT_SYSTEM,messages:finbotHistory})
-    });
+    // Build Gemini contents array — inject system prompt as first user turn
+    const contents=[];
+    // Gemini doesn't have a system role — prepend as first user message
+    if(finbotHistory.length===1){
+      contents.push({role:'user',parts:[{text:FINBOT_SYSTEM+'
+
+User: '+val}]});
+      contents.push({role:'model',parts:[{text:'Got it! I am MedMama Finance Assistant. Ready to help!'}]});
+      contents.push({role:'user',parts:[{text:val}]});
+    } else {
+      contents.push({role:'user',parts:[{text:FINBOT_SYSTEM}]});
+      contents.push({role:'model',parts:[{text:'Understood! I am MedMama Finance Assistant, ready to help with transactions and finance questions.'}]});
+      for(const m of finbotHistory){
+        contents.push({role:m.role==='user'?'user':'model',parts:[{text:m.content}]});
+      }
+    }
+    const res=await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/'+GEMINI_MODEL+':generateContent?key='+apiKey,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({contents,generationConfig:{maxOutputTokens:1000,temperature:0.7}})}
+    );
     const data=await res.json();
     if(data.error){
       finbotRemoveTyping();
-      if(data.error.type==='authentication_error'){
-        localStorage.removeItem('mm_anthropic_key');
-        finbotAddMsg('bot','❌ API key invalid or expired. Please enter a valid key.');
+      if(data.error.status==='PERMISSION_DENIED'||data.error.status==='UNAUTHENTICATED'){
+        geminiSetKey('');
+        finbotAddMsg('bot','❌ API key invalid. Please enter your Gemini key again.');
         finbotShowKeyPrompt();
       } else {
         finbotAddMsg('bot','Error: '+data.error.message);
       }
       finbotBusy=false;document.getElementById('finbot-send').disabled=false;return;
     }
-    const raw=data.content?.map(b=>b.text||'').join('')||'Sorry, something went wrong.';
+    const raw=data.candidates?.[0]?.content?.parts?.[0]?.text||'Sorry, no response received.';
     const txnData=finbotParseTxn(raw);
     const display=raw.replace(/```txn_data[\s\S]*?```/g,'').trim();
     finbotHistory.push({role:'assistant',content:raw});
@@ -1937,7 +1950,7 @@ async function finbotSend(){
     finbotAddMsg('bot',display,txnData);
   }catch(e){
     finbotRemoveTyping();
-    finbotAddMsg('bot','Network error: '+e.message+'. Check your connection and try again.');
+    finbotAddMsg('bot','Network error: '+e.message+'. Check your connection.');
   }
   finbotBusy=false;
   document.getElementById('finbot-send').disabled=false;
@@ -1952,7 +1965,13 @@ function finbotQuick(text){
 function finbotInit(){
   const msgs=document.getElementById('finbot-msgs');
   if(!msgs||msgs.children.length>0)return;
-  finbotAddMsg('bot','Hi! I\'m your MedMama finance assistant 💰 Tell me about an expense or income — like "spent ₹500 on medicine today" — and I\'ll add it for you. Or ask me anything about your finances!');
+  const hasKey=!!geminiGetKey();
+  if(hasKey){
+    finbotAddMsg('bot','Hi! I\'m your MedMama finance assistant 💰 Tell me about a transaction — like "spent ₹800 on groceries today" — and I\'ll add it. Or ask anything about your finances!');
+  } else {
+    finbotAddMsg('bot','Hi! I\'m your MedMama finance assistant 💰 I use Google Gemini AI — completely free, no credit card needed!');
+    finbotShowKeyPrompt();
+  }
 }
 
 // init bot when bot tab is opened
